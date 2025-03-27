@@ -1,4 +1,4 @@
-import { prisma } from './prisma'
+import { prisma } from '@/lib/db/prisma'
 import type { MemoryPiece } from '@prisma/client'
 
 export async function createMemoryPiece(data: {
@@ -20,8 +20,7 @@ export async function getMemoryPiece(id: string) {
     include: {
       subjectRef: true,
       unitRef: true,
-      memoryChecks: true,
-      imageUrl: true
+      memoryChecks: true
     }
   })
 }
