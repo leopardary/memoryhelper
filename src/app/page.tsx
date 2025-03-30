@@ -1,6 +1,6 @@
 import MemoryPieceCard from "@/app/components/MemoryPieceCard";
 import Link from "next/link";
-import { prisma } from "@/lib/db/prisma";
+import { prisma } from "@/lib/db/api/prisma";
 import Image from "next/image";
 import PaginationBar from "@/app/components/PaginationBar";
 

@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/db/prisma'
+import { prisma } from '@/lib/db/api/prisma'
 import type { MemoryCheck } from '@prisma/client'
 
 export async function createMemoryCheck(data: {
