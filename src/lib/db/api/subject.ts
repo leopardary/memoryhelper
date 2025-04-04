@@ -1,43 +1,48 @@
-import { prisma } from './prisma'
-import type { Subject } from '@prisma/client'
+import Subject from '@/lib/db/model/Subject';
+import { CreateSubjectInput, UpdateSubjectInput } from '@/lib/db/model/types/Subject.types';
+import { connectDB } from '@/lib/db/utils';
 
-export async function createSubject(data: {
-  title: string
-  description: string
-  labels: string[]
-}) {
-  return prisma.subject.create({
-    data
-  })
+export async function createSubject(data: CreateSubjectInput) {
+  await connectDB();
+  return Subject.create(data);
 }
 
 export async function getSubject(id: string) {
-  return prisma.subject.findUnique({
-    where: { id },
-    include: {
-      units: true,
-      memoryPieces: true
-    }
-  })
+  await connectDB();
+  return Subject.findById(id)
+    .populate('units')
+    .populate('memoryPieces');
 }
 
 export async function getAllSubjects() {
-  return prisma.subject.findMany({
-    include: {
-      units: true
-    }
-  })
+  await connectDB();
+  return Subject.find()
+    .populate('units');
 }
 
-export async function updateSubject(id: string, data: Partial<Subject>) {
-  return prisma.subject.update({
-    where: { id },
-    data
-  })
+export async function updateSubject(id: string, data: UpdateSubjectInput) {
+  await connectDB();
+  return Subject.findByIdAndUpdate(
+    id,
+    data,
+    { new: true, runValidators: true }
+  );
 }
 
 export async function deleteSubject(id: string) {
-  return prisma.subject.delete({
-    where: { id }
-  })
+  await connectDB();
+  return Subject.findByIdAndDelete(id);
+}
+
+export async function getSubjectCount() {
+  await connectDB();
+  return Subject.countDocuments();
+}
+
+export async function getSubjectsWithPagination(currentPage: number, pageSize: number, heroItemCount: number) {
+  await connectDB();
+  return Subject.find()
+    .sort({ _id: -1 })
+    .skip((currentPage - 1) * pageSize + (currentPage === 1 ? 0 : heroItemCount))
+    .limit(pageSize + (currentPage === 1 ? heroItemCount : 0));
 }

@@ -1,21 +1,22 @@
-import mongoose from 'mongoose';
+import mongoose, { Model } from 'mongoose';
+import { SubjectProps } from './types/Subject.types';
 
-const subjectSchema = new mongoose.Schema(
-  {
-    title: { type: String, required: true, unique: true },
-    description: { type: String },
-    labels: [{ type: String }],
-    imageUrl: { type: String },
-  },
-  { timestamps: true, collection: 'subjects' }
-);
+let Subject: Model<SubjectProps>;
 
-interface SubjectSchema {
-  title: string;
-  description: string;
-  labels: string[];
-  imageUrl: string
+if (!mongoose.models.Subject) {
+  const subjectSchema = new mongoose.Schema<SubjectProps>(
+    {
+      title: { type: String, required: true, unique: true },
+      description: { type: String },
+      labels: [{ type: String }],
+      imageUrl: { type: String },
+    },
+    { timestamps: true, collection: 'subjects' }
+  );
+  
+  Subject = mongoose.model<SubjectProps>('Subject', subjectSchema);
+} else {
+  Subject = mongoose.models.Subject as Model<SubjectProps>;
 }
 
-const Subject = mongoose.model('Subject', subjectSchema);
 export default Subject;
