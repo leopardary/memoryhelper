@@ -1,6 +1,7 @@
 import Subject from '@/lib/db/model/Subject';
 import { CreateSubjectInput, UpdateSubjectInput } from '@/lib/db/model/types/Subject.types';
 import { connectDB } from '@/lib/db/utils';
+import { validateImagePath } from '@/lib/utils/fileValidation';
 
 export async function createSubject(data: CreateSubjectInput) {
   await connectDB();
@@ -12,6 +13,15 @@ export async function getSubject(id: string) {
   return Subject.findById(id)
     .populate('units')
     .populate('memoryPieces');
+}
+
+export async function getSubjectByTitle(title: string) {
+  try {
+    return await Subject.findOne({ title: title });
+  } catch (error) {
+    console.error(`Subject ${title} Not Found:`, error);
+    throw error;
+  }
 }
 
 export async function getAllSubjects() {
@@ -45,4 +55,25 @@ export async function getSubjectsWithPagination(currentPage: number, pageSize: n
     .sort({ _id: -1 })
     .skip((currentPage - 1) * pageSize + (currentPage === 1 ? 0 : heroItemCount))
     .limit(pageSize + (currentPage === 1 ? heroItemCount : 0));
+}
+
+// Check existence or create subject
+export async function findOrCreateSubject(subject: CreateSubjectInput) {
+  try {
+    if (subject.imageUrl && !validateImagePath(subject.imageUrl)) {
+      throw new Error(`Image file not found: ${subject.imageUrl}`);
+    }
+
+    const record = await Subject.findOneAndUpdate(
+      { title: subject.title },
+      subject,
+      { upsert: true, new: true }
+    );
+    
+    console.log('Subject found or created:', record);
+    return record;
+  } catch (error) {
+    console.error('Error in findOrCreateSubject:', error);
+    throw error;
+  }
 }

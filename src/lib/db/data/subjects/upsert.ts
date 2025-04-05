@@ -1,29 +1,7 @@
 import mongoose from 'mongoose';
-import Subject from '@/lib/db/model/Subject'
-import { validateImagePath } from '@/lib/utils/fileValidation';
 import { CreateSubjectInput } from '@/lib/db/model/types/Subject.types';
 import { connectDB } from '@/lib/db/utils';
-
-// Check existence or create subject
-async function findOrCreateSubject(subject: CreateSubjectInput) {
-  try {
-    if (subject.imageUrl && !validateImagePath(subject.imageUrl)) {
-      throw new Error(`Image file not found: ${subject.imageUrl}`);
-    }
-
-    const record = await Subject.findOneAndUpdate(
-      { title: subject.title },
-      subject,
-      { upsert: true, new: true }
-    );
-    
-    console.log('Subject found or created:', record);
-    return record;
-  } catch (error) {
-    console.error('Error in findOrCreateSubject:', error);
-    throw error;
-  }
-}
+import { findOrCreateSubject } from '@/lib/db/api/subject';
 
 const subject_yuwen: CreateSubjectInput = {
   title: "语文",
