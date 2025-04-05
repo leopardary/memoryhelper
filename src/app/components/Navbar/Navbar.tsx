@@ -1,18 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import logo from "@public/globe.svg";
-import { redirect } from "next/navigation";
-import UserMenuButton from "@/app/Navbar/UserMenuButton";
+import UserMenuButton from "@/app/components/Navbar/UserMenuButton";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth/next";
-
-async function searchProducts(formData: FormData) {
-  "use server";
-  const searchQuery = formData.get("searchQuery")?.toString();
-  if (searchQuery) {
-    redirect("/search?query=" + searchQuery);
-  }
-}
 
 const Logo = () => (<div className="flex-1">
   <Link href="/" className="btn btn-ghost text-xl normal-case">
