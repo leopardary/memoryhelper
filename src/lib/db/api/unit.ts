@@ -1,47 +1,37 @@
-import { prisma } from './prisma'
-import type { Unit } from '.prisma/client'
+import Unit from '@/lib/db/model/Unit';
+import { connectDB } from '@/lib/db/utils';
+import { CreateUnitInput, UpdateUnitInput } from '@/lib/db/model/types/Unit.types';
 
-export async function createUnit(data: {
-  title: string
-  type: string
-  description?: string
-  parentUnit?: string
-  subject: string
-  order: number
-}) {
-  return prisma.unit.create({
-    data
-  })
+export async function createUnit(data: CreateUnitInput) {
+  await connectDB();
+  return Unit.create(data);
 }
 
 export async function getUnit(id: string) {
-  return prisma.unit.findUnique({
-    where: { id },
-    include: {
-      parent: true,
-      children: true,
-      memoryPieces: true,
-      subjectRef: true
-    }
-  })
+  await connectDB();
+  return Unit.findById(id)
+    .populate('parent')
+    .populate('children')
+    .populate('memoryPieces')
+    .populate('subject');
 }
 
 export async function getUnitsBySubject(subjectId: string) {
-  return prisma.unit.findMany({
-    where: { subject: subjectId },
-    orderBy: { order: 'asc' }
-  })
+  await connectDB();
+  return Unit.find({ subject: subjectId })
+    .sort({ order: 1 });
 }
 
-export async function updateUnit(id: string, data: Partial<Unit>) {
-  return prisma.unit.update({
-    where: { id },
-    data
-  })
+export async function updateUnit(id: string, data: UpdateUnitInput) {
+  await connectDB();
+  return Unit.findByIdAndUpdate(
+    id,
+    data,
+    { new: true, runValidators: true }
+  );
 }
 
 export async function deleteUnit(id: string) {
-  return prisma.unit.delete({
-    where: { id }
-  })
+  await connectDB();
+  return Unit.findByIdAndDelete(id);
 }

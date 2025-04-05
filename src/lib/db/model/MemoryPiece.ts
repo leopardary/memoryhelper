@@ -1,17 +1,24 @@
-import mongoose from 'mongoose';
-import { MemoryPieceProps } from './types/MemoryPiece.types';
+import mongoose, { Model } from 'mongoose';
+import { MemoryPieceProps } from '@/lib/db/model/types/MemoryPiece.types';
 
-const memoryPieceSchema = new mongoose.Schema<MemoryPieceProps>({
-  subject: { type: mongoose.Schema.Types.ObjectId, ref: 'Subject', required: true },
-  unit: { type: mongoose.Schema.Types.ObjectId, ref: 'Unit' },
-  content: { type: String, required: true },
-  imageUrl: { type: String },
-  description: { type: String },
-  labels: [{ type: String }]
-}, {
-  timestamps: true
-});
+let MemoryPiece: Model<MemoryPieceProps>;
 
-const MemoryPiece = mongoose.models.MemoryPiece || mongoose.model<MemoryPieceProps>('MemoryPiece', memoryPieceSchema);
+if (!mongoose.models.MemoryPiece) {
+  const memoryPieceSchema = new mongoose.Schema<MemoryPieceProps>(
+    {
+      subject: { type: mongoose.Schema.Types.ObjectId, ref: 'Subject', required: true },
+      unit: { type: mongoose.Schema.Types.ObjectId, ref: 'Unit' },
+      content: { type: String, required: true },
+      imageUrl: { type: String },
+      description: { type: String },
+      labels: [{ type: String }]
+    },
+    { timestamps: true, collection: 'memoryPieces' }
+  );
+
+  MemoryPiece = mongoose.model<MemoryPieceProps>('MemoryPiece', memoryPieceSchema);
+} else {
+  MemoryPiece = mongoose.models.MemoryPiece as Model<MemoryPieceProps>;
+}
 
 export default MemoryPiece;
