@@ -7,7 +7,7 @@ const subject_yuwen: CreateSubjectInput = {
   title: "语文",
   description: "Chinese Language Arts",
   labels: ["Chinese", "Language"],
-  imageUrl: `${process.env.IMAGE_BASE_PATH}/subjects/yuwen.jpg`
+  imageUrl: `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/yuwen.jpg`
 };
 
 const subject_shuxue: CreateSubjectInput = {

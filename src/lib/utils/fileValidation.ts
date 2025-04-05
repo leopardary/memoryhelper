@@ -11,4 +11,4 @@ export function validateImagePath(imagePath: string): boolean {
     console.error('Error validating image path:', error);
     return false;
   }
-} 
+}

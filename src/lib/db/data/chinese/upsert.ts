@@ -6,6 +6,7 @@ import { CreateSubjectInput } from '@/lib/db/model/types/Subject.types';
 import { CreateMemoryPieceInput } from '@/lib/db/model/types/MemoryPiece.types';
 import { connectDB } from '@/lib/db/utils';
 import {getSubjectByTitle} from '@/lib/db/api/subject';
+import data from '@/lib/db/data/chinese/seed_4a1';
 
 // Check existence or create MemoryPiece
 async function findOrCreateMemoryPiece(data: CreateMemoryPieceInput) {

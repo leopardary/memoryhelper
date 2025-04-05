@@ -1,7 +1,22 @@
 const data = {
   "统编版小学语文四年级 - 上册": {
+    type: 'Unit',
+    description: '统编版小学语文四年级 - 上册',
+    imageUrl: `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/yuwen_4a.jpg`,
+    order: 7,
+    data: [{
     "第一单元": {
-      "观潮": [
+      type: 'Unit',
+      description: '第一单元',
+      imageUrl: `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/unit1.jpg`,
+      order: 1,
+      data: [ {
+      "观潮": {
+        type: 'Unit',
+        description: '第一课，观潮',
+        imageUrl: `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/lesson1.jpg`,
+        order: 1,
+        data: [
         {
           "盐": {
             "组词": [
@@ -15,7 +30,8 @@ const data = {
             ],
             "labels": [
               "会认字"
-            ]
+            ],
+            "imageUrl": ''
           }
         },
         {
@@ -480,6 +496,10 @@ const data = {
         }
       ]
     }
+    }]
+    }
+  }
+    ]
   }
 }
 
