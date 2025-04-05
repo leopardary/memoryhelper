@@ -31,7 +31,7 @@ const data = {
             "labels": [
               "会认字"
             ],
-            "imageUrl": ''
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/盐.gif`
           }
         },
         {
@@ -46,7 +46,8 @@ const data = {
             ],
             "labels": [
               "会认字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/屹.jpg`
           }
         },
         {
@@ -62,7 +63,8 @@ const data = {
             ],
             "labels": [
               "会认字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/昂.gif`
           }
         },
         {
@@ -78,7 +80,8 @@ const data = {
             ],
             "labels": [
               "会认字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/鼎.gif`
           }
         },
         {
@@ -94,7 +97,8 @@ const data = {
             ],
             "labels": [
               "会认字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/沸.gif`
           }
         },
         {
@@ -110,7 +114,8 @@ const data = {
             ],
             "labels": [
               "会认字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/贯.gif`
           }
         },
         {
@@ -126,54 +131,8 @@ const data = {
             ],
             "labels": [
               "会认字"
-            ]
-          }
-        },
-        {
-          "崩": {
-            "组词": [
-              "崩塌",
-              "崩溃",
-              "雪崩"
             ],
-            "造句": [
-              "暴雨导致山体崩塌。",
-              "他因压力过大几乎崩溃。"
-            ],
-            "labels": [
-              "会认字"
-            ]
-          }
-        },
-        {
-          "震": {
-            "组词": [
-              "地震",
-              "震撼",
-              "震动"
-            ],
-            "造句": [
-              "地震时大家迅速跑到空地。",
-              "这部电影的结局令人震撼。"
-            ],
-            "labels": [
-              "会认字"
-            ]
-          }
-        },
-        {
-          "霎": {
-            "组词": [
-              "霎时",
-              "一霎"
-            ],
-            "造句": [
-              "霎时间，天空乌云密布。",
-              "一霎的沉默后，掌声雷动。"
-            ],
-            "labels": [
-              "会认字"
-            ]
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/浩.gif`
           }
         },
         {
@@ -189,7 +148,8 @@ const data = {
             ],
             "labels": [
               "会认字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/薄.gif`
           }
         },
         {
@@ -205,7 +165,8 @@ const data = {
             ],
             "labels": [
               "会认字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/笼.gif`
           }
         },
         {
@@ -221,7 +182,8 @@ const data = {
             ],
             "labels": [
               "会认字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/罩.gif`
           }
         },
         {
@@ -236,7 +198,8 @@ const data = {
             ],
             "labels": [
               "会认字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/踮.gif`
           }
         },
         {
@@ -252,7 +215,8 @@ const data = {
             ],
             "labels": [
               "会认字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/恢.gif`
           }
         },
         {
@@ -268,7 +232,8 @@ const data = {
             ],
             "labels": [
               "会写字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/潮.gif`
           }
         },
         {
@@ -284,7 +249,8 @@ const data = {
             ],
             "labels": [
               "会写字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/据.gif`
           }
         },
         {
@@ -300,7 +266,8 @@ const data = {
             ],
             "labels": [
               "会写字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/堤.gif`
           }
         },
         {
@@ -316,7 +283,8 @@ const data = {
             ],
             "labels": [
               "会写字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/阔.gif`
           }
         },
         {
@@ -332,7 +300,8 @@ const data = {
             ],
             "labels": [
               "会写字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/盼.gif`
           }
         },
         {
@@ -348,7 +317,8 @@ const data = {
             ],
             "labels": [
               "会写字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/滚.gif`
           }
         },
         {
@@ -364,7 +334,8 @@ const data = {
             ],
             "labels": [
               "会写字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/顿.gif`
           }
         },
         {
@@ -380,7 +351,8 @@ const data = {
             ],
             "labels": [
               "会写字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/逐.gif`
           }
         },
         {
@@ -396,7 +368,8 @@ const data = {
             ],
             "labels": [
               "会写字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/渐.gif`
           }
         },
         {
@@ -412,7 +385,8 @@ const data = {
             ],
             "labels": [
               "会写字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/堵.gif`
           }
         },
         {
@@ -428,7 +402,8 @@ const data = {
             ],
             "labels": [
               "会写字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/犹.gif`
           }
         },
         {
@@ -444,7 +419,8 @@ const data = {
             ],
             "labels": [
               "会写字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/崩.gif`
           }
         },
         {
@@ -460,7 +436,8 @@ const data = {
             ],
             "labels": [
               "会写字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/震.gif`
           }
         },
         {
@@ -475,7 +452,8 @@ const data = {
             ],
             "labels": [
               "会写字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/霎.gif`
           }
         },
         {
@@ -491,7 +469,8 @@ const data = {
             ],
             "labels": [
               "会写字"
-            ]
+            ],
+            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/余.gif`
           }
         }
       ]

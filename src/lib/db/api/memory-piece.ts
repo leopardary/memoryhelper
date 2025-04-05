@@ -43,3 +43,21 @@ export async function getMemoryPieceByContent(content: string) {
     .populate('subject')
     .populate('unit');
 }
+
+// Check existence or create MemoryPiece
+export async function findOrCreateMemoryPiece(data: CreateMemoryPieceInput) {
+  try {
+    // First, attempt to find the record using `content` (assuming it's unique)
+    const record = await MemoryPiece.findOneAndUpdate(
+      { content: data.content },
+      data,
+      { upsert: true, new: true }
+    );
+    
+    console.log('Memory piece found or created:', record);
+    return record;
+  } catch (error) {
+    console.error('Error in findOrCreateMemoryPiece:', error);
+    throw error;
+  }
+}
