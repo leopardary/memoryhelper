@@ -17,6 +17,7 @@ export async function getSubject(id: string) {
 
 export async function getSubjectByTitle(title: string) {
   try {
+    await connectDB();
     return await Subject.findOne({ title: title });
   } catch (error) {
     console.error(`Subject ${title} Not Found:`, error);

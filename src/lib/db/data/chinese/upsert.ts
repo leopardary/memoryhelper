@@ -1,28 +1,94 @@
 import mongoose from 'mongoose';
-import { CreateMemoryPieceInput } from '@/lib/db/model/types/MemoryPiece.types';
 import {getSubjectByTitle} from '@/lib/db/api/subject';
 import {findOrCreateMemoryPiece} from '@/lib/db/api/memory-piece'
+import {findOrCreateUnit} from '@/lib/db/api/unit'
+import { connectDB } from '@/lib/db/utils';
 import data from '@/lib/db/data/chinese/seed_4a1';
 
-// Example Usage
-async function main() {
+export async function processSeedData() {
   try {
-
+    await connectDB();
     const yuwen_subject_result = await getSubjectByTitle("语文");
     console.log('Subject 语文 found:', yuwen_subject_result);
     if (yuwen_subject_result == null) {
       throw new Error('Subject 语文 is not found.')
     }
-    const memoryPiece: CreateMemoryPieceInput = {
-      subject: yuwen_subject_result._id,
-      content: "示例内容",
-      description: "Example content",
-      labels: ["example"],
-      imageUrl: '/images/memory-pieces/example.jpg'
-    };
+    // Create or find the subject
+    const moduleTitle = Object.keys(data)[0];
+    const moduleData = data[moduleTitle];
+    const moduleRecord = await findOrCreateUnit({
+      title: moduleTitle,
+      type: moduleData.type,
+      description: moduleData.description,
+      imageUrl: moduleData.imageUrl,
+      order: moduleData.order,
+      subject: yuwen_subject_result.id
+    });
 
-    const memoryPieceResult = await findOrCreateMemoryPiece(memoryPiece);
-    console.log('Memory Piece Result:', memoryPieceResult);
+    const chapterTitle = Object.keys(moduleData.data[0])[0];
+    const chapterData = moduleData.data[0][chapterTitle];
+    const chapter = await findOrCreateUnit({
+      title: chapterTitle,
+      type: chapterData.type,
+      description: chapterData.description,
+      imageUrl: chapterData.imageUrl,
+      order: chapterData.order,
+      subject: yuwen_subject_result.id,
+      parentUnit: moduleRecord.id
+    });
+
+    const lessonTitle = Object.keys(chapterData.data[0])[0];
+    const lessonData = chapterData.data[0][lessonTitle];
+    const lessonRecord = await findOrCreateUnit({
+      title: lessonTitle,
+      type: lessonData.type,
+      description: lessonData.description,
+      imageUrl: lessonData.imageUrl,
+      order: lessonData.order,
+      subject: yuwen_subject_result.id,
+      parentUnit: chapter.id
+    });
+
+    const characters = lessonData.data;
+
+    for (const character of characters) {
+      const content = Object.keys(character)[0];
+      const data = character[content];
+      const description = data['组词']?.join(', ') + '##' + data['造句']?.join('/ ');
+      const imageUrl = data['imageUrl'];
+      const labels = data['labels'];
+      const characterRecord = await findOrCreateMemoryPiece({
+        content,
+        description,
+        imageUrl,
+        labels,
+        unit: lessonRecord.id,
+        subject: yuwen_subject_result.id,
+      })
+    }
+
+    console.log('Seed data processing completed successfully');
+  } catch (error) {
+    console.error('Error processing seed data:', error);
+    throw error;
+  }
+}
+
+// Example Usage
+async function main() {
+  try {
+    await processSeedData();
+
+    // const memoryPiece: CreateMemoryPieceInput = {
+    //   subject: yuwen_subject_result._id,
+    //   content: "示例内容",
+    //   description: "Example content",
+    //   labels: ["example"],
+    //   imageUrl: '/images/memory-pieces/example.jpg'
+    // };
+
+    // const memoryPieceResult = await findOrCreateMemoryPiece(memoryPiece);
+    // console.log('Memory Piece Result:', memoryPieceResult);
   } catch (error) {
     console.error('Main execution error:', error);
   } finally {

@@ -1,18 +1,18 @@
 const data = {
   "统编版小学语文四年级 - 上册": {
-    type: 'Unit',
+    type: 'module',
     description: '统编版小学语文四年级 - 上册',
     imageUrl: `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/yuwen_4a.jpg`,
     order: 7,
     data: [{
     "第一单元": {
-      type: 'Unit',
+      type: 'chapter',
       description: '第一单元',
-      imageUrl: `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/unit1.jpg`,
+      imageUrl: `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/unit1.jpeg`,
       order: 1,
       data: [ {
       "观潮": {
-        type: 'Unit',
+        type: 'lesson',
         description: '第一课，观潮',
         imageUrl: `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/lesson1.jpg`,
         order: 1,
