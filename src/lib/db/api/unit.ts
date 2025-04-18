@@ -11,7 +11,7 @@ export async function createUnit(data: CreateUnitInput) {
 export async function getUnit(id: string) {
   await connectDB();
   return Unit.findById(id)
-    .populate('parent')
+    .populate('parentUnit')
     .populate('children')
     .populate('memoryPieces')
     .populate('subject');
@@ -57,4 +57,14 @@ export async function findOrCreateUnit(unit: CreateUnitInput) {
     console.error('Error in findOrCreateUnit:', error);
     throw error;
   }
+}
+
+export async function getDirectChildrenBySubject(subjectId: string) {
+  await connectDB();
+  return Unit.find({ 
+    subject: subjectId,
+    parentUnit: null // Only get units without a parentUnit (direct children)
+  })
+    .sort({ order: 1 })
+    .populate('children');
 }

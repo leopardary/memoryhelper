@@ -1,5 +1,6 @@
 import mongoose, { Model } from 'mongoose';
 import { UnitProps } from '@/lib/db/model/types/Unit.types';
+import MemoryPiece from '@/lib/db/model/MemoryPiece'
 
 let Unit: Model<UnitProps>;
 
@@ -21,6 +22,12 @@ if (!mongoose.models.Unit) {
     ref: 'Unit',
     localField: '_id',
     foreignField: 'parentUnit',
+  });
+
+  unitSchema.virtual('memoryPieces', {
+    ref: MemoryPiece.modelName,
+    localField: '_id',
+    foreignField: 'unit',
   });
 
   Unit = mongoose.model<UnitProps>('Unit', unitSchema);

@@ -10,9 +10,7 @@ export async function createSubject(data: CreateSubjectInput) {
 
 export async function getSubject(id: string) {
   await connectDB();
-  return Subject.findById(id)
-    .populate('units')
-    .populate('memoryPieces');
+  return Subject.findById(id);
 }
 
 export async function getSubjectByTitle(title: string) {

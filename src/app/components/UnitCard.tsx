@@ -1,12 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
-import { SubjectProps } from "@/lib/db/model/types/Subject.types";
+import { UnitProps } from "@/lib/db/model/types/Unit.types";
 
-export default function SubjectCard({ subject }: { subject: SubjectProps }) {
-  const { _id, title, description, imageUrl, labels } = subject;
+export default function UnitCard({ unit }: { unit: UnitProps }) {
+  const {id, type, title, description, imageUrl, order } = unit;
   return (
     <Link
-      href={"/subject/" + _id}
+      href={"/unit/" + id}
       className="card w-full bg-base-100 hover:shadow-xl transition-shadow"
     >
       <div className="m-4">
@@ -25,11 +25,6 @@ export default function SubjectCard({ subject }: { subject: SubjectProps }) {
           {title}
         </h2>
         <p>{description}</p>
-        {labels != undefined && labels.length > 0 && <div className="flex flex-wrap gap-2 mt-2">
-          {labels.map((label, index) => (
-            <div key={index} className="badge badge-outline">{label}</div>
-          ))}
-        </div>}
       </div>
     </Link>
   );
