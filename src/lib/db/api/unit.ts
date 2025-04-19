@@ -17,6 +17,17 @@ export async function getUnit(id: string) {
     .populate('subject');
 }
 
+export async function parentUnitChain(id: string) {
+  await connectDB();
+  let unit = await Unit.findById(id);
+  const res = [];
+  while (unit != null) {
+    res.push(unit);
+    unit = await Unit.findById(unit.parentUnit);
+  }
+  return res;
+}
+
 export async function getUnitsBySubject(subjectId: string) {
   await connectDB();
   return Unit.find({ subject: subjectId })
