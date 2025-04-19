@@ -1,8 +1,7 @@
 import SubjectCard from "@/app/components/SubjectCard";
-import Link from "next/link";
-import Image from "next/image";
 import PaginationBar from "@/app/components/PaginationBar";
 import {getSubjectCount, getSubjectsWithPagination} from "@/lib/db/api/subject";
+import {HeroCard} from '@/app/components/HeroCard'
 
 interface HomeProps {
   searchParams: {
@@ -22,30 +21,7 @@ export default async function Home({
   const subjects = await getSubjectsWithPagination(currentPage, pageSize, heroItemCount);
   return (
     <div className="flex flex-col items-center">
-      {currentPage === 1 && (
-        <div className="hero rounded-xl bg-base-200 border-2">
-          <div className="hero-content flex-col lg:flex-row">
-            <Image
-              src={subjects[0].imageUrl || ""}
-              alt={subjects[0].title}
-              width={400}
-              height={800}
-              className="w-full max-w-sm rounded-lg shadow-2xl"
-              priority
-            />
-            <div>
-              <h1 className="text-5xl font-bold">{subjects[0].title}</h1>
-              <p className="py-6">{subjects[0].description}</p>
-              <Link
-                href={"/subject/" + subjects[0].id}
-                className="btn-primary btn"
-              >
-                Check it out
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
+      {currentPage === 1 && (<HeroCard imageSrc={subjects[0].imageUrl} imageAlt={subjects[0].title} title={subjects[0].title} description={subjects[0].description} href={"/subject/" + subjects[0].id} buttonContent={"Check it out"} />)}
 
       <div className="my-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {(currentPage === 1 ? subjects.slice(1) : subjects).map((subject) => (

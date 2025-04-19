@@ -11,8 +11,7 @@ export async function getMemoryPiece(id: string) {
   await connectDB();
   return MemoryPiece.findById(id)
     .populate('subject')
-    .populate('unit')
-    .populate('memoryChecks');
+    .populate('unit');
 }
 
 export async function getMemoryPiecesByUnit(unitId: string) {
