@@ -35,8 +35,8 @@ export default async function Navbar() {
               </button>
               <ul className="dropdown menu w-52 rounded-box bg-base-100 shadow-sm"
                 popover="auto" id="notificationActions" style={{ positionAnchor: "--anchor-1" }}>
-                <li><a>Item 1</a></li>
-                <li><a>Item 2</a></li>
+                <li><a>Review</a></li>
+                <li><a>Practice</a></li>
               </ul>
             </div>
           )}

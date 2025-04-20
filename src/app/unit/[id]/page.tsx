@@ -5,6 +5,7 @@ import MemoryPieceCard from '@/app/components/MemoryPieceCard'
 import {UnitProps} from '@/lib/db/model/types/Unit.types'
 import {MemoryPieceProps} from '@/lib/db/model/types/MemoryPiece.types'
 import isEmpty from 'lodash/isEmpty'
+import Table from '@/app/components/Table'
 
 // A unit is either having children units when it is a organizing unit, or having children memoryPieces when it is a leaf unit.
 export default async function Unit({params}) {
@@ -20,20 +21,20 @@ export default async function Unit({params}) {
   breadcrumbsSegments.unshift({name: unit?.subject.title, url: `/subject/${unit?.subject.id}`});
   const unitChildren = unit?.children;
   const memoryPieces = unit?.memoryPieces;
-  // const childUnits = unit?.children;
-  // const subject = await getSubject(subjectId);
-  // const breadcrumbs = [{url: `/subject/${subjectId}`, name: subject?.title}]
   return <>
   <Breadcrumbs segments={breadcrumbsSegments}/>
   <div className="flex flex-col items-center">
-  <div className="my-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {!isEmpty(unitChildren) ? unitChildren.map((unitChild: UnitProps) => (
+  {!isEmpty(unitChildren) ? <div className="my-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        {unitChildren.map((unitChild: UnitProps) => (
           <UnitCard unit={unitChild} key={unitChild.id} />
-        )) : 
-        memoryPieces.map((memoryPiece: MemoryPieceProps) => (
-          <MemoryPieceCard memoryPiece={memoryPiece} key={memoryPiece.id}/>
-        ))}
+        ))
+        }
       </div>
+       : 
+       <Table headers={['checkbox', 'content', 'description', 'label']} data={memoryPieces.map((memoryPiece: MemoryPieceProps) => {
+         return ['checkbox', memoryPiece.content, memoryPiece.description?.split("##").join('  '), memoryPiece.labels, memoryPiece._id];
+       })} />
+}
   </div>
   </>
 }
