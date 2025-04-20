@@ -3,7 +3,6 @@ import { getUnit, parentUnitChain } from "@/lib/db/api/unit"
 import UnitCard from "@/app/components/UnitCard"
 import MemoryPieceCard from '@/app/components/MemoryPieceCard'
 import {UnitProps} from '@/lib/db/model/types/Unit.types'
-import {MemoryPieceProps} from '@/lib/db/model/types/MemoryPiece.types'
 import isEmpty from 'lodash/isEmpty'
 import Table from '@/app/components/Table'
 
@@ -31,9 +30,7 @@ export default async function Unit({params}) {
         }
       </div>
        : 
-       <Table headers={['checkbox', 'content', 'description', 'label']} data={memoryPieces.map((memoryPiece: MemoryPieceProps) => {
-         return ['checkbox', memoryPiece.content, memoryPiece.description?.split("##").join('  '), memoryPiece.labels, memoryPiece._id];
-       })} />
+       <Table memoryPieces={memoryPieces} />
 }
   </div>
   </>

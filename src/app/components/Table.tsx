@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {MemoryPieceProps} from '@/lib/db/model/types/MemoryPiece.types'
 
 const Checkbox = () => <label>
 <input type="checkbox" className="checkbox" />
@@ -13,11 +14,14 @@ const TableCell = ({ content, key }: { content: string; key: string }) => {
 }
 
 interface TableProps {
-  headers: string[];
-  data: string[][];
+  memoryPieces: MemoryPieceProps[];
 }
 
-export default function Table({ headers, data }: TableProps) {
+export default function Table({ memoryPieces }: TableProps) {
+  const headers = ['checkbox', 'content', 'description', 'label'];
+  const data = memoryPieces.map((memoryPiece: MemoryPieceProps) => {
+       return ['checkbox', memoryPiece.content, memoryPiece.description?.split("##").join('  '), memoryPiece.labels, memoryPiece._id];
+    });
   return <div className="w-full">
   <table className="table w-full">
     <thead>
