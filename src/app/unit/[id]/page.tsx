@@ -30,7 +30,7 @@ export default async function Unit({params}) {
         }
       </div>
        : 
-       <Table memoryPieces={memoryPieces} />
+       <Table memoryPiecesStr={JSON.stringify(memoryPieces)} />
 }
   </div>
   </>
