@@ -1,7 +1,6 @@
 import Breadcrumbs from "@/app/components/Breadcrumbs"
 import { getUnit, parentUnitChain } from "@/lib/db/api/unit" 
 import UnitCard from "@/app/components/UnitCard"
-import MemoryPieceCard from '@/app/components/MemoryPieceCard'
 import {UnitProps} from '@/lib/db/model/types/Unit.types'
 import isEmpty from 'lodash/isEmpty'
 import Table from '@/app/components/Table'

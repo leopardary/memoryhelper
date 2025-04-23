@@ -61,6 +61,9 @@ export async function getSubscriptionsWithPagination(currentPage: number, pageSi
 export async function findOrCreateSubscription(subscription: CreateSubscriptionInput) {
   await connectDB();
   try {
+    if (subscription.userId == null || subscription.memoryPieceId == null) {
+      throw new Error('Subscription needs to have valid values for both userId and memoryPieceId.')
+    }
     const record = await Subscription.findOneAndUpdate(
       { userId: subscription.userId, memoryPieceId: subscription.memoryPieceId },
       subscription,
@@ -76,11 +79,13 @@ export async function findOrCreateSubscription(subscription: CreateSubscriptionI
 }
 
 export async function findOrCreateSubscriptionsInBatch(subscriptions: CreateSubscriptionInput[]) {
-    for (const subscription of subscriptions) {
+  const successfulSubscriptions = [];
+  for (const subscription of subscriptions) {
     try {
-      await findOrCreateSubscription(subscription);
+      const record = await findOrCreateSubscription(subscription);
+      successfulSubscriptions.push(record);
     } catch (error) {
-      
     }
   }
+  return successfulSubscriptions;
 }
