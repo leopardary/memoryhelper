@@ -1,6 +1,7 @@
 import { env } from "@/lib/env";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import { findOrCreateUser } from "@/lib/db/api/user"
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -10,7 +11,16 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    session({ session }) {
+    async jwt({token, user}) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user && token.id) {
+        session.user.id = token.id as string;
+      }
       return session;
     },
   },

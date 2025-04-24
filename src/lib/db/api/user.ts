@@ -1,24 +1,20 @@
-import { prisma } from './prisma'
-import type { User } from '@prisma/client'
+import User from '@/lib/db/model/User';
+import { connectDB } from '@/lib/db/utils';
+import { CreateUserInput } from '@/lib/db/model/types/User.types'
 
-export async function getUser(id: string) {
-  return prisma.user.findUnique({
-    where: { id },
-    include: {
-      memoryChecks: true
-    }
-  })
-}
-
-export async function getUserByEmail(email: string) {
-  return prisma.user.findUnique({
-    where: { email }
-  })
-}
-
-export async function updateUser(id: string, data: Partial<User>) {
-  return prisma.user.update({
-    where: { id },
-    data
-  })
+export async function findOrCreateUser(user: CreateUserInput) {
+  await connectDB();
+  try {
+    const record = await User.findOneAndUpdate(
+      { email: user.email },
+      user,
+      { upsert: true, new: true }
+    );
+    
+    console.log('User found or created:', record);
+    return record;
+  } catch (error) {
+    console.error('Error in findOrCreateUser:', error);
+    throw error;
+  }
 }
