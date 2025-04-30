@@ -1,27 +1,21 @@
 "use client";
-import { Session } from "next-auth";
 import { useTransition, useState } from "react";
 
 interface SubscribeButtonProps {
-  session: Session | null;
   memoryPieceIds: string[];
-  findOrCreateSubscriptionsInBatch: (subscriptions: {userId: string, memoryPieceId: string}[]) => Promise<[any]>
+  findOrCreateSubscriptionsInBatch: (memoryPieceIds: string[]) => Promise<[any]>
 }
 
-export default function SubscribeButton({ session, memoryPieceIds, findOrCreateSubscriptionsInBatch }: SubscribeButtonProps) {
+export default function SubscribeButton({ memoryPieceIds, findOrCreateSubscriptionsInBatch }: SubscribeButtonProps) {
   const [isPending, startTransition] = useTransition();
   const [success, setSuccess] = useState(0);
-  const user = session?.user;
-  const subscriptions = memoryPieceIds.map((memoryPieceId: string) => {
-    return {userId: user?._id, memoryPieceId: memoryPieceId};}
-  )
   return (
     <div className="flex items-center gap-2">
     <button className='btn' onClick={() => {
       setSuccess(0);
       startTransition(async () => {
-        const successfulSubscriptions = await findOrCreateSubscriptionsInBatch(subscriptions);
-        if (successfulSubscriptions.length == subscriptions.length) {
+        const successfulSubscriptions = await findOrCreateSubscriptionsInBatch(memoryPieceIds);
+        if (successfulSubscriptions.length == memoryPieceIds.length) {
           setSuccess(1)
         } else {
           setSuccess(-1);

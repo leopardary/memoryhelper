@@ -3,7 +3,7 @@ import { UserProps } from '@/lib/db/model/types/User.types';
 
 let User: Model<UserProps>;
 
-if (!mongoose.models.Userr) {
+if (!mongoose.models.User) {
   const userSchema = new mongoose.Schema<UserProps>(
     {
       name: { type: String, required: true },
