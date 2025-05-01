@@ -6,9 +6,12 @@ import isEmpty from 'lodash/isEmpty'
 import Table from '@/app/components/Table'
 import SubscribeButton from '@/app/components/SubscribeButton'
 import { findOrCreateSubscriptionsInBatch } from "@/lib/db/api/subscription"
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 // A unit is either having children units when it is a organizing unit, or having children memoryPieces when it is a leaf unit.
 export default async function Unit({params}) {
+  const session = await getServerSession(authOptions);
   const unitId = params.id;
   const unit = await getUnit(unitId);
   if (!unit) throw new Error(`unit not found.`);
@@ -23,7 +26,7 @@ export default async function Unit({params}) {
   const memoryPieces = unit?.memoryPieces;
   return <>
     <Breadcrumbs segments={breadcrumbsSegments}/>
-    {isEmpty(unitChildren) && !isEmpty(memoryPieces) && <SubscribeButton memoryPieceIds={memoryPieces.map(memoryPiece => memoryPiece.id)} findOrCreateSubscriptionsInBatch={findOrCreateSubscriptionsInBatch} />}
+    {isEmpty(unitChildren) && !isEmpty(memoryPieces) && session && <SubscribeButton memoryPieceIds={memoryPieces.map(memoryPiece => memoryPiece.id)} findOrCreateSubscriptionsInBatch={findOrCreateSubscriptionsInBatch} />}
   <div className="flex flex-col items-center">
   {!isEmpty(unitChildren) ? <div className="my-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {unitChildren.map((unitChild: UnitProps) => (
@@ -32,7 +35,7 @@ export default async function Unit({params}) {
         }
       </div>
        : 
-       <Table memoryPiecesStr={JSON.stringify(memoryPieces)} />
+       <Table memoryPiecesStr={JSON.stringify(memoryPieces)} loggedIn={session != null}/>
 }
   </div>
   </>

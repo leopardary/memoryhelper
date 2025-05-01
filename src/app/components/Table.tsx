@@ -34,16 +34,22 @@ const TableCell = ({ content, id, checked, onChange }: {
 
 interface TableProps {
   memoryPiecesStr: string;
+  loggedIn: boolean;
 }
 
-export default function Table({ memoryPiecesStr }: TableProps) {
+export default function Table({ memoryPiecesStr, loggedIn }: TableProps) {
   const memoryPieces = JSON.parse(memoryPiecesStr);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   
-  const headers = ['checkbox', 'content', 'description', 'label'];
+  const headers = ['content', 'description', 'label'];
   const data = memoryPieces.map((memoryPiece: MemoryPieceProps) => {
-    return ['checkbox', memoryPiece.content, memoryPiece.description?.split("##").join('  '), memoryPiece.labels, memoryPiece._id];
+    return [memoryPiece.content, memoryPiece.description?.split("##").join('  '), memoryPiece.labels, memoryPiece._id];
   });
+
+  if (loggedIn) {
+    headers.unshift('checkbox');
+    data.forEach(row => row.unshift('checkbox'));
+  }
 
   const handleSelectAll = () => {
     if (selected.size === memoryPieces.length) {
