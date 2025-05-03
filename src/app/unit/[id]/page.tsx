@@ -5,7 +5,7 @@ import {UnitProps} from '@/lib/db/model/types/Unit.types'
 import isEmpty from 'lodash/isEmpty'
 import Table from '@/app/components/Table'
 import SubscribeButton from '@/app/components/SubscribeButton'
-import { findOrCreateSubscriptionsInBatch } from "@/lib/db/api/subscription"
+import { findOrCreateSubscriptionsInBatch, getSubscriptionsForUser, removeSubscriptionsInBatch } from "@/lib/db/api/subscription"
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
@@ -24,9 +24,21 @@ export default async function Unit({params}) {
   breadcrumbsSegments.unshift({name: unit?.subject.title, url: `/subject/${unit?.subject.id}`});
   const unitChildren = unit?.children;
   const memoryPieces = unit?.memoryPieces;
+  const subscriptions = {};
+  memoryPieces.forEach(memoryPiece => subscriptions[memoryPiece._id] = false);
+  let existingSubscriptions = [];
+  if (isEmpty(unitChildren) && !isEmpty(memoryPieces) && session) {
+    const user = session.user;
+    existingSubscriptions = (await getSubscriptionsForUser(user.id)).map(subscription => subscription.memoryPieceId.toString());
+    memoryPieces.forEach(memoryPiece => {
+      if (existingSubscriptions.indexOf(memoryPiece._id.toString()) >= 0) {
+        subscriptions[memoryPiece._id.toString()] = true;
+      }
+    })
+  }
   return <>
     <Breadcrumbs segments={breadcrumbsSegments}/>
-    {isEmpty(unitChildren) && !isEmpty(memoryPieces) && session && <SubscribeButton memoryPieceIds={memoryPieces.map(memoryPiece => memoryPiece.id)} findOrCreateSubscriptionsInBatch={findOrCreateSubscriptionsInBatch} />}
+    {/* {isEmpty(unitChildren) && !isEmpty(memoryPieces) && session && <SubscribeButton memoryPieceIds={memoryPieceIds} findOrCreateSubscriptionsInBatch={findOrCreateSubscriptionsInBatch} />} */}
   <div className="flex flex-col items-center">
   {!isEmpty(unitChildren) ? <div className="my-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {unitChildren.map((unitChild: UnitProps) => (
@@ -35,7 +47,7 @@ export default async function Unit({params}) {
         }
       </div>
        : 
-       <Table memoryPiecesStr={JSON.stringify(memoryPieces)} loggedIn={session != null}/>
+       <Table memoryPiecesStr={JSON.stringify(memoryPieces)} subscriptions={subscriptions} loggedIn={session != null} findOrCreateSubscriptionsInBatch={findOrCreateSubscriptionsInBatch} removeSubscriptionsInBatch={removeSubscriptionsInBatch}/>
 }
   </div>
   </>

@@ -47,6 +47,14 @@ export async function deleteSubscription(id: string) {
   return Subscription.findByIdAndDelete(id);
 }
 
+export async function deleteSubscriptionForUserAndMemoryPiece(userId: string, memoryPieceId: string) {
+  await connectDB();
+  const subscription = await Subscription.find({ userId: userId, memoryPieceId: memoryPieceId });
+  if (subscription.length > 0) {
+    await deleteSubscription(subscription[0].id);
+  }
+}
+
 export async function getSubscriptionCount() {
   await connectDB();
   return Subscription.countDocuments();
@@ -94,4 +102,20 @@ export async function findOrCreateSubscriptionsInBatch(memoryPieceIds: string[])
     }
   }
   return successfulSubscriptions;
+}
+
+// if the subscriptions exist, remove. Otherwise, do nothing.
+export async function removeSubscriptionsInBatch(memoryPieceIds: string[]) {
+  const session = await getServerSession(authOptions);
+  const user = await findOrCreateUser(session.user);
+  const subscriptions = memoryPieceIds.map(memoryPieceId => {return {memoryPieceId: memoryPieceId, userId: user._id.toString()}})
+  const successfulDeletion = [];
+  for (const subscription of subscriptions) {
+    try {
+      const record = await deleteSubscriptionForUserAndMemoryPiece(user._id.toString(), subscription.memoryPieceId);
+      successfulDeletion.push(record);
+    } catch (error) {
+    }
+  }
+  return successfulDeletion;
 }

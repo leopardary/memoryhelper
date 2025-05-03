@@ -2,11 +2,12 @@
 import { useTransition, useState } from "react";
 
 interface SubscribeButtonProps {
-  memoryPieceIds: string[];
-  findOrCreateSubscriptionsInBatch: (memoryPieceIds: string[]) => Promise<[any]>
+  memoryPieceIds: Record<string, boolean>;
+  findOrCreateSubscriptionsInBatch: (memoryPieceIds: string[]) => Promise<[any]>;
+  removeSubscriptionsInBatch: (memoryPieceIds: string[]) => Promise<[any]>;
 }
 
-export default function SubscribeButton({ memoryPieceIds, findOrCreateSubscriptionsInBatch }: SubscribeButtonProps) {
+export default function SubscribeButton({ memoryPieceIds, findOrCreateSubscriptionsInBatch, removeSubscriptionsInBatch }: SubscribeButtonProps) {
   const [isPending, startTransition] = useTransition();
   const [success, setSuccess] = useState(0);
   return (
@@ -14,8 +15,11 @@ export default function SubscribeButton({ memoryPieceIds, findOrCreateSubscripti
     <button className='btn' onClick={() => {
       setSuccess(0);
       startTransition(async () => {
-        const successfulSubscriptions = await findOrCreateSubscriptionsInBatch(memoryPieceIds);
-        if (successfulSubscriptions.length == memoryPieceIds.length) {
+        const selected = Object.keys(memoryPieceIds).filter(key => memoryPieceIds[key]);
+        const unselected = Object.keys(memoryPieceIds).filter(key => !memoryPieceIds[key]);
+        const successfulSubscriptions = await findOrCreateSubscriptionsInBatch(selected);
+        const successfulDeletions = await removeSubscriptionsInBatch(unselected);
+        if (successfulSubscriptions.length == selected.length && successfulDeletions.length == unselected.length) {
           setSuccess(1)
         } else {
           setSuccess(-1);

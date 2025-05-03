@@ -1,6 +1,7 @@
 "use client"
 import Link from "next/link";
 import { MemoryPieceProps } from '@/lib/db/model/types/MemoryPiece.types';
+import SubscribeButton from '@/app/components/SubscribeButton'
 import { useState } from 'react';
 
 const Checkbox = ({ checked, onChange }: { checked: boolean | null, onChange: () => void }) => (
@@ -34,15 +35,18 @@ const TableCell = ({ content, id, checked, onChange }: {
 
 interface TableProps {
   memoryPiecesStr: string;
+  subscriptions: Record<string, boolean>;
   loggedIn: boolean;
+  findOrCreateSubscriptionsInBatch: (memoryPieceIds: string[]) => Promise<[any]>;
+  removeSubscriptionsInBatch: (memoryPieceIds: string[]) => Promise<[any]>;
 }
 
-export default function Table({ memoryPiecesStr, loggedIn }: TableProps) {
-  const memoryPieces = JSON.parse(memoryPiecesStr);
-  const [selected, setSelected] = useState<Set<string>>(new Set());
+export default function Table({ memoryPiecesStr, subscriptions, loggedIn, findOrCreateSubscriptionsInBatch, removeSubscriptionsInBatch }: TableProps) {
+  const memoryPieceIds = JSON.parse(memoryPiecesStr);
+  const [selected, setSelected] = useState(subscriptions);
   
   const headers = ['content', 'description', 'label'];
-  const data = memoryPieces.map((memoryPiece: MemoryPieceProps) => {
+  const data = memoryPieceIds.map((memoryPiece: MemoryPieceProps) => {
     return [memoryPiece.content, memoryPiece.description?.split("##").join('  '), memoryPiece.labels, memoryPiece._id];
   });
 
@@ -52,30 +56,33 @@ export default function Table({ memoryPiecesStr, loggedIn }: TableProps) {
   }
 
   const handleSelectAll = () => {
-    if (selected.size === memoryPieces.length) {
-      setSelected(new Set());
+    if (Object.values(selected).filter(value => value).length === memoryPieceIds.length) {
+      setSelected(Object.keys(selected).reduce((res, curr) => {res[curr]=false; return res;}, {}));
     } else {
-      setSelected(new Set(memoryPieces.map(mp => mp._id.toString())));
+      setSelected(Object.keys(selected).reduce((res, curr) => {res[curr]=true; return res;}, {}));
     }
   };
 
   const handleSelectOne = (id: string) => {
-    const newSelected = new Set(selected);
-    if (newSelected.has(id)) {
-      newSelected.delete(id);
+    const selectedCopy = {...selected};
+    if (selectedCopy[id]) {
+      selectedCopy[id] = false;
     } else {
-      newSelected.add(id);
+      selectedCopy[id] = true;
     }
-    setSelected(newSelected);
+    setSelected(selectedCopy);
   };
 
   const getHeaderCheckboxState = () => {
-    if (selected.size === 0) return false;
-    if (selected.size === memoryPieces.length) return true;
+    if (Object.keys(selected).filter(key => selected[key]).length === 0) return false;
+    if (Object.keys(selected).filter(key => selected[key]).length === memoryPieceIds.length) return true;
     return null; // Indeterminate state
   };
 
-  return <div className="w-full">
+  return (
+  <>
+  {loggedIn && <SubscribeButton memoryPieceIds={selected} findOrCreateSubscriptionsInBatch={findOrCreateSubscriptionsInBatch} removeSubscriptionsInBatch={removeSubscriptionsInBatch} />}
+  <div className="w-full">
     <table className="table w-full">
       <thead>
         <tr>
@@ -99,8 +106,8 @@ export default function Table({ memoryPiecesStr, loggedIn }: TableProps) {
             <TableCell 
               id={id} 
               content={checkbox} 
-              checked={selected.has(id.toString())}
-              onChange={() => handleSelectOne(id.toString())}
+              checked={selected[id]}
+              onChange={() => handleSelectOne(id)}
             />
             {contents.map((elem, i) => <td key={i}>{elem}</td>)}
             <td className="w-24">
@@ -116,4 +123,6 @@ export default function Table({ memoryPiecesStr, loggedIn }: TableProps) {
       </tbody>
     </table>
   </div>
+  </> 
+  )
 }
