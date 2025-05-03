@@ -4,7 +4,6 @@ import UnitCard from "@/app/components/UnitCard"
 import {UnitProps} from '@/lib/db/model/types/Unit.types'
 import isEmpty from 'lodash/isEmpty'
 import Table from '@/app/components/Table'
-import SubscribeButton from '@/app/components/SubscribeButton'
 import { findOrCreateSubscriptionsInBatch, getSubscriptionsForUser, removeSubscriptionsInBatch } from "@/lib/db/api/subscription"
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
@@ -31,14 +30,14 @@ export default async function Unit({params}) {
     const user = session.user;
     existingSubscriptions = (await getSubscriptionsForUser(user.id)).map(subscription => subscription.memoryPieceId.toString());
     memoryPieces.forEach(memoryPiece => {
-      if (existingSubscriptions.indexOf(memoryPiece._id.toString()) >= 0) {
-        subscriptions[memoryPiece._id.toString()] = true;
+      const currMemoryPieceId = memoryPiece._id.toString();
+      if (existingSubscriptions.indexOf(currMemoryPieceId) >= 0) {
+        subscriptions[currMemoryPieceId] = true;
       }
     })
   }
   return <>
     <Breadcrumbs segments={breadcrumbsSegments}/>
-    {/* {isEmpty(unitChildren) && !isEmpty(memoryPieces) && session && <SubscribeButton memoryPieceIds={memoryPieceIds} findOrCreateSubscriptionsInBatch={findOrCreateSubscriptionsInBatch} />} */}
   <div className="flex flex-col items-center">
   {!isEmpty(unitChildren) ? <div className="my-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {unitChildren.map((unitChild: UnitProps) => (
