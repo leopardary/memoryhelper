@@ -1,11 +1,11 @@
-import { MemoryPiece } from "@prisma/client";
+import { MemoryPieceProps } from "@lib/db/model/types/MemoryPiece.types";
 import Link from "next/link";
 import Image from "next/image";
 
 interface MemoryPieceProps {
   memoryPiece: MemoryPiece
 }
-export default function MemoryPieceCard({ memoryPiece }: MemoryPieceProps) {
+export default function MemoryPieceCard({ memoryPiece }: {memoryPiece: MemoryPieceProps}) {
   const { id, description, content, subject, unit, labels, imageUrl } = memoryPiece;
   return (
     <Link

@@ -1,4 +1,5 @@
 import MemoryPiece from '@/lib/db/model/MemoryPiece';
+import Unit from '@/lib/db/model/Unit'
 import { connectDB } from '@/lib/db/utils';
 import { CreateMemoryPieceInput, UpdateMemoryPieceInput } from '@/lib/db/model/types/MemoryPiece.types';
 
@@ -59,4 +60,18 @@ export async function findOrCreateMemoryPiece(data: CreateMemoryPieceInput) {
     console.error('Error in findOrCreateMemoryPiece:', error);
     throw error;
   }
+}
+
+export async function findMemoryPiecesInBatch(ids: string[]) {
+  await connectDB();
+  const memoryPieces = [];
+  for (const id of ids) {
+    try {
+      const memoryPiece = await MemoryPiece.findById(id).populate('subject');
+      memoryPieces.push(memoryPiece);
+    } catch (e) {
+      console.error(`MemoryPiece with id ${id} not found due to error: `, e);
+    }
+  }
+  return memoryPieces;
 }
