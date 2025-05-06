@@ -4,6 +4,7 @@ import logo from "@public/globe.svg";
 import UserMenuButton from "@/app/components/Navbar/UserMenuButton";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth/next";
+import ClientLink from '@/app/components/ClientLink'
 
 const Logo = () => (<div className="flex-1">
   <Link href="/" className="btn btn-ghost text-xl normal-case">
@@ -22,7 +23,8 @@ const BellIcon = () => (
       )
 
 export default async function Navbar() {
-  const session = await getServerSession(authOptions);
+  const session = await 
+  getServerSession(authOptions);
   return (
     <div className="bg-base-100">
       <div className="navbar max-w-7xl m-auto flex-col sm:flex-row gap-2">
@@ -35,8 +37,8 @@ export default async function Navbar() {
               </button>
               <ul className="dropdown menu w-52 rounded-box bg-base-100 shadow-sm"
                 popover="auto" id="notificationActions" style={{ positionAnchor: "--anchor-1" }}>
-                <li><a>Review</a></li>
-                <li><a>Practice</a></li>
+                <li><ClientLink link={{href:"/review",className:"text-sm normal-case",text:"Review"}} /></li>
+                <li><ClientLink link={{href:"/practice",className:"text-sm normal-case",text:"Practice"}} /></li>
               </ul>
             </div>
           )}

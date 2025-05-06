@@ -1,5 +1,4 @@
 import MemoryPiece from '@/lib/db/model/MemoryPiece';
-import Unit from '@/lib/db/model/Unit'
 import { connectDB } from '@/lib/db/utils';
 import { CreateMemoryPieceInput, UpdateMemoryPieceInput } from '@/lib/db/model/types/MemoryPiece.types';
 

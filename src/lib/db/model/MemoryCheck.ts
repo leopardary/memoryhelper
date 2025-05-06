@@ -1,13 +1,21 @@
-import mongoose from 'mongoose';
+import mongoose, { Model } from 'mongoose';
+import { MemoryCheckProps } from '@/lib/db/model/types/MemoryCheck.types';
 
-const memoryCheckSchema = new mongoose.Schema(
-  {
-    memoryPiece: { type: mongoose.Schema.Types.ObjectId, ref: 'MemoryPiece', required: true },
-    correct: { type: Boolean, required: true },
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  },
-  { timestamps: true, collection: 'memorychecks' }
-);
+let MemoryCheck: Model<MemoryCheckProps>;
 
-const MemoryCheck = mongoose.model('MemoryCheck', memoryCheckSchema);
+if (!mongoose.models.MemoryCheck) {
+const memoryCheckSchema = new mongoose.Schema<MemoryCheckProps>(
+    {
+      memoryPiece: { type: mongoose.Schema.Types.ObjectId, ref: 'MemoryPiece', required: true },
+      user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+      correctness: { type: Boolean, required: true },
+    },
+    { timestamps: true, collection: 'memoryPieces' }
+  );
+
+  MemoryCheck = mongoose.model<MemoryCheckProps>('MemoryCheck', memoryCheckSchema);
+} else {
+  MemoryCheck = mongoose.models.MemoryCheck as Model<MemoryCheckProps>;
+}
+
 export default MemoryCheck;
