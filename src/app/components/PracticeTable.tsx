@@ -1,34 +1,65 @@
 "use client"
 import Link from "next/link";
 import { MemoryPieceProps } from '@/lib/db/model/types/MemoryPiece.types';
-import Flipper from '@/app/components/Flipper'
 import { CreateMemoryCheckInput } from '@/lib/db/model/types/MemoryCheck.types';
 import { useState } from 'react';
 
-const Checkbox = ({ checked, onChange }: { checked: boolean | null, onChange: () => void }) => (
-  <label>
+const Checkbox = ({ onChange }: { onChange: (value: boolean | null) => void }) => {
+  const [isRight, setIsRight] = useState<boolean | null>(null);
+  const finalOnChange = (isRightCheckBox: boolean) => {return () => {
+    if (isRightCheckBox) {
+      // uncheck right checkbox
+      if (isRight) {
+        setIsRight(null);
+        onChange(null);
+      } else {
+        setIsRight(true);
+        onChange(true);
+      }
+    } else {
+      // uncheck wrong checkbox
+      if (isRight === false) {
+        setIsRight(null);
+        onChange(null);
+      } else {
+        setIsRight(false);
+        onChange(false);
+      }
+    }
+  };}
+  return (
+  <>
+  <label className='m-2'>
     <input 
       type="checkbox" 
-      className="checkbox" 
-      checked={checked === true}
-      ref={input => {
-        if (input) {
-          input.indeterminate = checked === null;
-        }
-      }}
-      onChange={onChange}
+      className="checkbox m-1" 
+      checked={isRight === true}
+      onChange={finalOnChange(true)}
     />
+    Right
   </label>
-);
+  <label className='m-2'>
+    <input 
+      type="checkbox" 
+      className="checkbox m-1" 
+      checked={isRight === false}
+      onChange={finalOnChange(false)}
+    />
+    Wrong
+  </label>
+  </>
+);};
 
-const TableCell = ({ content, id, checked, onChange }: { 
+const TableCell = ({ content, id, onChange }: { 
   content: string; 
   id: string;
   checked?: boolean | null;
   onChange?: () => void;
 }) => {
   if (content === 'checkbox') {
-    return <Flipper key={id} />
+    return <th key={id}><Checkbox onChange={onChange} /></th>
+  } else if (content == 'submitButton') {
+    return <th key={'submit'}><button className='btn' onClick={() => {}}>Submit</button></th>
   } else {
     return <th key={id}>{content}</th>
   }
@@ -48,32 +79,39 @@ export default function Table({ memoryPiecesStr, createMemoryCheckInBatch }: Tab
     return [memoryPiece.content, memoryPiece.description?.split("##").join('  '), memoryPiece.labels, memoryPiece._id];
   });
 
-  headers.unshift('checkbox');
+  headers.unshift('submitButton');
   data.forEach(row => row.unshift('checkbox'));
 
-  const handleSelectAll = () => {
-    if (Object.values(correctNess).filter(value => value).length === memoryPieceIds.length) {
-      setCorrectNess(Object.keys(correctNess).reduce((res, curr) => {res[curr]=false; return res;}, {}));
-    } else {
-      setCorrectNess(Object.keys(correctNess).reduce((res, curr) => {res[curr]=true; return res;}, {}));
-    }
-  };
-
-  const handleSelectOne = (id: string) => {
-    const correctNessCopy = {...correctNess};
-    if (correctNessCopy[id]) {
-      correctNessCopy[id] = false;
-    } else {
-      correctNessCopy[id] = true;
-    }
-    setCorrectNess(correctNessCopy);
-  };
-
-  const getHeaderCheckboxState = () => {
-    if (Object.keys(correctNess).filter(key => correctNess[key]).length === 0) return false;
-    if (Object.keys(correctNess).filter(key => correctNess[key]).length === memoryPieceIds.length) return true;
-    return null; // Indeterminate state
-  };
+  const handleSelectOne = (id: string) => { return (value: boolean) => {
+      const correctNessCopy = {...correctNess};
+      if (correctNessCopy[id] === true) {
+        if (value === true) {
+          return;
+        } else if (value === false) {
+          correctNessCopy[id] = false;
+        } else if (value === null) {
+          correctNessCopy[id] = null;
+        }
+      } else if (correctNessCopy[id] === false) {
+        if (value === true) {
+          correctNessCopy[id] = true;
+        } else if (value === false) {
+          return;
+        } else if (value === null) {
+          correctNessCopy[id] = null;
+        }
+      } else if (correctNessCopy[id] == null) {
+        if (value === true) {
+          correctNessCopy[id] = true;
+        } else if (value === false) {
+          correctNessCopy[id] = false;
+        } else if (value === null) {
+          return;
+        }
+      }
+      setCorrectNess(correctNessCopy);
+    };
+  }
 
   return (
   <>
@@ -85,8 +123,6 @@ export default function Table({ memoryPiecesStr, createMemoryCheckInBatch }: Tab
             <TableCell 
               key={header} 
               content={header} 
-              checked={header === 'checkbox' ? getHeaderCheckboxState() : undefined}
-              onChange={header === 'checkbox' ? handleSelectAll : undefined}
             />
           ))}
           <th className="w-24"></th>
@@ -101,8 +137,7 @@ export default function Table({ memoryPiecesStr, createMemoryCheckInBatch }: Tab
             <TableCell 
               id={id} 
               content={checkbox} 
-              checked={correctNess[id]}
-              onChange={() => handleSelectOne(id)}
+              onChange={handleSelectOne(id)}
             />
             {contents.map((elem, i) => <td key={i}>{elem}</td>)}
             <td className="w-24">

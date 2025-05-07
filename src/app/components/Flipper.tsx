@@ -13,6 +13,12 @@ const Checkbox = () => {
 }
 
 const StyledWrapper = styled.div`
+  .checkbox-wrapper-10 {
+    padding-inline: calc(0.25rem * 4);
+    padding-block: calc(0.25rem * 3);
+    vertical-align: middle;
+  }
+
   .checkbox-wrapper-10 .tgl {
     display: none;
   }
