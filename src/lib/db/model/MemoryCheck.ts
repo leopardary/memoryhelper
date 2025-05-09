@@ -10,7 +10,7 @@ const memoryCheckSchema = new mongoose.Schema<MemoryCheckProps>(
       user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
       correctness: { type: Boolean, required: true },
     },
-    { timestamps: true, collection: 'memoryPieces' }
+    { timestamps: true, collection: 'memoryChecks' }
   );
 
   MemoryCheck = mongoose.model<MemoryCheckProps>('MemoryCheck', memoryCheckSchema);

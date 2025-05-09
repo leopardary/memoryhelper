@@ -1,7 +1,6 @@
 "use client"
 import Link from "next/link";
 import { MemoryPieceProps } from '@/lib/db/model/types/MemoryPiece.types';
-import { CreateMemoryCheckInput } from '@/lib/db/model/types/MemoryCheck.types';
 import { useState } from 'react';
 
 const Checkbox = ({ onChange }: { onChange: (value: boolean | null) => void }) => {
@@ -50,7 +49,7 @@ const Checkbox = ({ onChange }: { onChange: (value: boolean | null) => void }) =
   </>
 );};
 
-const TableCell = ({ content, id, onChange }: { 
+const TableCell = ({ content, id, onChange, submit }: { 
   content: string; 
   id: string;
   checked?: boolean | null;
@@ -59,7 +58,7 @@ const TableCell = ({ content, id, onChange }: {
   if (content === 'checkbox') {
     return <th key={id}><Checkbox onChange={onChange} /></th>
   } else if (content == 'submitButton') {
-    return <th key={'submit'}><button className='btn' onClick={() => {}}>Submit</button></th>
+    return <th key={'submit'}><button className='btn' onClick={submit}>Submit</button></th>
   } else {
     return <th key={id}>{content}</th>
   }
@@ -67,11 +66,12 @@ const TableCell = ({ content, id, onChange }: {
 
 interface TableProps {
   memoryPiecesStr: string;
-  createMemoryCheckInBatch: (memoryCheckIds: CreateMemoryCheckInput[]) => Promise<string[]>;
+  createMemoryChecks: (correctNess: any) => Promise<string[]>;
 }
 
-export default function Table({ memoryPiecesStr, createMemoryCheckInBatch }: TableProps) {
+export default function Table({ memoryPiecesStr, createMemoryChecks }: TableProps) {
   const memoryPieceIds = JSON.parse(memoryPiecesStr);
+  // object to maintain the correctness for each memory piece, with key being the id for the memory piece, and value being the correctness.
   const [correctNess, setCorrectNess] = useState({});
   
   const headers = ['content', 'description', 'label'];
@@ -122,7 +122,8 @@ export default function Table({ memoryPiecesStr, createMemoryCheckInBatch }: Tab
           {headers.map((header: string) => (
             <TableCell 
               key={header} 
-              content={header} 
+              content={header}
+              submit={() => createMemoryChecks(correctNess)}
             />
           ))}
           <th className="w-24"></th>
