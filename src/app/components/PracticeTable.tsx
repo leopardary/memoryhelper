@@ -29,7 +29,7 @@ const Checkbox = ({ onChange }: { onChange: (value: boolean | null) => void }) =
   };}
   return (
   <>
-  <label className='m-2'>
+  <label className='m-2 text-green-500'>
     <input 
       type="checkbox" 
       className="checkbox m-1" 
@@ -38,7 +38,7 @@ const Checkbox = ({ onChange }: { onChange: (value: boolean | null) => void }) =
     />
     Right
   </label>
-  <label className='m-2'>
+  <label className='m-2 text-red-500'>
     <input 
       type="checkbox" 
       className="checkbox m-1" 
