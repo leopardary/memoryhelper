@@ -1,7 +1,8 @@
 "use client"
 import Link from "next/link";
+import pickBy from 'lodash/pickBy';
 import { MemoryPieceProps } from '@/lib/db/model/types/MemoryPiece.types';
-import { useState } from 'react';
+import { useTransition, useState } from 'react';
 
 const Checkbox = ({ onChange }: { onChange: (value: boolean | null) => void }) => {
   const [isRight, setIsRight] = useState<boolean | null>(null);
@@ -49,16 +50,51 @@ const Checkbox = ({ onChange }: { onChange: (value: boolean | null) => void }) =
   </>
 );};
 
-const TableCell = ({ content, id, onChange, submit }: { 
+interface SubmitButtonProps {
+  correctNess: Record<string, boolean>;
+  createMemoryChecks: (correctNess: Record<string, boolean>) => Promise<string[]>;
+}
+
+const SubmitButton = (props: SubmitButtonProps) => {
+  const correctNess = props.correctNess;
+  const createMemoryChecks = props.createMemoryChecks;
+  const driedCorrectNess = pickBy(correctNess, val => val != null);
+  const [isPending, startTransition] = useTransition();
+  const [success, setSuccess] = useState(0);
+  return (
+    <>
+    <button className='btn' onClick={() => {
+      setSuccess(0);
+      startTransition(async () => {
+        const successfulSubmission = await createMemoryChecks(driedCorrectNess);
+        if (successfulSubmission.length == Object.keys(driedCorrectNess).length) {
+          setSuccess(1)
+        } else {
+          setSuccess(-1);
+        }
+      })
+    }}>Submit</button>
+    {isPending && <span className="loading loading-spinner loading-md" />}
+    {!isPending && success == 1 && (
+      <span className='text-success'>Submitted successfully.</span>
+    )}
+    {!isPending && success == -1 && (
+      <span className='text-warning'>Submission failed.</span>
+    )}
+    </>
+  );
+}
+
+const TableCell = ({ content, id, onChange, submitButtonProps }: { 
   content: string; 
   id: string;
-  checked?: boolean | null;
   onChange?: () => void;
+  submitButtonProps: SubmitButtonProps
 }) => {
   if (content === 'checkbox') {
     return <th key={id}><Checkbox onChange={onChange} /></th>
   } else if (content == 'submitButton') {
-    return <th key={'submit'}><button className='btn' onClick={submit}>Submit</button></th>
+    return <th key={'submit'}><SubmitButton correctNess={submitButtonProps.correctNess} createMemoryChecks={submitButtonProps.createMemoryChecks} /></th>
   } else {
     return <th key={id}>{content}</th>
   }
@@ -123,7 +159,7 @@ export default function Table({ memoryPiecesStr, createMemoryChecks }: TableProp
             <TableCell 
               key={header} 
               content={header}
-              submit={() => createMemoryChecks(correctNess)}
+              submitButtonProps={{correctNess, createMemoryChecks}}
             />
           ))}
           <th className="w-24"></th>
