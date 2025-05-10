@@ -53,11 +53,13 @@ const Checkbox = ({ onChange }: { onChange: (value: boolean | null) => void }) =
 interface SubmitButtonProps {
   correctNess: Record<string, boolean>;
   createMemoryChecks: (correctNess: Record<string, boolean>) => Promise<string[]>;
+  refreshPage: () => Promise<void>;
 }
 
 const SubmitButton = (props: SubmitButtonProps) => {
   const correctNess = props.correctNess;
   const createMemoryChecks = props.createMemoryChecks;
+  const refreshPage = props.refreshPage;
   const driedCorrectNess = pickBy(correctNess, val => val != null);
   const [isPending, startTransition] = useTransition();
   const [success, setSuccess] = useState(0);
@@ -68,7 +70,8 @@ const SubmitButton = (props: SubmitButtonProps) => {
       startTransition(async () => {
         const successfulSubmission = await createMemoryChecks(driedCorrectNess);
         if (successfulSubmission.length == Object.keys(driedCorrectNess).length) {
-          setSuccess(1)
+          setSuccess(1);
+          await refreshPage();
         } else {
           setSuccess(-1);
         }
@@ -94,7 +97,7 @@ const TableCell = ({ content, id, onChange, submitButtonProps }: {
   if (content === 'checkbox') {
     return <th key={id}><Checkbox onChange={onChange} /></th>
   } else if (content == 'submitButton') {
-    return <th key={'submit'}><SubmitButton correctNess={submitButtonProps.correctNess} createMemoryChecks={submitButtonProps.createMemoryChecks} /></th>
+    return <th key={'submit'}><SubmitButton correctNess={submitButtonProps.correctNess} createMemoryChecks={submitButtonProps.createMemoryChecks} refreshPage={submitButtonProps.refreshPage} /></th>
   } else {
     return <th key={id}>{content}</th>
   }
@@ -103,9 +106,10 @@ const TableCell = ({ content, id, onChange, submitButtonProps }: {
 interface TableProps {
   memoryPiecesStr: string;
   createMemoryChecks: (correctNess: any) => Promise<string[]>;
+  refreshPage: () => Promise<void>;
 }
 
-export default function Table({ memoryPiecesStr, createMemoryChecks }: TableProps) {
+export default function PracticeTable({ memoryPiecesStr, createMemoryChecks, refreshPage }: TableProps) {
   const memoryPieceIds = JSON.parse(memoryPiecesStr);
   // object to maintain the correctness for each memory piece, with key being the id for the memory piece, and value being the correctness.
   const [correctNess, setCorrectNess] = useState({});
@@ -159,7 +163,7 @@ export default function Table({ memoryPiecesStr, createMemoryChecks }: TableProp
             <TableCell 
               key={header} 
               content={header}
-              submitButtonProps={{correctNess, createMemoryChecks}}
+              submitButtonProps={{correctNess, createMemoryChecks, refreshPage}}
             />
           ))}
           <th className="w-24"></th>

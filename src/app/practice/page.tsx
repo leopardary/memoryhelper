@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { createMemoryCheckInBatch } from '@/lib/db/api/memory-check';
 import PracticeTable from '@/app/components/PracticeTable';
+import { redirect } from 'next/navigation';
 
 const createMemoryChecks = async (memoryCheckResults: any) => {
   'use server'
@@ -30,7 +31,11 @@ export default async function Practice() {
   const existingSubscriptions = (await getSubscriptionsForUser(user.id));
   const subscribedMemoryPieceIds = existingSubscriptions.map(existingSubscription => existingSubscription.memoryPieceId.toString());
   const subscribedMemoryPieces = await findMemoryPiecesInBatch(subscribedMemoryPieceIds);
+  const refreshPage = async () => {
+    'use server'
+    redirect('/practice');
+  }
   return (<div className="flex flex-col items-center">
-        <PracticeTable memoryPiecesStr={JSON.stringify(subscribedMemoryPieces)} createMemoryChecks={createMemoryChecks} />
+        <PracticeTable memoryPiecesStr={JSON.stringify(subscribedMemoryPieces)} createMemoryChecks={createMemoryChecks} refreshPage={refreshPage} />
       </div>)
 }
