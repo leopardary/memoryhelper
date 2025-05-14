@@ -1,5 +1,6 @@
 import mongoose, { Model } from 'mongoose';
 import { SubscriptionProps } from './types/Subscription.types';
+import MemoryCheck from '@/lib/db/model/MemoryCheck'
 
 let Subscription: Model<SubscriptionProps>;
 
@@ -18,21 +19,24 @@ if (!mongoose.models.Subscription) {
       },
       status: { 
         type: String, 
-        enum: ['active', 'paused', 'completed'], 
+        enum: ['new', 'learning', 'learned', 'lapsed'], 
         default: 'active' 
       },
-      lastReviewed: { type: Date },
-      nextReview: { type: Date },
-      reviewCount: { 
-        type: Number, 
-        default: 0 
-      }
+      easeFactor: { type: Number },
+      currentInterval: { type: Number },
+      nextTestDate: Date,
     },
     { 
       timestamps: true,
       collection: 'subscriptions'
     }
   );
+
+  subscriptionSchema.virtual('memoryChecks', {
+    ref: MemoryCheck.modelName,
+    localField: '_id',
+    foreignField: 'subscription',
+  });
 
   // Add compound index to ensure unique user-memoryPiece pairs
   subscriptionSchema.index({ userId: 1, memoryPieceId: 1 }, { unique: true });

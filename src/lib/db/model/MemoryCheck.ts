@@ -6,9 +6,8 @@ let MemoryCheck: Model<MemoryCheckProps>;
 if (!mongoose.models.MemoryCheck) {
 const memoryCheckSchema = new mongoose.Schema<MemoryCheckProps>(
     {
-      memoryPiece: { type: mongoose.Schema.Types.ObjectId, ref: 'MemoryPiece', required: true },
-      user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-      correctness: { type: Boolean, required: true },
+      subscription: { type: mongoose.Schema.Types.ObjectId, ref: 'Subscription', required: true },
+      score: { type: Number, required: true },
     },
     { timestamps: true, collection: 'memoryChecks' }
   );

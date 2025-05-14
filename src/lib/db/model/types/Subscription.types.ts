@@ -4,10 +4,10 @@ export interface SubscriptionProps {
   _id?: Types.ObjectId;
   userId: Types.ObjectId;
   memoryPieceId: Types.ObjectId;
-  status?: 'active' | 'paused' | 'completed';
-  lastReviewed?: Date;
-  nextReview?: Date;
-  reviewCount?: number;
+  easeFactor: number;
+  currentInterval: number;
+  nextTestDate: Date;
+  status?: 'new' | 'learning' | 'learned' | 'lapsed';
   createdAt?: Date;
   updatedAt?: Date;
 }
