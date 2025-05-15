@@ -4,7 +4,9 @@ import { connectDB } from '@/lib/db/utils';
 import Subscription from '@/lib/db/model/Subscription';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { findOrCreateUser } from '@/lib/db/api/user'
+import { findOrCreateUser } from '@/lib/db/api/user';
+import { initializeSubscription } from '@/lib/utils/subscriptionUtils';
+
 
 export async function createSubscription(data: CreateSubscriptionInput) {
   await connectDB();
@@ -96,7 +98,7 @@ export async function findOrCreateSubscriptionsInBatch(memoryPieceIds: string[])
   const successfulSubscriptions = [];
   for (const subscription of subscriptions) {
     try {
-      const record = await findOrCreateSubscription(subscription);
+      const record = await findOrCreateSubscription(initializeSubscription(subscription));
       successfulSubscriptions.push(record._id.toString());
     } catch (error) {
     }
