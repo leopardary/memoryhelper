@@ -28,6 +28,16 @@ export async function getSubscriptionsForUser(userId: string) {
   }
 }
 
+export async function getSubscriptionsDueToCheckForUser(userId: string) {
+  try {
+    await connectDB();
+    return await Subscription.find({ userId: userId, nextTestDate: { $lte:new Date()} }).sort({ nextTestDate: 1 });
+  } catch (error) {
+    console.error(`Subscription for user ${userId} Not Found:`, error);
+    throw error;
+  }
+}
+
 export async function getAllSubscriptions() {
   await connectDB();
   return Subscription.find()
