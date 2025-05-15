@@ -52,15 +52,19 @@ const Checkbox = ({ onChange }: { onChange: (value: boolean | null) => void }) =
 
 interface SubmitButtonProps {
   correctNess: Record<string, boolean>;
+  memoryPieceIdToSubscriptionId: Record<string, string>,
   createMemoryChecks: (correctNess: Record<string, boolean>) => Promise<string[]>;
   refreshPage: () => Promise<void>;
 }
 
 const SubmitButton = (props: SubmitButtonProps) => {
   const correctNess = props.correctNess;
+  const memoryPieceIdToSubscriptionId = props.memoryPieceIdToSubscriptionId;
   const createMemoryChecks = props.createMemoryChecks;
   const refreshPage = props.refreshPage;
   const driedCorrectNess = pickBy(correctNess, val => val != null);
+  const subscriptionCorrectness = {};
+  Object.keys(driedCorrectNess).forEach(memoryPieceId => subscriptionCorrectness[memoryPieceIdToSubscriptionId[memoryPieceId]] = driedCorrectNess[memoryPieceId]);
   const [isPending, startTransition] = useTransition();
   const [success, setSuccess] = useState(0);
   return (
@@ -68,8 +72,8 @@ const SubmitButton = (props: SubmitButtonProps) => {
     <button className='btn' onClick={() => {
       setSuccess(0);
       startTransition(async () => {
-        const successfulSubmission = await createMemoryChecks(driedCorrectNess);
-        if (successfulSubmission.length == Object.keys(driedCorrectNess).length) {
+        const successfulSubmission = await createMemoryChecks(subscriptionCorrectness);
+        if (successfulSubmission.length == Object.keys(subscriptionCorrectness).length) {
           setSuccess(1);
           await refreshPage();
         } else {
@@ -97,19 +101,22 @@ const TableCell = ({ content, id, onChange, submitButtonProps }: {
   if (content === 'checkbox') {
     return <th key={id}><Checkbox onChange={onChange} /></th>
   } else if (content == 'submitButton') {
-    return <th key={'submit'}><SubmitButton correctNess={submitButtonProps.correctNess} createMemoryChecks={submitButtonProps.createMemoryChecks} refreshPage={submitButtonProps.refreshPage} /></th>
+    return <th key={'submit'}><SubmitButton correctNess={submitButtonProps.correctNess} memoryPieceIdToSubscriptionId={submitButtonProps.memoryPieceIdToSubscriptionId} createMemoryChecks={submitButtonProps.createMemoryChecks} refreshPage={submitButtonProps.refreshPage} /></th>
   } else {
     return <th key={id}>{content}</th>
   }
 }
 
 interface TableProps {
+  // The serialized string for MemoryPieces for test.
   memoryPiecesStr: string;
+  // The according Subscription ids in the same order with memoryPiecesStr.
+  memoryPieceIdToSubscriptionId: Record<string, string>;
   createMemoryChecks: (correctNess: any) => Promise<string[]>;
   refreshPage: () => Promise<void>;
 }
 
-export default function PracticeTable({ memoryPiecesStr, createMemoryChecks, refreshPage }: TableProps) {
+export default function PracticeTable({ memoryPiecesStr, memoryPieceIdToSubscriptionId, createMemoryChecks, refreshPage }: TableProps) {
   const memoryPieceIds = JSON.parse(memoryPiecesStr);
   // object to maintain the correctness for each memory piece, with key being the id for the memory piece, and value being the correctness.
   const [correctNess, setCorrectNess] = useState({});
@@ -122,29 +129,29 @@ export default function PracticeTable({ memoryPiecesStr, createMemoryChecks, ref
   headers.unshift('submitButton');
   data.forEach(row => row.unshift('checkbox'));
 
-  const handleSelectOne = (id: string) => { return (value: boolean) => {
+  const handleSelectOne = (memoryPieceId: string) => { return (value: boolean) => {
       const correctNessCopy = {...correctNess};
-      if (correctNessCopy[id] === true) {
+      if (correctNessCopy[memoryPieceId] === true) {
         if (value === true) {
           return;
         } else if (value === false) {
-          correctNessCopy[id] = false;
+          correctNessCopy[memoryPieceId] = false;
         } else if (value === null) {
-          correctNessCopy[id] = null;
+          correctNessCopy[memoryPieceId] = null;
         }
-      } else if (correctNessCopy[id] === false) {
+      } else if (correctNessCopy[memoryPieceId] === false) {
         if (value === true) {
-          correctNessCopy[id] = true;
+          correctNessCopy[memoryPieceId] = true;
         } else if (value === false) {
           return;
         } else if (value === null) {
-          correctNessCopy[id] = null;
+          correctNessCopy[memoryPieceId] = null;
         }
-      } else if (correctNessCopy[id] == null) {
+      } else if (correctNessCopy[memoryPieceId] == null) {
         if (value === true) {
-          correctNessCopy[id] = true;
+          correctNessCopy[memoryPieceId] = true;
         } else if (value === false) {
-          correctNessCopy[id] = false;
+          correctNessCopy[memoryPieceId] = false;
         } else if (value === null) {
           return;
         }
@@ -163,7 +170,7 @@ export default function PracticeTable({ memoryPiecesStr, createMemoryChecks, ref
             <TableCell 
               key={header} 
               content={header}
-              submitButtonProps={{correctNess, createMemoryChecks, refreshPage}}
+              submitButtonProps={{correctNess, memoryPieceIdToSubscriptionId, createMemoryChecks, refreshPage}}
             />
           ))}
           <th className="w-24"></th>
