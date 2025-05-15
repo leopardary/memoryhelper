@@ -1,6 +1,7 @@
 import MemoryPiece from '@/lib/db/model/MemoryPiece';
 import { connectDB } from '@/lib/db/utils';
 import { CreateMemoryPieceInput, UpdateMemoryPieceInput } from '@/lib/db/model/types/MemoryPiece.types';
+import { getSubscriptionsDueToCheckForUser } from '@/lib/db/api/subscription';
 
 export async function createMemoryPiece(data: CreateMemoryPieceInput) {
   await connectDB();
@@ -73,4 +74,11 @@ export async function findMemoryPiecesInBatch(ids: string[]) {
     }
   }
   return memoryPieces;
+}
+
+
+// get a list of memory pieces that user should practice today.
+export async function memoryPieceToPracticeToday(userId: string) {
+  const dueSubscriptions = (await getSubscriptionsDueToCheckForUser(userId));
+  return await findMemoryPiecesInBatch(dueSubscriptions.map(subscription => subscription.memoryPieceId.toString()));
 }
