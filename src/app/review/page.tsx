@@ -1,6 +1,6 @@
 import { findMemoryPiecesInBatch } from "@/lib/db/api/memory-piece";
 import MemoryPieceCard from "@/app/components/MemoryPieceCard"
-import { MemoryPiece } from "@lib/db/model/memoryPiece"
+import MemoryPiece from "@lib/db/model/MemoryPiece";
 import { getSubscriptionsForUser } from "@/lib/db/api/subscription"
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";

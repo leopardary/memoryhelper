@@ -108,7 +108,7 @@ export async function findOrCreateSubscriptionsInBatch(memoryPieceIds: string[])
   const successfulSubscriptions = [];
   for (const subscription of subscriptions) {
     try {
-      const record = await findOrCreateSubscription(initializeSubscription(subscription));
+      const record = await findOrCreateSubscription(initializeSubscription(subscription.memoryPieceId, subscription.userId));
       successfulSubscriptions.push(record._id.toString());
     } catch (error) {
     }

@@ -1,5 +1,6 @@
 import { findMemoryPiecesInBatch } from "@/lib/db/api/memory-piece";
-import { getSubscriptionsForUser } from "@/lib/db/api/subscription"
+import { getSubscriptionsForUser } from "@/lib/db/api/subscription";
+import { memoryPieceToPracticeToday } from '@/lib/db/api/memory-piece';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { createMemoryCheckInBatch } from '@/lib/db/api/memory-check';
@@ -28,14 +29,12 @@ const createMemoryChecks = async (memoryCheckResults: any) => {
 export default async function Practice() {
   const session = await getServerSession(authOptions);
   const user = session.user;
-  const existingSubscriptions = (await getSubscriptionsForUser(user.id));
-  const subscribedMemoryPieceIds = existingSubscriptions.map(existingSubscription => existingSubscription.memoryPieceId.toString());
-  const subscribedMemoryPieces = await findMemoryPiecesInBatch(subscribedMemoryPieceIds);
+  const memoryPiecesToCheck = (await memoryPieceToPracticeToday(user.id));
   const refreshPage = async () => {
     'use server'
     redirect('/practice');
   }
   return (<div className="flex flex-col items-center">
-        <PracticeTable memoryPiecesStr={JSON.stringify(subscribedMemoryPieces)} createMemoryChecks={createMemoryChecks} refreshPage={refreshPage} />
+        <PracticeTable memoryPiecesStr={JSON.stringify(memoryPiecesToCheck)} createMemoryChecks={createMemoryChecks} refreshPage={refreshPage} />
       </div>)
 }
