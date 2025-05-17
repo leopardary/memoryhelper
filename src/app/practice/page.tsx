@@ -1,6 +1,5 @@
 import { findMemoryPiecesInBatch } from "@/lib/db/api/memory-piece";
-import { getSubscriptionsDueToCheckForUser } from "@/lib/db/api/subscription";
-import { normalizeScore } from '@/lib/db/api/memory-check';
+import { getSubscriptionsDueToCheckForUser, processSubscriptions } from "@/lib/db/api/subscription";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { createMemoryCheckInBatch } from '@/lib/db/api/memory-check';
@@ -17,8 +16,12 @@ const createMemoryChecks = async (memoryCheckResults: any) => {
       };
     }
   }).filter(memoryCheck => memoryCheck != null);
-  const createResult = await createMemoryCheckInBatch(memoryCheckInputs);
-  return createResult;
+  const createdMemoryChecks = await createMemoryCheckInBatch(memoryCheckInputs);
+  const updatedSubscriptions = await processSubscriptions(Object.keys(memoryCheckResults));
+  return {
+    createdMemoryChecks, 
+    updatedSubscriptions
+  };
 }
 
 // A unit is either having children units when it is a organizing unit, or having children memoryPieces when it is a leaf unit.

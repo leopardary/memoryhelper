@@ -5,7 +5,7 @@ import Subscription from '@/lib/db/model/Subscription';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { findOrCreateUser } from '@/lib/db/api/user';
-import { initializeSubscription } from '@/lib/utils/subscriptionUtils';
+import { initializeSubscription, processMemoryCheckWithHistory } from '@/lib/utils/subscriptionUtils';
 
 
 export async function createSubscription(data: CreateSubscriptionInput) {
@@ -15,7 +15,7 @@ export async function createSubscription(data: CreateSubscriptionInput) {
 
 export async function getSubscription(id: string) {
   await connectDB();
-  return Subscription.findById(id);
+  return Subscription.findById(id).populate('memoryChecks');
 }
 
 export async function getSubscriptionsForUser(userId: string) {
@@ -52,6 +52,25 @@ export async function updateSubscription(id: string, data: UpdateSubscriptionInp
     data,
     { new: true, runValidators: true }
   );
+}
+
+// Based on most recent MemoryChecks, update the Subscription, like the interval, nextTestDate, etc.
+export async function processSubscriptions(ids: string[]) {
+  const successfulUpdates = [];
+  for (const id of ids) {
+    try {
+      const subscription = await getSubscription(id);
+      const current_ease_factor = subscription?.easeFactor;
+      const current_interval = subscription?.currentInterval;
+      const checkHistory = subscription?.memoryChecks;
+      const newData = processMemoryCheckWithHistory(current_ease_factor, current_interval, checkHistory);
+      const updatedSubscription = await updateSubscription(id, { easeFactor: newData.new_ease_factor, currentInterval: newData.new_interval, nextTestDate: newData.next_review_date, status: newData.new_status})
+      successfulUpdates.push(updatedSubscription?._id.toString());
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  return successfulUpdates;
 }
 
 export async function deleteSubscription(id: string) {

@@ -53,7 +53,7 @@ const Checkbox = ({ onChange }: { onChange: (value: boolean | null) => void }) =
 interface SubmitButtonProps {
   correctNess: Record<string, boolean>;
   memoryPieceIdToSubscriptionId: Record<string, string>,
-  createMemoryChecks: (correctNess: Record<string, boolean>) => Promise<string[]>;
+  createMemoryChecks: (correctNess: Record<string, boolean>) => Promise<{createdMemoryChecks: string[], updatedSubscriptions: string[]}>;
   refreshPage: () => Promise<void>;
 }
 
@@ -72,8 +72,8 @@ const SubmitButton = (props: SubmitButtonProps) => {
     <button className='btn' onClick={() => {
       setSuccess(0);
       startTransition(async () => {
-        const successfulSubmission = await createMemoryChecks(subscriptionCorrectness);
-        if (successfulSubmission.length == Object.keys(subscriptionCorrectness).length) {
+        const { createdMemoryChecks, updatedSubscriptions } = await createMemoryChecks(subscriptionCorrectness);
+        if (createdMemoryChecks.length == Object.keys(subscriptionCorrectness).length && updatedSubscriptions.length == Object.keys(subscriptionCorrectness).length) {
           setSuccess(1);
           await refreshPage();
         } else {
@@ -112,7 +112,7 @@ interface TableProps {
   memoryPiecesStr: string;
   // The according Subscription ids in the same order with memoryPiecesStr.
   memoryPieceIdToSubscriptionId: Record<string, string>;
-  createMemoryChecks: (correctNess: any) => Promise<string[]>;
+  createMemoryChecks: (correctNess: any) => Promise<{createdMemoryChecks: string[], updatedSubscriptions: string[]}>;
   refreshPage: () => Promise<void>;
 }
 

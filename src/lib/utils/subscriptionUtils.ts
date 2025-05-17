@@ -88,15 +88,15 @@ function calculateHpm(checkHistory: object[]) {
 
 /**
 * Processes a MemoryCheck and updates its Subscription.
-* @param {string} current_status - {@link Subscription#status}. Enum among 'new', 'learning', 'learned', 'lapsed'.
 * @param {number} current_ease_factor - {@link Subscription#easeFactor}.
 * @param {number} current_interval - {@link Subscription#currentInterval}.
 * @param {object[]} checkHistory - {@link Subscription#memoryChecks}.
-* @param {number} currentQualityResponse - {@link MemoryCheck#score}.
-* @param {Date} checkDate - {@link MemoryCheck#createdAt}.
 * @returns {object} The properties to update the {@link Subscription}.
 */
-export function processMemoryCheckWithHistory(current_status: string, current_ease_factor: number, current_interval: number, checkHistory: object[], currentQualityResponse: number, checkDate = new Date()) {
+export function processMemoryCheckWithHistory(current_ease_factor: number, current_interval: number, checkHistory: object[]) {
+  const lastMemoryCheck = checkHistory.pop();
+  let currentQualityResponse = lastMemoryCheck?.score;
+  const checkDate = lastMemoryCheck?.createdAt;
   if (currentQualityResponse < 0 || currentQualityResponse > 5) {
       throw new Error("Quality of response must be between 0 and 5.");
   }
