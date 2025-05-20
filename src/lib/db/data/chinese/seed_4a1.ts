@@ -2,19 +2,19 @@ const data = {
   "统编版小学语文四年级 - 上册": {
     type: 'module',
     description: '统编版小学语文四年级 - 上册',
-    imageUrl: `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/yuwen_4a.jpg`,
+    imageUrls: [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/yuwen_4a.jpg`],
     order: 7,
     data: [{
     "第一单元": {
       type: 'chapter',
       description: '第一单元',
-      imageUrl: `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/unit1.jpeg`,
+      imageUrls: [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/unit1.jpeg`],
       order: 1,
       data: [ {
       "观潮": {
         type: 'lesson',
         description: '第一课，观潮',
-        imageUrl: `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/lesson1.jpg`,
+        imageUrls: [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/lesson1.jpg`],
         order: 1,
         data: [
         {
@@ -31,7 +31,7 @@ const data = {
             "labels": [
               "会认字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/盐.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/盐.gif`]
           }
         },
         {
@@ -47,7 +47,7 @@ const data = {
             "labels": [
               "会认字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/屹.jpg`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/屹.jpg`]
           }
         },
         {
@@ -64,7 +64,7 @@ const data = {
             "labels": [
               "会认字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/昂.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/昂.gif`]
           }
         },
         {
@@ -81,7 +81,7 @@ const data = {
             "labels": [
               "会认字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/鼎.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/鼎.gif`]
           }
         },
         {
@@ -98,7 +98,7 @@ const data = {
             "labels": [
               "会认字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/沸.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/沸.gif`]
           }
         },
         {
@@ -115,7 +115,7 @@ const data = {
             "labels": [
               "会认字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/贯.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/贯.gif`]
           }
         },
         {
@@ -132,7 +132,7 @@ const data = {
             "labels": [
               "会认字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/浩.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/浩.gif`]
           }
         },
         {
@@ -149,7 +149,7 @@ const data = {
             "labels": [
               "会认字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/薄.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/薄.gif`]
           }
         },
         {
@@ -166,7 +166,7 @@ const data = {
             "labels": [
               "会认字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/笼.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/笼.gif`]
           }
         },
         {
@@ -183,7 +183,7 @@ const data = {
             "labels": [
               "会认字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/罩.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/罩.gif`]
           }
         },
         {
@@ -199,7 +199,7 @@ const data = {
             "labels": [
               "会认字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/踮.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/踮.gif`]
           }
         },
         {
@@ -216,7 +216,7 @@ const data = {
             "labels": [
               "会认字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/恢.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/恢.gif`]
           }
         },
         {
@@ -233,7 +233,7 @@ const data = {
             "labels": [
               "会写字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/潮.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/潮.gif`]
           }
         },
         {
@@ -250,7 +250,7 @@ const data = {
             "labels": [
               "会写字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/据.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/据.gif`]
           }
         },
         {
@@ -267,7 +267,7 @@ const data = {
             "labels": [
               "会写字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/堤.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/堤.gif`]
           }
         },
         {
@@ -284,7 +284,7 @@ const data = {
             "labels": [
               "会写字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/阔.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/阔.gif`]
           }
         },
         {
@@ -301,7 +301,7 @@ const data = {
             "labels": [
               "会写字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/盼.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/盼.gif`]
           }
         },
         {
@@ -318,7 +318,7 @@ const data = {
             "labels": [
               "会写字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/滚.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/滚.gif`]
           }
         },
         {
@@ -335,7 +335,7 @@ const data = {
             "labels": [
               "会写字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/顿.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/顿.gif`]
           }
         },
         {
@@ -352,7 +352,7 @@ const data = {
             "labels": [
               "会写字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/逐.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/逐.gif`]
           }
         },
         {
@@ -369,7 +369,7 @@ const data = {
             "labels": [
               "会写字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/渐.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/渐.gif`]
           }
         },
         {
@@ -386,7 +386,7 @@ const data = {
             "labels": [
               "会写字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/堵.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/堵.gif`]
           }
         },
         {
@@ -403,7 +403,7 @@ const data = {
             "labels": [
               "会写字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/犹.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/犹.gif`]
           }
         },
         {
@@ -420,7 +420,7 @@ const data = {
             "labels": [
               "会写字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/崩.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/崩.gif`]
           }
         },
         {
@@ -437,7 +437,7 @@ const data = {
             "labels": [
               "会写字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/震.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/震.gif`]
           }
         },
         {
@@ -453,7 +453,7 @@ const data = {
             "labels": [
               "会写字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/霎.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/霎.gif`]
           }
         },
         {
@@ -470,7 +470,7 @@ const data = {
             "labels": [
               "会写字"
             ],
-            "imageUrl": `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/余.gif`
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/余.gif`]
           }
         }
       ]

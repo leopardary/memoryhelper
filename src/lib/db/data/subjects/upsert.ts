@@ -7,35 +7,35 @@ const subject_yuwen: CreateSubjectInput = {
   title: "语文",
   description: "Chinese Language Arts",
   labels: ["Chinese", "Language"],
-  imageUrl: `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/yuwen.jpg`
+  imageUrls: [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/yuwen.jpg`]
 };
 
 const subject_shuxue: CreateSubjectInput = {
   title: "数学",
   description: "Mathematics is the universal language of logic, patterns, and relationships. It provides the tools to solve real-world problems, explore the mysteries of the universe, and build the foundations of modern technology. From basic arithmetic to complex calculus, mathematics fosters critical thinking, analytical reasoning, and problem-solving skills. It is essential in fields like engineering, finance, medicine, and data science, making it a cornerstone of human progress.",
   labels: ["Mathematics", "Logic", "Problem Solving", "Numbers", "Equations", "Algebra", "Geometry", "Calculus", "Statistics", "Patterns", "Critical Thinking", "STEM", "Theorems", "Formulas", "Applied Math"],
-  imageUrl: `${process.env.IMAGE_BASE_PATH}/subjects/shuxue.jpg`
+  imageUrls: [`${process.env.IMAGE_BASE_PATH}/subjects/shuxue.jpg`]
 };
 
 const subject_wuli: CreateSubjectInput = {
   title: "物理",
   description: "Physics is the study of the fundamental principles that govern the universe. It explores the nature of matter, energy, space, and time, seeking to understand how the world behaves from the smallest particles to the vast cosmos. Through observation, experimentation, and mathematical modeling, physics helps us uncover the laws of nature, leading to innovations in technology, medicine, engineering, and space exploration. It challenges our understanding of reality and inspires curiosity about the universe's mysteries.",
   labels: ["Physics", "Science", "Energy", "Motion", "Forces", "Gravity", "Electricity", "Magnetism", "Quantum Mechanics", "Relativity", "Astrophysics", "Thermodynamics", "Optics", "Waves", "Matter and Energy", "Experimentation", "Scientific Discovery"],
-  imageUrl: `${process.env.IMAGE_BASE_PATH}/subjects/wuli.jpg`
+  imageUrls: [`${process.env.IMAGE_BASE_PATH}/subjects/wuli.jpg`]
 };
 
 const subject_lishi: CreateSubjectInput = {
   title: "历史",
   description: "History is the study of past events, civilizations, and the people who shaped the world. It helps us understand how societies evolved, learn from successes and failures, and appreciate the cultural, political, and technological advancements that define humanity. By exploring historical records, artifacts, and narratives, we gain insight into the forces that have shaped civilizations and continue to influence the present and future. History connects us to our roots, fosters critical thinking, and teaches valuable lessons about resilience, leadership, and progress.",
   labels: ["History", "Ancient Civilizations", "World History", "Cultural Heritage", "Historical Events", "Legends & Myths", "Archaeology", "Wars & Revolutions", "Historical Figures", "Empires & Dynasties", "Political History", "Social Movements", "Industrial Revolution", "Renaissance", "Exploration & Discovery", "Lessons from the Past"],
-  imageUrl: `${process.env.IMAGE_BASE_PATH}/subjects/lishi.jpg`
+  imageUrls: [`${process.env.IMAGE_BASE_PATH}/subjects/lishi.jpg`]
 };
 
 const subject_yingyu: CreateSubjectInput = {
   title: "英语",
   description: "English is a global language used for communication, literature, business, science, and diplomacy. With rich vocabulary, diverse grammar, and deep cultural history, English connects people across continents and cultures. Studying English enhances reading, writing, speaking, and listening skills, while also opening doors to understanding classic literature, modern media, and global perspectives. Whether used in daily conversation or academic discourse, English empowers individuals to express ideas, share stories, and engage with the world.",
   labels: ["English", "Language", "Literature", "Reading", "Writing", "Vocabulary", "Grammar", "Communication", "Speaking & Listening", "Global Language", "Creative Writing", "Poetry", "Prose", "Public Speaking", "Storytelling", "Language Arts"],
-  imageUrl: `${process.env.IMAGE_BASE_PATH}/subjects/yingyu.jpg`
+  imageUrls: [`${process.env.IMAGE_BASE_PATH}/subjects/yingyu.jpg`]
 };
 
 async function main() {
