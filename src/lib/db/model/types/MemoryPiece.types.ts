@@ -5,7 +5,7 @@ export interface MemoryPieceProps {
   subject: Types.ObjectId;
   unit?: Types.ObjectId;
   content: string;
-  imageUrl?: string;
+  imageUrls?: string[];
   description?: string;
   labels?: string[];
   createdAt?: Date;

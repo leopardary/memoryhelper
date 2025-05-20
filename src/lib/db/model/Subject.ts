@@ -9,7 +9,7 @@ if (!mongoose.models.Subject) {
       title: { type: String, required: true, unique: true },
       description: { type: String },
       labels: [{ type: String }],
-      imageUrl: { type: String },
+      imageUrls: [{ type: String }],
     },
     { timestamps: true, collection: 'subjects' }
   );

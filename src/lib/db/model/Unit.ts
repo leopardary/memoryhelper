@@ -10,7 +10,7 @@ if (!mongoose.models.Unit) {
       title: { type: String, required: true },
       type: { type: String, required: true, enum: ['chapter', 'lesson', 'module'] },
       description: { type: String },
-      imageUrl: { type: String },
+      imageUrls: [{ type: String }],
       parentUnit: { type: mongoose.Schema.Types.ObjectId, ref: 'Unit' },
       subject: { type: mongoose.Schema.Types.ObjectId, ref: 'Subject', required: true },
       order: { type: Number },

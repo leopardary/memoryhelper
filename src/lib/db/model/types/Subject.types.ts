@@ -4,7 +4,7 @@ export interface SubjectProps {
   _id?: Types.ObjectId;
   title: string;
   description?: string | null;
-  imageUrl?: string | null;
+  imageUrls?: string[] | null;
   labels?: string[] | null;
   createdAt?: Date;
   updatedAt?: Date;

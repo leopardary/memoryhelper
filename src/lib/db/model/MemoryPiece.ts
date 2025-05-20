@@ -9,7 +9,7 @@ if (!mongoose.models.MemoryPiece) {
       subject: { type: mongoose.Schema.Types.ObjectId, ref: 'Subject', required: true },
       unit: { type: mongoose.Schema.Types.ObjectId, ref: 'Unit' },
       content: { type: String, required: true },
-      imageUrl: { type: String },
+      imageUrls: [{ type: String }],
       description: { type: String },
       labels: [{ type: String }]
     },

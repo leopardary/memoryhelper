@@ -7,7 +7,7 @@ export interface UnitProps {
   title: string;
   type: UnitType;
   description?: string;
-  imageUrl?: string;
+  imageUrls?: string[];
   parentUnit?: Types.ObjectId;
   subject: Types.ObjectId;
   order?: number;
