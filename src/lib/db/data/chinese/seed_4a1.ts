@@ -14,7 +14,7 @@ const data = {
       "观潮": {
         type: 'lesson',
         description: '第一课，观潮',
-        imageUrls: [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/lesson1.jpg`],
+        imageUrls: [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/lesson1.jpg`, `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/lesson1b.jpeg`, `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/lesson1c.jpeg`],
         order: 1,
         data: [
         {
