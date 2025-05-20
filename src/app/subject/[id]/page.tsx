@@ -8,8 +8,10 @@ export default async function Subject({params}) {
   const units = await getDirectChildrenBySubject(subjectId)
   const subject = await getSubject(subjectId);
   const breadcrumbs = [{url: `/subject/${subjectId}`, name: subject?.title}]
+  const imageUrls = subject?.imageUrls;
   return <>
   <Breadcrumbs segments={breadcrumbs}/>
+  <div className="divider"></div>
   <div className="flex flex-col items-center">
   <div className="my-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {units.map((unit) => (

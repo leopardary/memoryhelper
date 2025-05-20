@@ -3,6 +3,7 @@ import { getUnit, parentUnitChain } from "@/lib/db/api/unit"
 import UnitCard from "@/app/components/UnitCard"
 import {UnitProps} from '@/lib/db/model/types/Unit.types'
 import isEmpty from 'lodash/isEmpty'
+import ImageCarousel from '@/app/components/ImageCarousel'
 import Table from '@/app/components/Table'
 import { findOrCreateSubscriptionsInBatch, getSubscriptionsForUser, removeSubscriptionsInBatch } from "@/lib/db/api/subscription"
 import { getServerSession } from "next-auth/next";
@@ -38,6 +39,9 @@ export default async function Unit({params}) {
   }
   return <>
     <Breadcrumbs segments={breadcrumbsSegments}/>
+    <div className="divider">Details</div>
+    <ImageCarousel imageSrcs={unit.imageUrls} imageAlt='' />
+    {!isEmpty(unitChildren) ?<div className="divider">Sub Units</div>:<div className="divider">Memory Pieces</div>}
   <div className="flex flex-col items-center">
   {!isEmpty(unitChildren) ? <div className="my-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {unitChildren.map((unitChild: UnitProps) => (
