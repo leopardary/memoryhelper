@@ -20,7 +20,7 @@ export async function processSeedData() {
       title: moduleTitle,
       type: moduleData.type,
       description: moduleData.description,
-      imageUrl: moduleData.imageUrl,
+      imageUrls: moduleData.imageUrls,
       order: moduleData.order,
       subject: yuwen_subject_result.id
     });
@@ -31,7 +31,7 @@ export async function processSeedData() {
       title: chapterTitle,
       type: chapterData.type,
       description: chapterData.description,
-      imageUrl: chapterData.imageUrl,
+      imageUrls: chapterData.imageUrls,
       order: chapterData.order,
       subject: yuwen_subject_result.id,
       parentUnit: moduleRecord.id
@@ -43,7 +43,7 @@ export async function processSeedData() {
       title: lessonTitle,
       type: lessonData.type,
       description: lessonData.description,
-      imageUrl: lessonData.imageUrl,
+      imageUrls: lessonData.imageUrls,
       order: lessonData.order,
       subject: yuwen_subject_result.id,
       parentUnit: chapter.id
@@ -55,12 +55,12 @@ export async function processSeedData() {
       const content = Object.keys(character)[0];
       const data = character[content];
       const description = data['组词']?.join(', ') + '##' + data['造句']?.join('/ ');
-      const imageUrl = data['imageUrl'];
+      const imageUrls = data['imageUrls'];
       const labels = data['labels'];
       const characterRecord = await findOrCreateMemoryPiece({
         content,
         description,
-        imageUrl,
+        imageUrls,
         labels,
         unit: lessonRecord.id,
         subject: yuwen_subject_result.id,
@@ -99,3 +99,7 @@ async function main() {
 }
 
 main().catch(console.error);
+
+/**
+ * To run this file, execute `npx tsx src/lib/db/data/chinese/upsert.ts` in commandline
+ */

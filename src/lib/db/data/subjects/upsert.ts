@@ -66,3 +66,7 @@ async function main() {
 }
 
 main().catch(console.error);
+
+/**
+ * To run this file, execute `npx tsx src/lib/db/data/subjects/upsert.ts` in commandline
+ */
