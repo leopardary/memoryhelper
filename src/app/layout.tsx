@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Flowmazon",
-  description: "We make your wallet cry",
+  title: "MemoryHelper",
+  description: "Your memory treasure keeper.",
 };
 
 export default function RootLayout({

@@ -474,7 +474,201 @@ const data = {
           }
         }
       ]
+    },
+      "走月亮": {
+        type: 'lesson',
+        description: '第二课，走月亮',
+        imageUrls: [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson2/lesson2a.jpeg`, `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson2/lesson2b.jpeg`, `${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson2/lesson2c.jpeg`],
+        order: 2,
+        data: [
+    {"跃": {
+      "组词": ["跳跃", "跃升", "鱼跃"],
+      "造句": [
+        "小鹿轻盈地跳跃着穿过灌木丛。",
+        "公司业绩今年实现了大幅跃升。"
+      ],
+      "labels": [
+              "会认字"
+            ],
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson2/跃.gif`]
+    }},
+    {"穗": {
+      "组词": ["稻穗", "穗子", "抽穗"],
+      "造句": [
+        "金黄的稻穗沉甸甸地低垂着，预示丰收的到来。",
+        "窗帘边缘装饰着精美的流苏穗子。"
+      ],
+      "labels": [
+              "会认字"
+            ],
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson2/穗.gif`]
+    }},
+    {"镀": {
+      "组词": ["镀金", "电镀", "镀层"],
+      "造句": [
+        "这座雕像表面镀了一层金，在阳光下熠熠生辉。",
+        "自行车的车把经过电镀处理，不容易生锈。"
+      ],
+      "labels": [
+              "会认字"
+            ],
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson2/镀.gif`]
+    }},
+    {"烁": {
+      "组词": ["闪烁", "烁亮", "烁金"],
+      "造句": [
+        "夜空中繁星闪烁，像无数眨动的眼睛。",
+        "新买的不锈钢水壶表面烁亮如镜。"
+      ],
+      "labels": [
+              "会认字"
+            ],
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson2/烁.gif`]
+    }},{
+    "淘": {
+      "labels": ["会写字"],
+      "组词": ["淘气", "淘米", "淘汰"],
+      "造句": [
+        "淘气的小猴子把香蕉皮扔得到处都是。",
+        "妈妈教我淘米时要轻轻搓洗两遍。"
+      ],
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson2/淘.gif`]
     }
+  },
+  {
+    "牵": {
+      "labels": ["会写字"],
+      "组词": ["牵手", "牵挂", "牵牛花"],
+      "造句": [
+        "过马路时，妹妹主动牵起了我的手。",
+        "阳台上的牵牛花迎着朝阳绽开了笑脸。"
+      ],
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson2/牵.webp`]
+    }
+  },
+  {
+    "鹅": {
+      "labels": ["会写字"],
+      "组词": ["白鹅", "鹅毛", "鹅黄"],
+      "造句": [
+        "池塘里两只白鹅正在梳理羽毛。",
+        "春天柳枝抽出的嫩芽带着鹅黄色。"
+      ],
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson2/鹅.gif`]
+    }
+  },
+  {
+    "卵": {
+      "labels": ["会写字"],
+      "组词": ["卵石", "卵生", "以卵击石"],
+      "造句": [
+        "我在海边捡到一枚有着天然花纹的卵石。",
+        "用这种方法对抗大企业简直是以卵击石。"
+      ],
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson2/卵.gif`]
+    }
+  },
+  {
+    "填": {
+      "labels": ["会写字"],
+      "组词": ["填写", "填空", "填补"],
+      "造句": [
+        "老师让我们在表格上用正楷字填写个人信息。",
+        "这项新技术成功填补了国内空白。"
+      ],
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson2/填.gif`]
+    }
+  },
+  {
+    "庄": {
+      "labels": ["会写字"],
+      "组词": ["庄稼", "庄严", "农庄"],
+      "造句": [
+        "干旱的天气让地里的庄稼都蔫了叶子。",
+        "升旗仪式上所有人都保持着庄严的神情。"
+      ],
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson2/庄.gif`]
+    }
+  },
+  {
+    "稼": {
+      "labels": ["会写字"],
+      "组词": ["庄稼", "稼穑", "耕稼"],
+      "造句": [
+        "爷爷说庄稼就像孩子，需要精心照料。",
+        "古诗《悯农》描写了古代农民的稼穑艰辛。"
+      ],
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson2/稼.webp`]
+    }
+  },
+  {
+    "俗": {
+      "labels": ["会写字"],
+      "组词": ["风俗", "俗气", "通俗"],
+      "造句": [
+        "端午节赛龙舟是我们家乡的传统风俗。",
+        "这本童话书用通俗的语言讲述深刻道理。"
+      ],
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson2/俗.gif`]
+    }
+  },
+  {
+    "跃": {
+      "labels": ["会写字"],
+      "组词": ["跳跃", "活跃", "跃跃欲试"],
+      "造句": [
+        "小青蛙后腿一蹬就跃入了池塘中。",
+        "看到新买的滑板，弟弟已经跃跃欲试了。"
+      ],
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson2/跃.gif`]
+    }
+  },
+  {
+    "葡": {
+      "labels": ["会写字"],
+      "组词": ["葡萄", "葡萄糖", "葡萄酒"],
+      "造句": [
+        "奶奶在院子里搭了架子种葡萄。",
+        "运动员比赛时会补充含葡萄糖的饮料。"
+      ],
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson2/葡.gif`]
+    }
+  },
+  {
+    "萄": {
+      "labels": ["会写字"],
+      "组词": ["葡萄", "野葡萄", "葡萄干"],
+      "造句": [
+        "小狐狸偷吃了农夫种的葡萄。",
+        "妈妈在面包里加了新疆特产的葡萄干。"
+      ],
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson2/萄.gif`]
+    }
+  },
+  {
+    "稻": {
+      "labels": ["会写字"],
+      "组词": ["水稻", "稻谷", "稻草"],
+      "造句": [
+        "袁隆平爷爷研究的水稻养活了无数人。",
+        "秋收后田野里堆起了金黄的稻谷垛。"
+      ],
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson2/稻.gif`]
+    }
+  },
+  {
+    "熟": {
+      "labels": ["会写字"],
+      "组词": ["成熟", "熟悉", "煮熟"],
+      "造句": [
+        "果园里的苹果已经成熟散发着香气。",
+        "我对这条上学的小路再熟悉不过了。"
+      ],
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson2/熟.gif`]
+    }
+  }
+        ]
+      }
     }]
     }
   }

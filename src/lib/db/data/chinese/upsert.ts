@@ -37,18 +37,18 @@ export async function processSeedData() {
       parentUnit: moduleRecord.id
     });
 
-    const lessonTitle = Object.keys(chapterData.data[0])[0];
-    const lessonData = chapterData.data[0][lessonTitle];
-    const lessonRecord = await findOrCreateUnit({
-      title: lessonTitle,
-      type: lessonData.type,
-      description: lessonData.description,
-      imageUrls: lessonData.imageUrls,
-      order: lessonData.order,
-      subject: yuwen_subject_result.id,
-      parentUnit: chapter.id
-    });
-
+    const lessonTitles = Object.keys(chapterData.data[0]);
+    for (const lessonTitle of lessonTitles) {
+      const lessonData = chapterData.data[0][lessonTitle];
+      const lessonRecord = await findOrCreateUnit({
+        title: lessonTitle,
+        type: lessonData.type,
+        description: lessonData.description,
+        imageUrls: lessonData.imageUrls,
+        order: lessonData.order,
+        subject: yuwen_subject_result.id,
+        parentUnit: chapter.id
+      });
     const characters = lessonData.data;
 
     for (const character of characters) {
@@ -66,12 +66,18 @@ export async function processSeedData() {
         subject: yuwen_subject_result.id,
       })
     }
-
-    console.log('Seed data processing completed successfully');
-  } catch (error) {
+        console.log('Seed data processing completed successfully');
+  } 
+    }catch (error) {
     console.error('Error processing seed data:', error);
     throw error;
   }
+    
+    
+
+    
+
+
 }
 
 // Example Usage
