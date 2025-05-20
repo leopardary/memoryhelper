@@ -3,7 +3,7 @@ import Image from "next/image";
 import { UnitProps } from "@/lib/db/model/types/Unit.types";
 
 export default function UnitCard({ unit }: { unit: UnitProps }) {
-  const {id, type, title, description, imageUrl, order } = unit;
+  const {id, type, title, description, imageUrls, order } = unit;
   return (
     <Link
       href={"/unit/" + id}
@@ -12,7 +12,7 @@ export default function UnitCard({ unit }: { unit: UnitProps }) {
       <div className="m-4">
         <figure>
           <Image
-            src={imageUrl || ''}
+            src={imageUrls?.[0] || ''}
             alt={title}
             width={400}
             height={400}

@@ -47,7 +47,7 @@ const data = {
             "labels": [
               "会认字"
             ],
-            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/屹.jpg`]
+            "imageUrls": [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit1/lesson1/屹.jpeg`]
           }
         },
         {

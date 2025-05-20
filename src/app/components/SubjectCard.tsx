@@ -3,7 +3,7 @@ import Image from "next/image";
 import { SubjectProps } from "@/lib/db/model/types/Subject.types";
 
 export default function SubjectCard({ subject }: { subject: SubjectProps }) {
-  const { _id, title, description, imageUrl, labels } = subject;
+  const { _id, title, description, imageUrls, labels } = subject;
   return (
     <Link
       href={"/subject/" + _id}
@@ -12,7 +12,7 @@ export default function SubjectCard({ subject }: { subject: SubjectProps }) {
       <div className="m-4">
         <figure>
           <Image
-            src={imageUrl || ''}
+            src={imageUrls?.[0] || ''}
             alt={title}
             width={400}
             height={400}

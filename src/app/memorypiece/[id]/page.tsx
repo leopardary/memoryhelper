@@ -18,7 +18,7 @@ export default async function MemoryPiece({params}) {
   return <>
   <Breadcrumbs segments={breadcrumbsSegments}/>
   <div className="flex flex-col items-center">
-  <HeroCard imageSrc={memoryPiece.imageUrl} imageAlt={memoryPiece.content} title={memoryPiece.content} description={memoryPiece.description} href={`/memorypiece/${memoryPiece.id}`} />
+  <HeroCard imageSrcs={memoryPiece.imageUrls} imageAlt={memoryPiece.content} title={memoryPiece.content} description={memoryPiece.description} href={`/memorypiece/${memoryPiece.id}`} />
   </div>
   </>
 }
