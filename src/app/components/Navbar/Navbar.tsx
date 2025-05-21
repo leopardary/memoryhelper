@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import logo from "@public/globe.svg";
+import logo from "@public/favicon.png";
 import UserMenuButton from "@/app/components/Navbar/UserMenuButton";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth/next";
