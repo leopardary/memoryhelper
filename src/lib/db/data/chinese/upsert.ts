@@ -3,7 +3,7 @@ import {getSubjectByTitle} from '@/lib/db/api/subject';
 import {findOrCreateMemoryPiece} from '@/lib/db/api/memory-piece'
 import {findOrCreateUnit} from '@/lib/db/api/unit'
 import { connectDB } from '@/lib/db/utils';
-import data from '@/lib/db/data/chinese/seed_4a1';
+import data from '@/lib/db/data/chinese/all_seed_data';
 
 export async function processSeedData() {
   try {
@@ -14,8 +14,11 @@ export async function processSeedData() {
       throw new Error('Subject 语文 is not found.')
     }
     // Create or find the subject
-    const moduleTitle = Object.keys(data)[0];
-    const moduleData = data[moduleTitle];
+    for (const moduleKey of Object.keys(data)) {
+      const module = data[moduleKey];
+      const moduleTitle = Object.keys(module)[0];
+
+    const moduleData = module[moduleTitle];
     const moduleRecord = await findOrCreateUnit({
       title: moduleTitle,
       type: moduleData.type,
@@ -67,7 +70,7 @@ export async function processSeedData() {
       })
     }
         console.log('Seed data processing completed successfully');
-  } 
+  } }
     }catch (error) {
     console.error('Error processing seed data:', error);
     throw error;
