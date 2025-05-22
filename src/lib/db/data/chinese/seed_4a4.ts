@@ -9,7 +9,7 @@ const data = {
       type: 'chapter',
       description: '第四单元',
       imageUrls: [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit4/unit4.jpeg`],
-      order: 1,
+      order: 4,
       data: [ {
       "盘古开天地": {
         type: 'lesson',

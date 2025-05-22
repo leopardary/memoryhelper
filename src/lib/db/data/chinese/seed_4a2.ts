@@ -9,7 +9,7 @@ const data = {
       type: 'chapter',
       description: '第二单元',
       imageUrls: [`${process.env.IMAGE_BASE_PATH}/subjects/yuwen/4a/unit2/unit2.jpeg`],
-      order: 1,
+      order: 2,
       data: [ {
       "一个豆荚里的五粒豆": {
         type: 'lesson',
