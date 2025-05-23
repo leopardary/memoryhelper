@@ -1,15 +1,15 @@
 import {getCharacterLoadingGif} from '@/lib/utils/chineseCharacterGif'
 import {writeBufferToFile} from '@/lib/utils/fileUtils'
 
-//'获','赖','潜','索','舶','兰','唤','纪','技','改','程','超','亿','核','奥','益','联','质','哲','任','善'，'驻','钞','培','赌','媒','氛','账','贺','樟','杠','狡','猾'
-const characters = [];
+//'隐','毫','掘','搜','倾','骤','置','抛','宅','临','慎','选','择','址','良','穴','厅','卧','专','卫','较'
+const characters = ['纲','授','揍','键','谱','锈','沫','砖','矿','综','氧','俱'];
 
 async function main() {
   try {
     // Example usage with the character loading GIF
     for (const character of characters) {
       const gifBuffer = await getCharacterLoadingGif(character);
-      await writeBufferToFile(gifBuffer, `public/images/subjects/yuwen/4a/unit2/lesson6/${character}.gif`);
+      await writeBufferToFile(gifBuffer, `public/images/subjects/yuwen/4a/unit8/practice/${character}.gif`);
     }
        
   } catch (error) {
