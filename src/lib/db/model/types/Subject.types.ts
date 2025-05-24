@@ -3,9 +3,9 @@ import { Types } from 'mongoose';
 export interface SubjectProps {
   _id?: Types.ObjectId;
   title: string;
-  description?: string | null;
-  imageUrls?: string[] | null;
-  labels?: string[] | null;
+  description?: string;
+  imageUrls?: string[];
+  labels?: string[];
   createdAt?: Date;
   updatedAt?: Date;
 }

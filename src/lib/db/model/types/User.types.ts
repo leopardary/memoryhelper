@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
 
 export interface UserProps {
-  _id: Types.ObjectId;
+  _id: Types.ObjectId | string;
   name: string;
   email: string;
   imageUrl?: string;

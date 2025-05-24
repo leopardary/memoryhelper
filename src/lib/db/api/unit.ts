@@ -51,8 +51,8 @@ export async function deleteUnit(id: string) {
 // Check existence or create unit
 export async function findOrCreateUnit(unit: CreateUnitInput) {
   try {
-    if (unit.imageUrl && !validateImagePath(unit.imageUrl)) {
-      throw new Error(`Image file not found: ${unit.imageUrl}`);
+    if (unit.imageUrls && !validateImagePath(unit.imageUrls)) {
+      throw new Error(`Image file not found: ${unit.imageUrls}`);
     }
 
     // Unit is uniquely defined by the combination of [title, parentUnit, subject]

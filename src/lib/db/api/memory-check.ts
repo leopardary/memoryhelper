@@ -31,7 +31,7 @@ export async function createMemoryCheckInBatch(data: CreateMemoryCheckInput[]) {
   await connectDB();
   const memoryChecks = [];
   for (const memoryCheck of data) {
-    const score = normalizeScore(memoryCheck.score);
+    const score = await normalizeScore(memoryCheck.score);
     try {
       const record = await MemoryCheck.create({ ...memoryCheck, score: score });
       memoryChecks.push(record._id.toString());
@@ -82,7 +82,7 @@ enum ScoreQuality {
  * @returns A Promise resolving to a ScoreQuality number (0-5).
  * @throws Error if the input value is of an unexpected type.
  */
-function normalizeScore(value: unknown): ScoreQuality {
+export async function normalizeScore(value: unknown): Promise<ScoreQuality> {
   if (typeof value === 'boolean') {
     if (value === true) {
       // Boolean true could map to a "good" correct answer.

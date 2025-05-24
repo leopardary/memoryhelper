@@ -4,10 +4,10 @@ import isEmpty from 'lodash/isEmpty'
 
 export interface HeroCardProps {
   imageSrcs?: string[];
-  imageAlt?: string;
+  imageAlt: string;
   title?: string;
   description?: string;
-  href?: string;
+  href: string;
   buttonContent?: string
 }
 

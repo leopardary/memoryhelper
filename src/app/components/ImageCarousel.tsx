@@ -1,8 +1,8 @@
 import Image from "next/image";
 
-const ImageCarousel = ({imageSrcs, imageAlt}: {imageSrcs: string[], imageAlt: string}) => {
+const ImageCarousel = ({imageSrcs, imageAlt}: {imageSrcs?: string[], imageAlt: string}) => {
   return (<div className="carousel w-full">
-    {imageSrcs.map((imageSrc: string, index: number) => {
+    {imageSrcs && imageSrcs.map((imageSrc: string, index: number) => {
       const prevIndex = index == 0 ? imageSrcs.length - 1 : index - 1;
       const nextIndex = index == imageSrcs.length - 1 ? 0 : index + 1; 
       return (

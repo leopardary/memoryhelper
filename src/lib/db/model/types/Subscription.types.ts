@@ -1,9 +1,9 @@
 import { Types } from 'mongoose';
 
 export interface SubscriptionProps {
-  _id?: Types.ObjectId;
-  userId: Types.ObjectId;
-  memoryPieceId: Types.ObjectId;
+  _id?: Types.ObjectId | string;
+  userId: Types.ObjectId | string;
+  memoryPieceId: Types.ObjectId | string;
   easeFactor: number;
   currentInterval: number;
   nextTestDate: Date;

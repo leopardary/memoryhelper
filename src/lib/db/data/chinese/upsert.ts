@@ -5,6 +5,10 @@ import {findOrCreateUnit} from '@/lib/db/api/unit'
 import { connectDB } from '@/lib/db/utils';
 import data from '@/lib/db/data/chinese/all_seed_data';
 
+function getDataField(data: any, key: string) {
+  return data[key];
+}
+
 export async function processSeedData() {
   try {
     await connectDB();
@@ -15,7 +19,7 @@ export async function processSeedData() {
     }
     // Create or find the subject
     for (const moduleKey of Object.keys(data)) {
-      const moduleObject = data[moduleKey];
+      const moduleObject: any = getDataField(data, moduleKey);
       const moduleTitle = Object.keys(moduleObject)[0];
 
     const moduleData = moduleObject[moduleTitle];

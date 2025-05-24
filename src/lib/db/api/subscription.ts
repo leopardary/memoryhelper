@@ -3,7 +3,7 @@ import { CreateSubscriptionInput, UpdateSubscriptionInput } from '@/lib/db/model
 import { connectDB } from '@/lib/db/utils';
 import Subscription from '@/lib/db/model/Subscription';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/utils/authOptions";
 import { findOrCreateUser } from '@/lib/db/api/user';
 import { initializeSubscription, processMemoryCheckWithHistory } from '@/lib/utils/subscriptionUtils';
 
@@ -54,17 +54,27 @@ export async function updateSubscription(id: string, data: UpdateSubscriptionInp
   );
 }
 
+function getMemoryCheck(subscription: any) {
+  return subscription?.memoryChecks;
+}
+
 // Based on most recent MemoryChecks, update the Subscription, like the interval, nextTestDate, etc.
 export async function processSubscriptions(ids: string[]) {
-  const successfulUpdates = [];
+  const successfulUpdates: string[] = [];
   for (const id of ids) {
     try {
       const subscription = await getSubscription(id);
-      const current_ease_factor = subscription?.easeFactor;
+      if (subscription == null) {
+        throw new Error('Subscription ' + id + ' not found.');
+      }
+      const current_ease_factor: number = subscription?.easeFactor;
       const current_interval = subscription?.currentInterval;
-      const checkHistory = subscription?.memoryChecks;
+      const checkHistory = getMemoryCheck(subscription);
       const newData = processMemoryCheckWithHistory(current_ease_factor, current_interval, checkHistory);
       const updatedSubscription = await updateSubscription(id, { easeFactor: newData.new_ease_factor, currentInterval: newData.new_interval, nextTestDate: newData.next_review_date, status: newData.new_status})
+      if (updatedSubscription == null) {
+        throw new Error('Subscription update failed for id: ' + id);
+      }
       successfulUpdates.push(updatedSubscription?._id.toString());
     } catch (e) {
       console.error(e);
@@ -122,7 +132,7 @@ export async function findOrCreateSubscription(subscription: CreateSubscriptionI
 
 export async function findOrCreateSubscriptionsInBatch(memoryPieceIds: string[]) {
   const session = await getServerSession(authOptions);
-  const user = await findOrCreateUser(session.user);
+  const user = await findOrCreateUser(session?.user);
   const subscriptions = memoryPieceIds.map(memoryPieceId => {return {memoryPieceId: memoryPieceId, userId: user._id.toString()}})
   const successfulSubscriptions = [];
   for (const subscription of subscriptions) {
@@ -139,13 +149,13 @@ export async function findOrCreateSubscriptionsInBatch(memoryPieceIds: string[])
 // if the subscriptions exist, remove. Otherwise, do nothing.
 export async function removeSubscriptionsInBatch(memoryPieceIds: string[]) {
   const session = await getServerSession(authOptions);
-  const user = await findOrCreateUser(session.user);
+  const user = await findOrCreateUser(session?.user);
   const subscriptions = memoryPieceIds.map(memoryPieceId => {return {memoryPieceId: memoryPieceId, userId: user._id.toString()}})
   const successfulDeletion = [];
   for (const subscription of subscriptions) {
     try {
-      const record = await deleteSubscriptionForUserAndMemoryPiece(user._id.toString(), subscription.memoryPieceId);
-      successfulDeletion.push(record._id.toString());
+      await deleteSubscriptionForUserAndMemoryPiece(user._id.toString(), subscription.memoryPieceId);
+      successfulDeletion.push(subscription.memoryPieceId);
     } catch (error) {
       console.error(error);
     }

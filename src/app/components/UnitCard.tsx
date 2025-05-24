@@ -3,10 +3,10 @@ import Image from "next/image";
 import { UnitProps } from "@/lib/db/model/types/Unit.types";
 
 export default function UnitCard({ unit }: { unit: UnitProps }) {
-  const {id, title, description, imageUrls } = unit;
+  const {_id, title, description, imageUrls } = unit;
   return (
     <Link
-      href={"/unit/" + id}
+      href={"/unit/" + _id?.toString()}
       className="card w-full bg-base-100 hover:shadow-xl transition-shadow"
     >
       <div className="m-4">

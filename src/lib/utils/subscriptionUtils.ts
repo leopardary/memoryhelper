@@ -30,13 +30,14 @@ export const SRS_PARAMETERS = {
  * @returns {object} The initialized Subscription object.
  */
 export function initializeSubscription(memoryPieceId: string, userId: string) {
+  const newStatus: "new" | "learning" | "learned" | "lapsed" | undefined = 'new'
   return {
     memoryPieceId,
     userId,
     easeFactor: SRS_PARAMETERS.DEFAULT_EASE_FACTOR,
     currentInterval: SRS_PARAMETERS.INITIAL_INTERVAL_NEW_WORD, 
     nextTestDate: getTodayDate(),
-    status: 'new'
+    status: newStatus
   };
 }
 
@@ -62,7 +63,7 @@ function addDays(date: Date, days: number) {
 * @param {Array<object>} checkHistory - The word's MemoryCheck history.
 * @returns {number} The HPM value (typically between -1 and 1).
 */
-function calculateHpm(checkHistory: object[]) {
+function calculateHpm(checkHistory: {quality_of_response: 0 | 1 | 2 | 3 | 4 | 5}[]) {
   if (!checkHistory || checkHistory.length === 0) {
       return 0.0;
   }
@@ -86,6 +87,29 @@ function calculateHpm(checkHistory: object[]) {
   return weightedScoreSum / total_weight;
 }
 
+function processCheckHistory(checkHistory: {createdAt: Date, score: number}[]) {
+  return checkHistory.map((checkItem: {createdAt: Date, score: number}) => {
+    let normalizedScore: 0 | 1 | 2 | 3 | 4 | 5 = 0;
+    const roundNumber = Math.round(checkItem.score);
+    if (checkItem.score <= 0) {
+      normalizedScore = 0;
+    } else if (checkItem.score >= 5) {
+      normalizedScore = 5;
+    } else if (roundNumber == 1) {
+      normalizedScore = 1;
+    } else if (roundNumber == 2) {
+      normalizedScore = 2;
+    } else if (roundNumber == 3) {
+      normalizedScore = 3;
+    } else if (roundNumber == 4) {
+      normalizedScore = 4;
+    }
+   return {
+    quality_of_response: normalizedScore
+  } 
+  });
+}
+
 /**
 * Processes a MemoryCheck and updates its Subscription.
 * @param {number} current_ease_factor - {@link Subscription#easeFactor}.
@@ -93,9 +117,15 @@ function calculateHpm(checkHistory: object[]) {
 * @param {object[]} checkHistory - {@link Subscription#memoryChecks}.
 * @returns {object} The properties to update the {@link Subscription}.
 */
-export function processMemoryCheckWithHistory(current_ease_factor: number, current_interval: number, checkHistory: object[]) {
+export function processMemoryCheckWithHistory(current_ease_factor: number, current_interval: number, checkHistory: {createdAt: Date, score: number}[]) {
+  if (checkHistory.length == 0) {
+    throw new Error("checkHistory is empty.")
+  }
   const lastMemoryCheck = checkHistory.pop();
-  let currentQualityResponse = lastMemoryCheck?.score;
+    if (lastMemoryCheck == null) {
+    throw new Error("checkHistory is empty.")
+  }
+  let currentQualityResponse = lastMemoryCheck.score;
   const checkDate = lastMemoryCheck?.createdAt;
   if (currentQualityResponse < 0 || currentQualityResponse > 5) {
       throw new Error("Quality of response must be between 0 and 5.");
@@ -105,7 +135,7 @@ export function processMemoryCheckWithHistory(current_ease_factor: number, curre
   const today = new Date(checkDate); // Use provided checkDate
 
   // 1. Calculate HPM from history *before* this review
-  const hpmRaw = calculateHpm(checkHistory);
+  const hpmRaw = calculateHpm(processCheckHistory(checkHistory));
 
   // 2. Update Ease Factor
   const baseEaseAdjustment = (
@@ -117,7 +147,7 @@ export function processMemoryCheckWithHistory(current_ease_factor: number, curre
   const new_ease_factor = Math.max(SRS_PARAMETERS.MINIMUM_EASE_FACTOR, current_ease_factor + baseEaseAdjustment + historicalInfluence);
   let new_interval;
   let next_review_date;
-  let new_status;
+  let new_status: "new" | "lapsed" | "learning" | "learned" | undefined;
 
   // 3. & 4. Update Interval based on currentQualityResponse
   if (currentQualityResponse < 3) { // LAPSE: Incorrect or very hard (treat as lapse for interval)

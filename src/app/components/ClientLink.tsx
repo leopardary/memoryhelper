@@ -7,9 +7,8 @@ interface ClientLinkProps {
   className: string;
   text: string;
 }
-//export default function ShoppingCartButton({ cart }: ShoppingCartButtonProps) {
 
-export default function ClientLink ({link}: ClientLinkProps) {
+export default function ClientLink (link: ClientLinkProps) {
   const closeDropdown = () => {
     const elem = document.activeElement as HTMLElement;
     if (elem) {

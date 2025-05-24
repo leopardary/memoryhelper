@@ -2,9 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 import logo from "@public/favicon.png";
 import UserMenuButton from "@/app/components/Navbar/UserMenuButton";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/utils/authOptions";
 import { getServerSession } from "next-auth/next";
 import ClientLink from '@/app/components/ClientLink'
+import '@/app/components/styles/Navbar.scss'
 
 const Logo = () => (<div className="flex-1">
   <Link href="/" className="btn btn-ghost text-xl normal-case">
@@ -32,13 +33,13 @@ export default async function Navbar() {
         <div className="flex flex-row gap-2 place-items-center">
           {session && (
             <div className="dropdown dropdown-bottom dropdown-end">
-              <button className="btn btn-circle" popoverTarget="notificationActions" style={{ anchorName: "--anchor-1" }}>
+              <button className="btn btn-circle notification-button" popoverTarget="notificationActions">
                 <BellIcon />
               </button>
-              <ul className="dropdown menu w-52 rounded-box bg-base-100 shadow-sm"
-                popover="auto" id="notificationActions" style={{ positionAnchor: "--anchor-1" }}>
-                <li><ClientLink link={{href:"/review",className:"text-sm normal-case",text:"Review"}} /></li>
-                <li><ClientLink link={{href:"/practice",className:"text-sm normal-case",text:"Practice"}} /></li>
+              <ul className="dropdown menu w-52 rounded-box bg-base-100 shadow-sm notification-list"
+                popover="auto" id="notificationActions">
+                <li><ClientLink href="/review" className="text-sm normal-case" text="Review" /></li>
+                <li><ClientLink href="/practice" className="text-sm normal-case" text="Practice" /></li>
               </ul>
             </div>
           )}

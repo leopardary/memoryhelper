@@ -59,8 +59,8 @@ export async function getSubjectsWithPagination(currentPage: number, pageSize: n
 // Check existence or create subject
 export async function findOrCreateSubject(subject: CreateSubjectInput) {
   try {
-    if (subject.imageUrl && !validateImagePath(subject.imageUrl)) {
-      throw new Error(`Image file not found: ${subject.imageUrl}`);
+    if (subject?.imageUrls && !validateImagePath(subject.imageUrls)) {
+      throw new Error(`Image files not found: ${subject.imageUrls}`);
     }
 
     const record = await Subject.findOneAndUpdate(

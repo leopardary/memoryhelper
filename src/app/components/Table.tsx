@@ -4,7 +4,7 @@ import { MemoryPieceProps } from '@/lib/db/model/types/MemoryPiece.types';
 import SubscribeButton from '@/app/components/SubscribeButton'
 import { useState } from 'react';
 
-const Checkbox = ({ checked, onChange }: { checked: boolean | null, onChange: () => void }) => (
+const Checkbox = ({ checked, onChange }: { checked?: boolean, onChange?: () => void }) => (
   <label>
     <input 
       type="checkbox" 
@@ -22,8 +22,8 @@ const Checkbox = ({ checked, onChange }: { checked: boolean | null, onChange: ()
 
 const TableCell = ({ content, id, checked, onChange }: { 
   content: string; 
-  id: string;
-  checked?: boolean | null;
+  id?: string;
+  checked?: boolean;
   onChange?: () => void;
 }) => {
   if (content === 'checkbox') {
@@ -52,14 +52,14 @@ export default function Table({ memoryPiecesStr, subscriptions, loggedIn, findOr
 
   if (loggedIn) {
     headers.unshift('checkbox');
-    data.forEach(row => row.unshift('checkbox'));
+    data.forEach((row: string[]) => row.unshift('checkbox'));
   }
 
   const handleSelectAll = () => {
     if (Object.values(selected).filter(value => value).length === memoryPieceIds.length) {
-      setSelected(Object.keys(selected).reduce((res, curr) => {res[curr]=false; return res;}, {}));
+      setSelected(Object.keys(selected).reduce((res: Record<string, boolean>, curr: string) => {res[curr]=false; return res;}, {}));
     } else {
-      setSelected(Object.keys(selected).reduce((res, curr) => {res[curr]=true; return res;}, {}));
+      setSelected(Object.keys(selected).reduce((res: Record<string, boolean>, curr: string) => {res[curr]=true; return res;}, {}));
     }
   };
 
@@ -76,7 +76,7 @@ export default function Table({ memoryPiecesStr, subscriptions, loggedIn, findOr
   const getHeaderCheckboxState = () => {
     if (Object.keys(selected).filter(key => selected[key]).length === 0) return false;
     if (Object.keys(selected).filter(key => selected[key]).length === memoryPieceIds.length) return true;
-    return null; // Indeterminate state
+    return undefined; // Indeterminate state
   };
 
   return (
@@ -98,7 +98,7 @@ export default function Table({ memoryPiecesStr, subscriptions, loggedIn, findOr
         </tr>
       </thead>
       <tbody>
-        {data && data.map((row, index) => {
+        {data && data.map((row: string[], index: number) => {
           const checkbox = row[0];
           const id = row[row.length - 1];
           const contents = row.slice(1, row.length - 1);

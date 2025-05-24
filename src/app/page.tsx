@@ -3,15 +3,12 @@ import PaginationBar from "@/app/components/PaginationBar";
 import {getSubjectCount, getSubjectsWithPagination} from "@/lib/db/api/subject";
 import {HeroCard} from '@/app/components/HeroCard'
 
-interface HomeProps {
-  searchParams: {
+export default async function Home(props: {
+  searchParams: Promise<{
     page: string;
-  };
-}
-
-export default async function Home({
-  searchParams: { page = "1" },
-}: HomeProps) {
+  }>
+}) {
+  const page = (await props.searchParams)?.page || '1';
   const currentPage = parseInt(page);
   const pageSize = 3;
   const heroItemCount = 1;

@@ -3,11 +3,15 @@ import { getDirectChildrenBySubject } from "@/lib/db/api/unit"
 import UnitCard from "@/app/components/UnitCard"
 import {getSubject} from "@/lib/db/api/subject"
 
-export default async function Subject({params}) {
-  const subjectId = params.id;
+export default async function Subject({params}: {params: Promise<{id: string}>}) {
+  const { id } = await params;
+  const subjectId = id;
   const units = await getDirectChildrenBySubject(subjectId)
   const subject = await getSubject(subjectId);
-  const breadcrumbs = [{url: `/subject/${subjectId}`, name: subject?.title}]
+  if (subject == null) {
+    return <div>Subject not found.</div>
+  }
+  const breadcrumbs = [{url: `/subject/${subjectId}`, name: subject.title}]
   return <>
   <Breadcrumbs segments={breadcrumbs}/>
   <div className="divider"></div>

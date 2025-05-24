@@ -4,26 +4,26 @@ import pickBy from 'lodash/pickBy';
 import { MemoryPieceProps } from '@/lib/db/model/types/MemoryPiece.types';
 import { useTransition, useState } from 'react';
 
-const Checkbox = ({ onChange }: { onChange: (value: boolean | null) => void }) => {
+const Checkbox = ({ onChange }: { onChange?: (value: boolean | null) => void }) => {
   const [isRight, setIsRight] = useState<boolean | null>(null);
   const finalOnChange = (isRightCheckBox: boolean) => {return () => {
     if (isRightCheckBox) {
       // uncheck right checkbox
       if (isRight) {
         setIsRight(null);
-        onChange(null);
+        onChange?.(null);
       } else {
         setIsRight(true);
-        onChange(true);
+        onChange?.(true);
       }
     } else {
       // uncheck wrong checkbox
       if (isRight === false) {
         setIsRight(null);
-        onChange(null);
+        onChange?.(null);
       } else {
         setIsRight(false);
-        onChange(false);
+        onChange?.(false);
       }
     }
   };}
@@ -51,10 +51,10 @@ const Checkbox = ({ onChange }: { onChange: (value: boolean | null) => void }) =
 );};
 
 interface SubmitButtonProps {
-  correctNess: Record<string, boolean>;
-  memoryPieceIdToSubscriptionId: Record<string, string>,
-  createMemoryChecks: (correctNess: Record<string, boolean>) => Promise<{createdMemoryChecks: string[], updatedSubscriptions: string[]}>;
-  refreshPage: () => Promise<void>;
+  correctNess?: Record<string, boolean>;
+  memoryPieceIdToSubscriptionId?: Record<string, string>,
+  createMemoryChecks?: (correctNess: Record<string, boolean>) => Promise<{createdMemoryChecks: string[], updatedSubscriptions: string[]}>;
+  refreshPage?: () => Promise<void>;
 }
 
 const SubmitButton = (props: SubmitButtonProps) => {
@@ -63,10 +63,14 @@ const SubmitButton = (props: SubmitButtonProps) => {
   const createMemoryChecks = props.createMemoryChecks;
   const refreshPage = props.refreshPage;
   const driedCorrectNess = pickBy(correctNess, val => val != null);
-  const subscriptionCorrectness = {};
-  Object.keys(driedCorrectNess).forEach(memoryPieceId => subscriptionCorrectness[memoryPieceIdToSubscriptionId[memoryPieceId]] = driedCorrectNess[memoryPieceId]);
+  const subscriptionCorrectness: Record<string, boolean> = {};
+  if (memoryPieceIdToSubscriptionId != null) {
+    Object.keys(driedCorrectNess).forEach(memoryPieceId => subscriptionCorrectness[memoryPieceIdToSubscriptionId[memoryPieceId]] = driedCorrectNess[memoryPieceId]);
+  }
   const [isPending, startTransition] = useTransition();
   const [success, setSuccess] = useState(0);
+  if (createMemoryChecks == null)
+    return <></>; 
   return (
     <>
     <button className='btn' onClick={() => {
@@ -75,7 +79,9 @@ const SubmitButton = (props: SubmitButtonProps) => {
         const { createdMemoryChecks, updatedSubscriptions } = await createMemoryChecks(subscriptionCorrectness);
         if (createdMemoryChecks.length == Object.keys(subscriptionCorrectness).length && updatedSubscriptions.length == Object.keys(subscriptionCorrectness).length) {
           setSuccess(1);
-          await refreshPage();
+          if (refreshPage != null) {
+            await refreshPage();
+          }
         } else {
           setSuccess(-1);
         }
@@ -94,14 +100,14 @@ const SubmitButton = (props: SubmitButtonProps) => {
 
 const TableCell = ({ content, id, onChange, submitButtonProps }: { 
   content: string; 
-  id: string;
-  onChange?: () => void;
-  submitButtonProps: SubmitButtonProps
+  id?: string;
+  onChange?: (value: boolean | null) => void;
+  submitButtonProps?: SubmitButtonProps
 }) => {
   if (content === 'checkbox') {
     return <th key={id}><Checkbox onChange={onChange} /></th>
   } else if (content == 'submitButton') {
-    return <th key={'submit'}><SubmitButton correctNess={submitButtonProps.correctNess} memoryPieceIdToSubscriptionId={submitButtonProps.memoryPieceIdToSubscriptionId} createMemoryChecks={submitButtonProps.createMemoryChecks} refreshPage={submitButtonProps.refreshPage} /></th>
+    return <th key={'submit'}><SubmitButton correctNess={submitButtonProps?.correctNess} memoryPieceIdToSubscriptionId={submitButtonProps?.memoryPieceIdToSubscriptionId} createMemoryChecks={submitButtonProps?.createMemoryChecks} refreshPage={submitButtonProps?.refreshPage} /></th>
   } else {
     return <th key={id}>{content}</th>
   }
@@ -112,7 +118,7 @@ interface TableProps {
   memoryPiecesStr: string;
   // The according Subscription ids in the same order with memoryPiecesStr.
   memoryPieceIdToSubscriptionId: Record<string, string>;
-  createMemoryChecks: (correctNess: Record<string, number>) => Promise<{createdMemoryChecks: string[], updatedSubscriptions: string[]}>;
+  createMemoryChecks: (correctNess: Record<string, boolean>) => Promise<{createdMemoryChecks: string[], updatedSubscriptions: string[]}>;
   refreshPage: () => Promise<void>;
 }
 
@@ -127,10 +133,10 @@ export default function PracticeTable({ memoryPiecesStr, memoryPieceIdToSubscrip
   });
 
   headers.unshift('submitButton');
-  data.forEach(row => row.unshift('checkbox'));
+  data.forEach((row: string[]) => row.unshift('checkbox'));
 
-  const handleSelectOne = (memoryPieceId: string) => { return (value: boolean) => {
-      const correctNessCopy = {...correctNess};
+  const handleSelectOne = (memoryPieceId: string) => { return (value: boolean | null) => {
+      const correctNessCopy: Record<string, boolean | null> = {...correctNess};
       if (correctNessCopy[memoryPieceId] === true) {
         if (value === true) {
           return;
@@ -177,7 +183,7 @@ export default function PracticeTable({ memoryPiecesStr, memoryPieceIdToSubscrip
         </tr>
       </thead>
       <tbody>
-        {data && data.map((row, index) => {
+        {data && data.map((row: string[], index: number) => {
           const checkbox = row[0];
           const id = row[row.length - 1];
           const contents = row.slice(1, row.length - 1);
@@ -187,7 +193,7 @@ export default function PracticeTable({ memoryPiecesStr, memoryPieceIdToSubscrip
               content={checkbox} 
               onChange={handleSelectOne(id)}
             />
-            {contents.map((elem, i) => <td key={i}>{elem}</td>)}
+            {contents.map((elem: string, i: number) => <td key={i}>{elem}</td>)}
             <td className="w-24">
               <Link
                 href={`/memorypiece/${id}`}

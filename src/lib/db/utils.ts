@@ -9,7 +9,11 @@ if (!MONGODB_URI) {
   throw new Error("Please define the DATABASE_URL environment variable.");
 }
 
-const cached = global.mongoose || {conn: null, promise: null};
+function getMongoose(global: any) {
+  return global.mongoose;
+}
+
+const cached: any = getMongoose(global) || {conn: null, promise: null};
 
 // Connect to MongoDB
 export async function connectDB() {
@@ -22,5 +26,5 @@ export async function connectDB() {
 }
 
 if (typeof global != 'undefined') {
-  global.mongoose = cached;
+  Object.defineProperty(global, 'mongoose', {value: cached, writable: false});
 }
