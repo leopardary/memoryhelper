@@ -3,8 +3,8 @@ import { useTransition, useState } from "react";
 
 interface SubscribeButtonProps {
   memoryPieceIds: Record<string, boolean>;
-  findOrCreateSubscriptionsInBatch: (memoryPieceIds: string[]) => Promise<[any]>;
-  removeSubscriptionsInBatch: (memoryPieceIds: string[]) => Promise<[any]>;
+  findOrCreateSubscriptionsInBatch: (memoryPieceIds: string[]) => Promise<[string]>;
+  removeSubscriptionsInBatch: (memoryPieceIds: string[]) => Promise<[string]>;
 }
 
 export default function SubscribeButton({ memoryPieceIds, findOrCreateSubscriptionsInBatch, removeSubscriptionsInBatch }: SubscribeButtonProps) {

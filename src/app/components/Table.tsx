@@ -37,8 +37,8 @@ interface TableProps {
   memoryPiecesStr: string;
   subscriptions: Record<string, boolean>;
   loggedIn: boolean;
-  findOrCreateSubscriptionsInBatch: (memoryPieceIds: string[]) => Promise<[any]>;
-  removeSubscriptionsInBatch: (memoryPieceIds: string[]) => Promise<[any]>;
+  findOrCreateSubscriptionsInBatch: (memoryPieceIds: string[]) => Promise<string[]>;
+  removeSubscriptionsInBatch: (memoryPieceIds: string[]) => Promise<string[]>;
 }
 
 export default function Table({ memoryPiecesStr, subscriptions, loggedIn, findOrCreateSubscriptionsInBatch, removeSubscriptionsInBatch }: TableProps) {

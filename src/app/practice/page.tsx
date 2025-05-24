@@ -6,7 +6,7 @@ import { createMemoryCheckInBatch } from '@/lib/db/api/memory-check';
 import PracticeTable from '@/app/components/PracticeTable';
 import { redirect } from 'next/navigation';
 
-const createMemoryChecks = async (memoryCheckResults: any) => {
+const createMemoryChecks = async (memoryCheckResults: Record<string, number>) => {
   'use server'
   const memoryCheckInputs = Object.keys(memoryCheckResults).map(subscriptionId => {
     if (memoryCheckResults[subscriptionId] != null) {

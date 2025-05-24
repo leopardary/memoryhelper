@@ -15,10 +15,10 @@ export async function processSeedData() {
     }
     // Create or find the subject
     for (const moduleKey of Object.keys(data)) {
-      const module = data[moduleKey];
-      const moduleTitle = Object.keys(module)[0];
+      const moduleObject = data[moduleKey];
+      const moduleTitle = Object.keys(moduleObject)[0];
 
-    const moduleData = module[moduleTitle];
+    const moduleData = moduleObject[moduleTitle];
     const moduleRecord = await findOrCreateUnit({
       title: moduleTitle,
       type: moduleData.type,
@@ -60,7 +60,7 @@ export async function processSeedData() {
       const description = data['组词']?.join(', ') + '##' + data['造句']?.join('/ ');
       const imageUrls = data['imageUrls'];
       const labels = data['labels'];
-      const characterRecord = await findOrCreateMemoryPiece({
+      await findOrCreateMemoryPiece({
         content,
         description,
         imageUrls,

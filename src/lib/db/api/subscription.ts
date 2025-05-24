@@ -130,6 +130,7 @@ export async function findOrCreateSubscriptionsInBatch(memoryPieceIds: string[])
       const record = await findOrCreateSubscription(initializeSubscription(subscription.memoryPieceId, subscription.userId));
       successfulSubscriptions.push(record._id.toString());
     } catch (error) {
+      console.error(error);
     }
   }
   return successfulSubscriptions;
@@ -146,6 +147,7 @@ export async function removeSubscriptionsInBatch(memoryPieceIds: string[]) {
       const record = await deleteSubscriptionForUserAndMemoryPiece(user._id.toString(), subscription.memoryPieceId);
       successfulDeletion.push(record._id.toString());
     } catch (error) {
+      console.error(error);
     }
   }
   return successfulDeletion;

@@ -21,7 +21,7 @@ export default async function Home({
   const subjects = await getSubjectsWithPagination(currentPage, pageSize, heroItemCount);
   return (
     <div className="flex flex-col items-center">
-      {currentPage === 1 && (<HeroCard imageSrcs={subjects[0].imageUrls} imageAlt={subjects[0].title} title={subjects[0].title} description={subjects[0].description} href={"/subject/" + subjects[0].id} buttonContent={"Check it out"} />)}
+      {currentPage === 1 && subjects.length > 0 && (<HeroCard imageSrcs={subjects[0].imageUrls} imageAlt={subjects[0].title} title={subjects[0].title} description={subjects[0].description} href={"/subject/" + subjects[0].id} buttonContent={"Check it out"} />)}
 
       <div className="my-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {(currentPage === 1 ? subjects.slice(1) : subjects).map((subject) => (

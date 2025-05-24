@@ -6,7 +6,7 @@ interface MemoryPieceProps {
   memoryPiece: MemoryPiece
 }
 export default function MemoryPieceCard({ memoryPiece }: {memoryPiece: MemoryPieceProps}) {
-  const { id, description, content, subject, unit, labels, imageUrls } = memoryPiece;
+  const { id, description, content, labels, imageUrls } = memoryPiece;
   return (
     <Link
       href={"/memorypiece/" + id}

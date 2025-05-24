@@ -112,7 +112,7 @@ interface TableProps {
   memoryPiecesStr: string;
   // The according Subscription ids in the same order with memoryPiecesStr.
   memoryPieceIdToSubscriptionId: Record<string, string>;
-  createMemoryChecks: (correctNess: any) => Promise<{createdMemoryChecks: string[], updatedSubscriptions: string[]}>;
+  createMemoryChecks: (correctNess: Record<string, number>) => Promise<{createdMemoryChecks: string[], updatedSubscriptions: string[]}>;
   refreshPage: () => Promise<void>;
 }
 

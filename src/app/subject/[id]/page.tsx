@@ -8,7 +8,6 @@ export default async function Subject({params}) {
   const units = await getDirectChildrenBySubject(subjectId)
   const subject = await getSubject(subjectId);
   const breadcrumbs = [{url: `/subject/${subjectId}`, name: subject?.title}]
-  const imageUrls = subject?.imageUrls;
   return <>
   <Breadcrumbs segments={breadcrumbs}/>
   <div className="divider"></div>
