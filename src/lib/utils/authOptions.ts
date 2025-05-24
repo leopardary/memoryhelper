@@ -35,6 +35,7 @@ export const authOptions: NextAuthOptions = {
       return false;
     }
   },
+  secret: env.SECRET
   // events: {
   //   async signIn({ user }) {
   //     await mergeAnonymousCartIntoUserCart(user.id);

@@ -5,6 +5,7 @@ const envSchema = zod.object({
   GOOGLE_CLIENT_ID: zod.string().nonempty(),
   GOOGLE_CLIENT_SECRET: zod.string().nonempty(),
   IMAGE_BASE_PATH: zod.string().nonempty(),
+  SECRET: zod.string().nonempty()
 });
 
 export const env = envSchema.parse(process.env);
