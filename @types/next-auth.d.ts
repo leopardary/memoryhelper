@@ -15,3 +15,5 @@ declare module "next-auth/jwt" {
     id: string;
   }
 }
+
+export declare module 'next-auth' {}
