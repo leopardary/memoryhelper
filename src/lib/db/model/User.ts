@@ -9,6 +9,7 @@ if (!mongoose.models.User) {
       name: { type: String, required: true },
       email: { type: String, required: true, unique: true },
       imageUrl: { type: String },
+      password: { type: String }
     },
     { timestamps: true, collection: 'users' }
   );

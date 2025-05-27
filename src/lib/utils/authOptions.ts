@@ -1,7 +1,9 @@
 import { env } from "@/lib/env";
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { getUserByEmail, findOrCreateUser } from "@/lib/db/api/user"
+import bcrypt from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -9,7 +11,31 @@ export const authOptions: NextAuthOptions = {
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     }),
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        // TODO: Replace with your user fetching logic
+        if (credentials == null || credentials.email == null || credentials.email.length == 0) {
+          return null;
+        }
+        const user = await getUserByEmail(credentials.email);
+        if (user == null || user.password == null) {
+          return null;
+        }
+        if (user && await bcrypt.compare(credentials.password, user.password)) {
+          return { id: user.id, name: user.name, email: user.email, imageUrl: user.imageUrl };
+        }
+        return null;
+      },
+    }),
   ],
+  pages: {
+    signIn: "/auth/signin",
+  },
   callbacks: {
     async jwt({token, user}) {
       if (user && user.email) {

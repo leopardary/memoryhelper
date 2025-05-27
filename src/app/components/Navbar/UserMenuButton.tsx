@@ -2,6 +2,7 @@
 import { Session } from "next-auth";
 import profilePicPlaceHolder from "@public/images/user/profile-pic-placeholder.jpg";
 import Image from "next/image";
+import ClientLink from '@/app/components/ClientLink'
 import { signIn, signOut } from "next-auth/react";
 
 const TripleDots = () => (<svg
@@ -42,15 +43,27 @@ export default function UserMenuButton({ session }: UserMenuButtonProps) {
         tabIndex={0}
         className="dropdown-content menu rounded-box menu-sm z-30 mt-3 w-52 bg-base-100 p-2 shadow"
       >
-        <li>
+        
           {user ? (
+            <li>
             <button onClick={() => signOut({ callbackUrl: "/" })}>
               Sign Out
             </button>
+            </li>
           ) : (
-            <button onClick={() => signIn()}>Sign In</button>
+            <>
+              <li key='gmail'>
+                <button onClick={() => signIn("google", { callbackUrl: "/" })}>Sign In with Google</button>
+              </li>
+              <li key='email'>
+                <ClientLink href="/auth/signin" className="text-sm normal-case" text="Sign In with Account" />
+              </li>
+              <div className="divider">or</div>
+              <li key='signup'>
+                <ClientLink href="/auth/signup" className="text-sm normal-case" text="Create Account" />
+              </li>
+            </>
           )}
-        </li>
       </ul>
     </div>
   );

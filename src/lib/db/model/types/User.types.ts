@@ -5,6 +5,7 @@ export interface UserProps {
   name: string;
   email: string;
   imageUrl?: string;
+  password?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
