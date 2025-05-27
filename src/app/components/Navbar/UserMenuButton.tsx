@@ -53,7 +53,9 @@ export default function UserMenuButton({ session }: UserMenuButtonProps) {
           ) : (
             <>
               <li key='gmail'>
+                <div className="text-sm normal-case" >
                 <button onClick={() => signIn("google", { callbackUrl: "/" })}>Sign In with Google</button>
+                </div>
               </li>
               <li key='email'>
                 <ClientLink href="/auth/signin" className="text-sm normal-case" text="Sign In with Account" />
