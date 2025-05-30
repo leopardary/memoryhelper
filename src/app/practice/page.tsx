@@ -2,20 +2,13 @@ import { findMemoryPiecesInBatch } from "@/lib/db/api/memory-piece";
 import { getSubscriptionsDueToCheckForUser, processSubscriptions } from "@/lib/db/api/subscription";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/utils/authOptions";
-import { createMemoryCheckInBatch, normalizeScore } from '@/lib/db/api/memory-check';
+import { createMemoryCheckInBatch } from '@/lib/db/api/memory-check';
 import PracticeTable from '@/app/components/PracticeTable';
 import { redirect } from 'next/navigation';
 
 const createMemoryChecks = async (memoryCheckResults: Record<string, boolean>) => {
   'use server'
-  const memoryCheckInputs: {subscription: string, score: number}[] = [];
-  for (const subscriptionId of Object.keys(memoryCheckResults)) {
-    if (memoryCheckResults[subscriptionId] != null) {
-      const score = await normalizeScore(memoryCheckResults[subscriptionId]);
-      memoryCheckInputs.push({subscription: subscriptionId, score});
-    }
-  }
-  const createdMemoryChecks = await createMemoryCheckInBatch(memoryCheckInputs);
+  const createdMemoryChecks = await createMemoryCheckInBatch(Object.keys(memoryCheckResults).map(subscription => {return {subscription: subscription, score:memoryCheckResults[subscription]};}));
   const updatedSubscriptions = await processSubscriptions(Object.keys(memoryCheckResults));
   return {
     createdMemoryChecks, 
