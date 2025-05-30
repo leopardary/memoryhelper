@@ -27,7 +27,13 @@ export async function deleteMemoryCheck(id: string) {
   return MemoryCheck.findByIdAndDelete(id);
 }
 
-export async function createMemoryCheckInBatch(data: CreateMemoryCheckInput[]) {
+interface MemoryCheckProps {
+  subscription: string;
+  // if number, betweeon 0 - 100.
+  score: number | boolean;
+}
+
+export async function createMemoryCheckInBatch(data: MemoryCheckProps[]) {
   await connectDB();
   const memoryChecks = [];
   for (const memoryCheck of data) {
