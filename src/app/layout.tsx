@@ -4,6 +4,9 @@ import Navbar from "@/app/components/Navbar/Navbar";
 import Footer from "@/app/components/Footer";
 import "@/app/globals.css";
 import SessionProvider from "@/app/SessionProvider";
+import {ColorsThemeProvider} from '@/providers/colors-theme-provider'
+import {ThemeProvider} from '@/providers/theme-provider'
+import { cn } from '@/app/components/Dashboard/utils'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,18 +29,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html suppressHydrationWarning lang="en">
       <link rel="icon" href="/favicon.png"
   type="image/png"
   sizes="32x32"
 />
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={cn(`${geistSans.variable} ${geistMono.variable} w-full min-h-svh relative bg-background antialiased`)}
       >
         <SessionProvider>
+          <ThemeProvider>
+            <ColorsThemeProvider>
           <Navbar />
           <main className="p-4 max-w-7xl m-auto min-w-[300px]">{children}</main>
           <Footer />
+          </ColorsThemeProvider>
+          </ThemeProvider>
         </SessionProvider>
       </body>
     </html>

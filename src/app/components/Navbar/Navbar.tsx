@@ -6,6 +6,10 @@ import { authOptions } from "@/lib/utils/authOptions";
 import { getServerSession } from "next-auth/next";
 import ClientLink from '@/app/components/ClientLink'
 import '@/app/components/styles/Navbar.scss'
+import { ThemeColorToggler } from '@/components/theme-color-toggle'
+import { ThemeModeToggler } from '@/components/theme-mode-toggle'
+import { ThemeRadiusToggler } from '@/components/theme-radius-toggle'
+import {Button} from '@/app/components/button'
 
 const Logo = () => (<div className="flex-1">
   <Link href="/" className="btn btn-ghost text-xl normal-case">
@@ -31,6 +35,12 @@ export default async function Navbar() {
       <div className="navbar max-w-7xl m-auto flex-col sm:flex-row gap-2">
         <Logo />
         <div className="flex flex-row gap-2 place-items-center">
+          <ThemeModeToggler />
+        <ThemeColorToggler />
+        <ThemeRadiusToggler />
+        <div>
+        <Button variant="default" size="default">This is a dynamic theme btn</Button>
+      </div>
           {session && (
             <div className="dropdown dropdown-bottom dropdown-end">
               <button className="btn btn-circle notification-button" popoverTarget="notificationActions">
@@ -40,6 +50,7 @@ export default async function Navbar() {
                 popover="auto" id="notificationActions">
                 <li><ClientLink href="/review" className="text-sm normal-case" text="Review" /></li>
                 <li><ClientLink href="/practice" className="text-sm normal-case" text="Practice" /></li>
+                <li><ClientLink href="/performance" className="text-sm normal-case" text="Performance" /></li>
               </ul>
             </div>
           )}
