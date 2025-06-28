@@ -11,12 +11,11 @@ import { ThemeModeToggler } from '@/components/theme-mode-toggle'
 import { ThemeRadiusToggler } from '@/components/theme-radius-toggle'
 import {Button} from '@/app/components/button'
 
-const Logo = () => (<div className="flex-1">
-  <Link href="/" className="btn btn-ghost text-xl normal-case">
-    <Image src={logo} height={40} width={40} alt="MemoryHelper logo" />
+const Logo = () => (
+  <Link href="/" className="flex flex-row text-xl items-center">
+    <Image src={logo} alt="MemoryHelper logo" className="mr-3 flex-none w-10 h-10"/>
     MemoryHelper
-  </Link>
-</div>);
+  </Link>);
 
 const BellIcon = () => (        
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" aria-label="Notifications">
@@ -31,16 +30,13 @@ export default async function Navbar() {
   const session = await 
   getServerSession(authOptions);
   return (
-    <div className="bg-base-100">
-      <div className="navbar max-w-7xl m-auto flex-col sm:flex-row gap-2">
+      <div className="max-w-7xl m-auto flex flex-col sm:flex-row gap-2">
         <Logo />
         <div className="flex flex-row gap-2 place-items-center">
           <ThemeModeToggler />
-        <ThemeColorToggler />
-        <ThemeRadiusToggler />
-        <div>
-        <Button variant="default" size="default">This is a dynamic theme btn</Button>
-      </div>
+          <ThemeColorToggler />
+          <ThemeRadiusToggler />
+          <Button>This is a dynamic theme btn</Button>
           {session && (
             <div className="dropdown dropdown-bottom dropdown-end">
               <button className="btn btn-circle notification-button" popoverTarget="notificationActions">
@@ -57,6 +53,5 @@ export default async function Navbar() {
           <UserMenuButton session={session} />
         </div>
       </div>
-    </div>
   );
 }
