@@ -40,10 +40,10 @@ export default function RootLayout({
         <SessionProvider>
           <ThemeProvider>
             <ColorsThemeProvider>
-          <Navbar />
-          <main className="p-4 max-w-7xl m-auto min-w-[300px]">{children}</main>
-          <Footer />
-          </ColorsThemeProvider>
+              <Navbar />
+              <main className="p-4 max-w-7xl m-auto min-w-[300px]">{children}</main>
+              <Footer />
+            </ColorsThemeProvider>
           </ThemeProvider>
         </SessionProvider>
       </body>
