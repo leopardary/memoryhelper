@@ -14,7 +14,7 @@ import {
 } from '@heroicons/react/24/outline'
 
 const Logo = () => (
-  <Link href="/" className="flex flex-row text-xl items-center">
+  <Link href="/" className="flex flex-row text-xl items-center font-serif">
     <Image src={logo} alt="MemoryHelper logo" className="mr-3 flex-none w-10 h-10"/>
     MemoryHelper
   </Link>);
