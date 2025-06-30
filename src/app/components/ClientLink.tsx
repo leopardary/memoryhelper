@@ -14,7 +14,7 @@ interface ClientLinkProps {
   className: string;
   text: string;
   children?: ReactNode;
-  icon: ClientLinkIconProps;
+  icon?: ClientLinkIconProps;
 }
 
 export default function ClientLink (link: ClientLinkProps) {
