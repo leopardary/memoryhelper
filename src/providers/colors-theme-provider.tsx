@@ -3,10 +3,10 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { useTheme, type ThemeProviderProps } from 'next-themes'
 import { useMounted } from '@/hooks/use-mounted'
-import { ThemeColors, ThemeColorStateParams, ThemeRadius } from '@/types/theme'
+import { ThemeColors, ThemeColorStateParams, ThemeRadius } from '@/lib/theme/types/theme'
 import setGlobalColorTheme from '@/lib/theme/global-color-theme'
-import { getSavedThemeColor } from '@/lib/theme/get-saved-theme-color'
-import { getSavedThemeRadius } from '@/lib/theme/get-saved-theme-radius'
+import { getSavedThemeColor } from '@/lib/theme/localStorageGetters/get-saved-theme-color'
+import { getSavedThemeRadius } from '@/lib/theme/localStorageGetters/get-saved-theme-radius'
 
 const ThemeContext = createContext<ThemeColorStateParams>({} as ThemeColorStateParams)
 

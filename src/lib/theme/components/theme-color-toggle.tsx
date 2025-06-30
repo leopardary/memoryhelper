@@ -4,7 +4,7 @@ import * as React from 'react'
 import { useThemeContext } from '@/providers/colors-theme-provider'
 import { useTheme } from 'next-themes'
 
-import { ThemeColors } from '@/types/theme'
+import { ThemeColors } from '@/lib/theme/types/theme'
 import {
   Select,
   SelectContent,
