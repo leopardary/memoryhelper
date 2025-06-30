@@ -27,15 +27,17 @@ export default async function Navbar() {
   const session = await 
   getServerSession(authOptions);
   return (
-      <div className="max-w-7xl m-auto flex flex-col sm:flex-row gap-2">
+      <div className="max-w-7xl m-auto flex flex-col sm:flex-row gap-2 justify-between">
         <Logo />
         <div className="flex flex-row gap-2 place-items-center">
-          <ThemeModeToggler />
+          {/* <ThemeModeToggler />
           <ThemeColorToggler />
           <ThemeRadiusToggler />
-          <Button>This is a dynamic theme btn</Button>
-          {session && <Dropdown button={{icon: BellIcon}} popupOptions={[{ name: 'Review', description: 'Review the subscribed memory pieces', href: '/review', icon: RectangleStackIcon },
-  { name: 'Practice', description: 'Today\'s practice task', href: '/practice', icon: ClockIcon }, { name: 'Performance', description: 'Performance dashboard', href: '/performance', icon: ChartPieIcon }]}/>}
+          <Button>This is a dynamic theme btn</Button> */}
+          {session && <Dropdown button={{icon: <BellIcon className='h-6 w-6' />}} popupOptions={[
+            { name: 'Review', description: 'Review the subscribed memory pieces', href: '/review', icon: RectangleStackIcon },
+            { name: 'Practice', description: 'Today\'s practice task', href: '/practice', icon: ClockIcon }, 
+            { name: 'Performance', description: 'Performance dashboard', href: '/performance', icon: ChartPieIcon }]}/>}
           <UserMenuButton session={session} />
         </div>
       </div>

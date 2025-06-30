@@ -1,19 +1,28 @@
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import ClientLink from '@/app/components/ClientLink'
-import { FC } from 'react';
+import { FC, ReactElement } from 'react';
 
 // Reference：https://tailwindcss.com/plus/ui-blocks/marketing/elements/flyout-menus
 
 interface DropdownButton {
   title?: 'string'
-  icon?: FC;
+  icon?: ReactElement;
 }
 
+/**
+ * Options for the dropdown. 
+ * @param name  The title of the option. 
+ * @param description Brief description for this option, will be shown under the name.
+ * @param href  The url to go to if this is filled. This takes preference over `onClick`.
+ * @param onClick The eventHandler when user click on this option. Effective only when `href` is empty.
+ * @param icon  icon to show in front of the name if it is given.
+ */
 interface PopupOption {
   name: string,
   description?: string,
-  href: string,
+  href?: string,
+  onClick?: () => void,
   icon?: FC
 }
 
@@ -35,8 +44,8 @@ export default function Dropdown(props: DropdownProps) {
     <Popover className="relative">
       <PopoverButton className="inline-flex items-center gap-x-1 text-sm/6 font-semibold">
         {button.title && <span>{button.title}</span>}
-        {button.icon && <button.icon className="h-6 w-6" />}
-        <ChevronDownIcon aria-hidden="true" className="size-5" />
+        {button.icon}
+        <ChevronDownIcon aria-hidden="true" className="size-5 fill-muted-foreground" />
       </PopoverButton>
 
       <PopoverPanel
@@ -51,7 +60,7 @@ export default function Dropdown(props: DropdownProps) {
                   {item.icon && <item.icon aria-hidden="true" className="size-6 text-muted-foreground group-hover:text-primary" />}
                 </div>
                 <div>
-                  <ClientLink href={item.href} className="font-semibold text-foreground hover:underline" text={item.name}><span className="absolute inset-0" /></ClientLink>
+                  {item.href ? <ClientLink href={item.href} className="font-semibold text-foreground hover:underline" text={item.name}><span className="absolute inset-0" /></ClientLink> : <button className="font-semibold text-foreground hover:underline" onClick={item.onClick}>{item.name}<span className="absolute inset-0" /></button>}
                   <p className="mt-1 text-muted-foreground">{item.description}</p>
                 </div>
               </div>
