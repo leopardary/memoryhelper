@@ -51,7 +51,7 @@ export async function getSubjectCount() {
 export async function getSubjectsWithPagination(currentPage: number, pageSize: number, heroItemCount: number) {
   await connectDB();
   return Subject.find()
-    .sort({ _id: -1 })
+    .sort({ _id: 1 })
     .skip((currentPage - 1) * pageSize + (currentPage === 1 ? 0 : heroItemCount))
     .limit(pageSize + (currentPage === 1 ? heroItemCount : 0));
 }
