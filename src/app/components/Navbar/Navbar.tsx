@@ -5,10 +5,6 @@ import UserMenuButton from "@/app/components/Navbar/UserMenuButton";
 import { authOptions } from "@/lib/utils/authOptions";
 import { getServerSession } from "next-auth/next";
 import '@/app/components/styles/Navbar.scss'
-import { ThemeColorToggler } from '@/components/theme-color-toggle'
-import { ThemeModeToggler } from '@/components/theme-mode-toggle'
-import { ThemeRadiusToggler } from '@/components/theme-radius-toggle'
-import {Button} from '@/app/components/button'
 import Dropdown from '@/app/components/Dropdown'
 import {
   ChartPieIcon,
@@ -29,11 +25,7 @@ export default async function Navbar() {
   return (
       <div className="max-w-7xl m-auto flex flex-col sm:flex-row gap-2 justify-between">
         <Logo />
-        <div className="flex flex-row gap-2 place-items-center">
-          {/* <ThemeModeToggler />
-          <ThemeColorToggler />
-          <ThemeRadiusToggler />
-          <Button>This is a dynamic theme btn</Button> */}
+        <div className="flex flex-row gap-2 items-center">
           {session && <Dropdown button={{icon: <BellIcon className='h-6 w-6' />}} popupOptions={[
             { name: 'Review', description: 'Review the subscribed memory pieces', href: '/review', icon: RectangleStackIcon },
             { name: 'Practice', description: 'Today\'s practice task', href: '/practice', icon: ClockIcon }, 

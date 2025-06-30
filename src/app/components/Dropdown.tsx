@@ -41,7 +41,7 @@ interface DropdownProps {
 export default function Dropdown(props: DropdownProps) {
   const { button, popupOptions, quickActions } = props;
   return (
-    <Popover className="relative">
+    <Popover className="relative mt-1.5">
       <PopoverButton className="inline-flex items-center gap-x-1 text-sm/6 font-semibold">
         {button.title && <span>{button.title}</span>}
         {button.icon}
