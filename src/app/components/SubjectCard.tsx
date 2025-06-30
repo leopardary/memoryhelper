@@ -1,13 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { SubjectProps } from "@/lib/db/model/types/Subject.types";
+import Badge from '@/app/components/Badge'
 
 export default function SubjectCard({ subject }: { subject: SubjectProps }) {
   const { _id, title, description, imageUrls, labels } = subject;
   return (
     <Link
       href={"/subject/" + _id}
-      className="card w-full bg-base-100 hover:shadow-xl transition-shadow"
+      className="w-full m-2 bg-background hover:shadow-xl transition-shadow rounded-md md:rounded-lg hover:border-2"
     >
       <div className="m-4">
         <figure>
@@ -20,16 +21,16 @@ export default function SubjectCard({ subject }: { subject: SubjectProps }) {
           />
         </figure>
       </div>
-      <div className="card-body">
-        <h2 className="card-title">
+      <div className="mx-4 flex flex-col items-center">
+        {/* <h2 className="m-3 font-serif text-lg">
           {title}
-        </h2>
-        <p>{description}</p>
+        </h2> */}
         {labels != undefined && labels.length > 0 && <div className="flex flex-wrap gap-2 mt-2">
-          {labels.map((label, index) => (
-            <div key={index} className="badge badge-outline">{label}</div>
+          {labels.map((label) => (
+            <Badge text={label} key={label} />
           ))}
         </div>}
+        <p className="my-2 font-serif text-sm italic text-muted-foreground">{description}</p>
       </div>
     </Link>
   );

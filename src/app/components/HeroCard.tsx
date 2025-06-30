@@ -22,12 +22,12 @@ export function HeroCard(props: HeroCardProps) {
               alt={imageAlt}
               width={400}
               height={800}
-              className="w-full max-w-sm rounded-lg shadow-2xl"
+              className="w-full max-w-sm rounded-lg shadow-xl"
               priority
             />
-            <div className="m-2">
+            <div className="m-2 md:items-baseline">
               <h1 className="text-5xl font-bold font-serif">{title}</h1>
-              <p className="ml-2 py-6 text-muted-foreground">{description}</p>
+              <p className="ml-2 py-6 italic text-muted-foreground">{description}</p>
               {!isEmpty(buttonContent) && <Link
                 href={href}
                 className="btn-primary btn"
