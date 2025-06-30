@@ -1,4 +1,4 @@
-import { ThemeRadiusValues } from '@/constants/theme'
+import { ThemeRadiusValues } from '@/lib/theme/constants/theme'
 
 export type ThemeMode = 'light' | 'dark'
 

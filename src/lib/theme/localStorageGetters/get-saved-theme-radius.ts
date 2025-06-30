@@ -1,5 +1,5 @@
-import { ThemeRadiusValues } from '@/constants/theme'
-import { ThemeRadius } from '@/types/theme'
+import { ThemeRadiusValues } from '@/lib/theme/constants/theme'
+import { ThemeRadius } from '@/lib/theme/types/theme'
 
 export const getSavedThemeRadius = (): ThemeRadius => {
   if (typeof window === 'undefined') return ThemeRadiusValues.ZeroPointFive

@@ -1,5 +1,5 @@
-import { ThemeColorsNames } from '@/constants/theme'
-import { ThemeColors } from '@/types/theme'
+import { ThemeColorsNames } from '@/lib/theme/constants/theme'
+import { ThemeColors } from '@/lib/theme/types/theme'
 
 export const getSavedThemeColor = (): ThemeColors => {
   if (typeof window === 'undefined') return ThemeColorsNames.Blue

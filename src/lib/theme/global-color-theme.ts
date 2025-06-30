@@ -1,6 +1,6 @@
-import { themes } from '@/constants/theme'
+import { themes } from '@/lib/theme/constants/theme'
 
-import { ThemeColors, ThemeMode, ThemeRadius } from '@/types/theme'
+import { ThemeColors, ThemeMode, ThemeRadius } from '@/lib/theme/types/theme'
 
 export default function setGlobalColorTheme(
   themeMode: ThemeMode,

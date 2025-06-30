@@ -8,9 +8,9 @@ import Dropdown from "@/app/components/Dropdown";
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import { Button } from '@/app/components/button'
 import { useState, ReactElement } from 'react';
-import { ThemeColorToggler } from '@/components/theme-color-toggle'
-import { ThemeModeToggler } from '@/components/theme-mode-toggle'
-import { ThemeRadiusToggler } from '@/components/theme-radius-toggle'
+import { ThemeColorToggler } from '@/lib/theme/components/theme-color-toggle'
+import { ThemeModeToggler } from '@/lib/theme/components/theme-mode-toggle'
+import { ThemeRadiusToggler } from '@/lib/theme/components/theme-radius-toggle'
 
 interface UiSettingModalProps {
   modalOpen: boolean;
