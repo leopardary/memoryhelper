@@ -43,7 +43,7 @@ export default function Dropdown(props: DropdownProps) {
   return (
     <Popover className="relative mt-1.5">
       <PopoverButton className="inline-flex items-center gap-x-1 text-sm/6 font-semibold">
-        {button.title && <span>{button.title}</span>}
+        {button.title && <span className='font-semibold'>{button.title}</span>}
         {button.icon}
         <ChevronDownIcon aria-hidden="true" className="size-5 fill-muted-foreground" />
       </PopoverButton>
@@ -60,8 +60,8 @@ export default function Dropdown(props: DropdownProps) {
                   {item.icon && <item.icon aria-hidden="true" className="size-6 text-muted-foreground group-hover:text-primary" />}
                 </div>
                 <div>
-                  {item.href ? <ClientLink href={item.href} className="font-semibold text-foreground hover:underline" text={item.name}><span className="absolute inset-0" /></ClientLink> : <button className="font-semibold text-foreground hover:underline" onClick={item.onClick}>{item.name}<span className="absolute inset-0" /></button>}
-                  <p className="mt-1 text-muted-foreground">{item.description}</p>
+                  {item.href ? <ClientLink href={item.href} className="font-semibold text-foreground hover:underline font-semibold" text={item.name}><span className="absolute inset-0" /></ClientLink> : <button className="font-semibold text-foreground hover:underline" onClick={item.onClick}>{item.name}<span className="absolute inset-0" /></button>}
+                  <p className="mt-1 text-muted-foreground font-semibold">{item.description}</p>
                 </div>
               </div>
             ))}

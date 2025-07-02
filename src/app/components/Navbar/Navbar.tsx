@@ -15,7 +15,7 @@ import {
 
 const Logo = () => (
   <Link href="/" className="flex flex-row text-xl items-center font-serif">
-    <Image src={logo} alt="MemoryHelper logo" className="mr-3 flex-none w-10 h-10"/>
+    <Image src={logo} alt="MemoryHelper logo" className="m-3 flex-none w-10 h-10 rounded-md"/>
     MemoryHelper
   </Link>);
 
@@ -23,9 +23,9 @@ export default async function Navbar() {
   const session = await 
   getServerSession(authOptions);
   return (
-      <div className="max-w-7xl m-auto flex flex-col sm:flex-row gap-2 justify-between">
+      <div className="max-w-7xl m-auto flex flex-row gap-2 justify-between">
         <Logo />
-        <div className="flex flex-row gap-2 items-center">
+        <div className="m-3 flex flex-row gap-2 items-center">
           {session && <Dropdown button={{icon: <BellIcon className='h-6 w-6' />}} popupOptions={[
             { name: 'Review', description: 'Review the subscribed memory pieces', href: '/review', icon: RectangleStackIcon },
             { name: 'Practice', description: 'Today\'s practice task', href: '/practice', icon: ClockIcon }, 
