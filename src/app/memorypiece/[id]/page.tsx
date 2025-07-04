@@ -19,6 +19,8 @@ export default async function MemoryPiece({params}: {params: Promise<{id: string
   breadcrumbsSegments.push({name: memoryPiece.content, url: `/memorypiece/${memoryPiece.id}`});
   // prefix with the subject.
   breadcrumbsSegments.unshift({name: getSubjectTitle(memoryPiece), url: `/subject/${memoryPiece?.subject.id}`});
+  // prefix with home.
+  breadcrumbsSegments.unshift({name: 'Home', url: `/`});
 
   return <>
   <Breadcrumbs segments={breadcrumbsSegments}/>
