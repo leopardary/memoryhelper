@@ -11,7 +11,7 @@ export default async function Subject({params}: {params: Promise<{id: string}>})
   if (subject == null) {
     return <div>Subject not found.</div>
   }
-  const breadcrumbs = [{url: `/subject/${subjectId}`, name: subject.title}]
+  const breadcrumbs = [{url: `/`, name: 'Home'}, {url: `/subject/${subjectId}`, name: subject.title}]
   return <>
   <Breadcrumbs segments={breadcrumbs}/>
   <div className="divider"></div>

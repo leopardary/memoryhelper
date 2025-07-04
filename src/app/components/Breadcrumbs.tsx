@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ChevronRightIcon, HomeIcon } from '@heroicons/react/20/solid'
 
 interface PathSegmentProps {
   url: string;
@@ -6,17 +7,9 @@ interface PathSegmentProps {
 }
 
 const PathSegment = (props: PathSegmentProps) => (<li>
-  <Link href={props?.url}>
-    <svg
-      fill="none"
-      viewBox="0 0 24 24"
-      className="h-4 w-4 stroke-current">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
-    </svg>
+  <Link href={props?.url} className={`${props.name == 'Home' ? 'inline-flex' : 'flex'} items-center`}>
+  {props.name == 'Home' ? <HomeIcon className="size-4 fill-muted-foreground mr-1"/> :
+    <ChevronRightIcon className="size-4 fill-muted-foreground mr-1"/>}
     {props?.name}
   </Link>
 </li>)
@@ -27,12 +20,12 @@ export interface BreadcumbsProps {
 
 export default function Breadcrumbs(props: BreadcumbsProps) {
   return (
-    <div className="breadcrumbs text-sm">
-  <ul>
+    <nav className="flex px-5 py-3 text-gray-700 border border-gray-200 rounded-lg bg-background dark:text-gray-200 dark:border-gray-700" aria-label="Breadcrumb">
+  <ol className="inline-flex items-center space-x-1 rtl:space-x-reverse">
     {props && props.segments.map((segment: PathSegmentProps) => {
       return (<PathSegment key={segment.url} url={segment.url} name={segment.name} />);
       })}
-  </ul>
-</div>
+  </ol>
+</nav>
   );
 }

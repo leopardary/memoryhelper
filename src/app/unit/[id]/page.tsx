@@ -35,6 +35,8 @@ export default async function Unit({params}: {params: Promise<{id: string}>}) {
   breadcrumbsSegments.push({name: unit.title, url: `/unit/${unit.id}`});
   // prefix with the subject.
   breadcrumbsSegments.unshift({name: getSubjectTitle(unit), url: `/subject/${unit?.subject.id}`});
+  // prefix with home.
+  breadcrumbsSegments.unshift({name: 'Home', url: `/`});
   const unitChildren = getChildren(unit);
   const memoryPieces = getMemoryPieces(unit);
   const subscriptions: Record<string, boolean> = {};
