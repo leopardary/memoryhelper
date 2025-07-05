@@ -37,6 +37,7 @@ export default async function Unit({params}: {params: Promise<{id: string}>}) {
   breadcrumbsSegments.unshift({name: getSubjectTitle(unit), url: `/subject/${unit?.subject.id}`});
   // prefix with home.
   breadcrumbsSegments.unshift({name: 'Home', url: `/`});
+  // The unit has either childrern unit, or memoryPieces.
   const unitChildren = getChildren(unit);
   const memoryPieces = getMemoryPieces(unit);
   const subscriptions: Record<string, boolean> = {};
@@ -44,6 +45,7 @@ export default async function Unit({params}: {params: Promise<{id: string}>}) {
   let existingSubscriptions: string[] = [];
   if (isEmpty(unitChildren) && !isEmpty(memoryPieces) && session) {
     const user = session.user;
+    // Move to a global state
     existingSubscriptions = (await getSubscriptionsForUser(user.id)).map(subscription => subscription.memoryPieceId.toString());
     memoryPieces.forEach((memoryPiece: any) => {
       const currMemoryPieceId = memoryPiece._id.toString();
@@ -54,10 +56,10 @@ export default async function Unit({params}: {params: Promise<{id: string}>}) {
   }
   return <>
     <Breadcrumbs segments={breadcrumbsSegments}/>
-    <div className="divider">Details</div>
+    <div className="py-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600">Details</div>
     <ImageCarousel imageSrcs={unit.imageUrls} imageAlt='' />
-    {!isEmpty(unitChildren) && unitChildren.length > 0 &&<div className="divider">Sub Units</div>}
-    {!isEmpty(memoryPieces) && memoryPieces.length > 0 && <div className="divider">Memory Pieces</div>}
+    {!isEmpty(unitChildren) && unitChildren.length > 0 &&<div className="py-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600">Sub Units</div>}
+    {!isEmpty(memoryPieces) && memoryPieces.length > 0 && <div className="py-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600">Memory Pieces</div>}
   <div className="flex flex-col items-center">
   {!isEmpty(unitChildren) && unitChildren.length > 0 && <div className="my-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {unitChildren.map((unitChild: UnitProps) => (

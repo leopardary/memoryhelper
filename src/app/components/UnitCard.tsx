@@ -7,7 +7,7 @@ export default function UnitCard({ unit }: { unit: UnitProps }) {
   return (
     <Link
       href={"/unit/" + _id?.toString()}
-      className="card w-full bg-base-100 hover:shadow-xl transition-shadow"
+      className="w-full bg-background border-2 border-background hover:border-border hover:shadow-md transition-shadow rounded-md"
     >
       <div className="m-4">
         <figure>
@@ -20,11 +20,11 @@ export default function UnitCard({ unit }: { unit: UnitProps }) {
           />
         </figure>
       </div>
-      <div className="card-body">
-        <h2 className="card-title">
+      <div className="flex flex-col place-items-center">
+        <h2 className="text-gray-800 dark:text-gray-100">
           {title}
         </h2>
-        <p>{description}</p>
+        {/* <p className="text-muted-foreground">{description}</p> */}
       </div>
     </Link>
   );
