@@ -14,7 +14,7 @@ import {
 } from '@heroicons/react/24/outline'
 
 const Logo = () => (
-  <Link href="/" className="flex flex-row text-xl items-center font-serif">
+  <Link href="/" className="flex flex-row text-xl items-center">
     <Image src={logo} alt="MemoryHelper logo" className="m-3 flex-none w-10 h-10 rounded-md"/>
     MemoryHelper
   </Link>);
@@ -23,7 +23,7 @@ export default async function Navbar() {
   const session = await 
   getServerSession(authOptions);
   return (
-      <div className="max-w-7xl m-auto flex flex-row gap-2 justify-between">
+      <div className="max-w-7xl m-auto flex flex-row gap-2 justify-between font-serif">
         <Logo />
         <div className="m-3 flex flex-row gap-2 items-center">
           {session && <Dropdown button={{icon: <BellIcon className='h-6 w-6' />}} popupOptions={[
