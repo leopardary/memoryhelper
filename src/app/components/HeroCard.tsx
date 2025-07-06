@@ -14,6 +14,7 @@ export interface HeroCardProps {
 
 export function HeroCard(props: HeroCardProps) {
   const {imageSrcs, imageAlt, title, description, href, buttonContent} = props;
+  const [wordCombinations, sentenceSamples] = description?.split("##");
   return (
   <div className="w-full border-2 md:border-4 rounded-lg">
           <div className="m-2 md:m-4 flex flex-col md:flex-row items-center">
@@ -27,7 +28,8 @@ export function HeroCard(props: HeroCardProps) {
             />
             <div className="m-2 md:items-baseline">
               <h1 className="text-5xl font-bold font-serif">{title}</h1>
-              <p className="ml-2 py-6 italic text-muted-foreground">{description}</p>
+              <p className="ml-2 pt-6 italic text-muted-foreground">{wordCombinations}</p>
+              <p className="ml-2 pt-2 italic text-muted-foreground">{sentenceSamples}</p>
               {!isEmpty(buttonContent) && <Link
                 href={href}
                 className="btn-primary btn"
