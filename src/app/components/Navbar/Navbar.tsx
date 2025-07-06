@@ -26,7 +26,7 @@ export default async function Navbar() {
       <div className="max-w-7xl m-auto flex flex-row gap-2 justify-between font-serif">
         <Logo />
         <div className="m-3 flex flex-row gap-2 items-center">
-          {session && <Dropdown button={{icon: <BellIcon className='h-6 w-6' />}} popupOptions={[
+          {session && <Dropdown button={{icon: <BellIcon className='h-6 w-6 mr-6' />}} popupOptions={[
             { name: 'Review', description: 'Review the subscribed memory pieces', href: '/review', icon: RectangleStackIcon },
             { name: 'Practice', description: 'Today\'s practice task', href: '/practice', icon: ClockIcon }, 
             { name: 'Performance', description: 'Performance dashboard', href: '/performance', icon: ChartPieIcon }]}/>}
