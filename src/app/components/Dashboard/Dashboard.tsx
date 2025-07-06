@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/tabs';
 import { Button } from '@/app/components/button';
-import { Calendar, Clock } from 'lucide-react';
+import { ClockIcon, CalendarIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
 import { ProgressChart } from './ProgressChart';
 import { MemoryPieceGrid } from './MemoryPieceGrid';
 import { StatsOverview } from './StatsOverview';
@@ -72,7 +72,7 @@ const Dashboard = () => {
                 onClick={() => setTimeFilter(filter)}
                 className="flex items-center gap-2"
               >
-                {filter === 'today' ? <Clock className="w-4 h-4" /> : <Calendar className="w-4 h-4" />}
+                {filter === 'today' ? <ClockIcon className="w-4 h-4" /> : filter === 'week' ? <CalendarIcon className="w-4 h-4" /> : <CalendarDaysIcon className="w-4 h-4" />}
                 {getTimeFilterLabel(filter)}
               </Button>
             ))}

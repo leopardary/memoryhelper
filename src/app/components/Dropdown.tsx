@@ -1,5 +1,4 @@
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import ClientLink from '@/app/components/ClientLink'
 import { FC, ReactElement } from 'react';
 
