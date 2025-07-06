@@ -1,7 +1,7 @@
 import { MemoryPieceProps } from '@/lib/db/model/types/MemoryPiece.types';
 import Link from "next/link";
 import Image from "next/image";
-import {Badge} from '@/app/components/Badge';
+import {Badge} from '@/app/components/badge';
 
 export default function MemoryPieceCard({ memoryPiece }: {memoryPiece: MemoryPieceProps}) {
   const { _id, description, content, labels, imageUrls } = memoryPiece;

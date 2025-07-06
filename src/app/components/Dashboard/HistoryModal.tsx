@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './dialog';
-import { Badge } from '@/app/components/Badge';
+import { Badge } from '@/app/components/badge';
 import { MemoryPiece, mockData, getMemoryPieceDetails } from './mockData';
 import { format } from 'date-fns';
 import { Clock, Calendar, AlertCircle, CheckCircle } from 'lucide-react';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/card';
-import { Badge } from '@/app/components/Badge';
+import { Badge } from '@/app/components/badge';
 import { TestResult, getMemoryPieceDetails, MemoryPiece } from './mockData';
 import { Clock, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 

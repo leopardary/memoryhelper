@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { SubjectProps } from "@/lib/db/model/types/Subject.types";
-import {Badge} from '@/app/components/Badge'
+import {Badge} from '@/app/components/badge'
 
 export default function SubjectCard({ subject }: { subject: SubjectProps }) {
   const { _id, title, description, imageUrls, labels } = subject;
