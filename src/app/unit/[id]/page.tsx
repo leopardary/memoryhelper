@@ -61,14 +61,11 @@ export default async function Unit({params}: {params: Promise<{id: string}>}) {
     <ImageCarousel imageSrcs={unit.imageUrls} imageAlt='' />
     {!isEmpty(unitChildren) && unitChildren.length > 0 && <SectionDivider title={'Sub Units'} />}
     {!isEmpty(memoryPieces) && memoryPieces.length > 0 && <SectionDivider title={'Memory Pieces'}/>}
-  <div className="flex flex-col items-center">
-  {!isEmpty(unitChildren) && unitChildren.length > 0 && <div className="my-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {unitChildren.map((unitChild: UnitProps) => (
-          <UnitCard unit={unitChild} key={unitChild._id?.toString()} />
-        ))
-        }
-      </div>}
-       {!isEmpty(memoryPieces) && memoryPieces.length > 0 && <Table memoryPiecesStr={JSON.stringify(memoryPieces)} subscriptions={subscriptions} loggedIn={session != null} findOrCreateSubscriptionsInBatch={findOrCreateSubscriptionsInBatch} removeSubscriptionsInBatch={removeSubscriptionsInBatch}/>}
-  </div>
+    <div className="flex flex-col items-center">
+    {!isEmpty(unitChildren) && unitChildren.length > 0 && <div className="my-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {unitChildren.map((unitChild: UnitProps) => <UnitCard unit={unitChild} key={unitChild._id?.toString()} />)}
+        </div>}
+        {!isEmpty(memoryPieces) && memoryPieces.length > 0 && <Table memoryPiecesStr={JSON.stringify(memoryPieces)} subscriptions={subscriptions} loggedIn={session != null} findOrCreateSubscriptionsInBatch={findOrCreateSubscriptionsInBatch} removeSubscriptionsInBatch={removeSubscriptionsInBatch}/>}
+    </div>
   </>
 }
