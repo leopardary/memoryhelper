@@ -3,6 +3,8 @@ import Link from "next/link";
 import pickBy from 'lodash/pickBy';
 import { MemoryPieceProps } from '@/lib/db/model/types/MemoryPiece.types';
 import { useTransition, useState } from 'react';
+import { Button } from '@/app/components/button';
+import Badge from '@/app/components/Badge';
 
 const Checkbox = ({ onChange }: { onChange?: (value: boolean | null) => void }) => {
   const [isRight, setIsRight] = useState<boolean | null>(null);
@@ -73,7 +75,7 @@ const SubmitButton = (props: SubmitButtonProps) => {
     return <></>; 
   return (
     <>
-    <button className='btn' onClick={() => {
+    <Button className="w-16 h-8" onClick={() => {
       setSuccess(0);
       startTransition(async () => {
         const { createdMemoryChecks, updatedSubscriptions } = await createMemoryChecks(subscriptionCorrectness);
@@ -86,7 +88,7 @@ const SubmitButton = (props: SubmitButtonProps) => {
           setSuccess(-1);
         }
       })
-    }}>Submit</button>
+    }}>Submit</Button>
     {isPending && <span className="loading loading-spinner loading-md" />}
     {!isPending && success == 1 && (
       <span className='text-success'>Submitted successfully.</span>
@@ -98,18 +100,19 @@ const SubmitButton = (props: SubmitButtonProps) => {
   );
 }
 
-const TableCell = ({ content, id, onChange, submitButtonProps }: { 
+const TableCell = ({ content, id, onChange, submitButtonProps, isHeader }: { 
   content: string; 
   id?: string;
   onChange?: (value: boolean | null) => void;
-  submitButtonProps?: SubmitButtonProps
+  submitButtonProps?: SubmitButtonProps;
+  isHeader?: boolean;
 }) => {
   if (content === 'checkbox') {
-    return <th key={id}><Checkbox onChange={onChange} /></th>
+    return isHeader ? <th key={id} scope='col' className='px-6 py-3'><Checkbox onChange={onChange} /></th> : <td key={id} className='px-6 py-4'><Checkbox onChange={onChange} /></td>
   } else if (content == 'submitButton') {
     return <th key={'submit'}><SubmitButton correctNess={submitButtonProps?.correctNess} memoryPieceIdToSubscriptionId={submitButtonProps?.memoryPieceIdToSubscriptionId} createMemoryChecks={submitButtonProps?.createMemoryChecks} refreshPage={submitButtonProps?.refreshPage} /></th>
   } else {
-    return <th key={id}>{content}</th>
+    return isHeader ? <th key={id} scope='col' className='px-6 py-3'>{content}</th> : <td key={id} className='px-6 py-4'>{content}</td>
   }
 }
 
@@ -129,11 +132,11 @@ export default function PracticeTable({ memoryPiecesStr, memoryPieceIdToSubscrip
   
   const headers = ['content', 'description', 'label'];
   const data = memoryPieceIds.map((memoryPiece: MemoryPieceProps) => {
-    return [memoryPiece.content, memoryPiece.description?.split("##").join('  '), memoryPiece.labels, memoryPiece._id];
+    return {content: memoryPiece.content, description: memoryPiece.description?.split("##").join('  '), labels: memoryPiece.labels, id: memoryPiece._id};
   });
 
   headers.unshift('submitButton');
-  data.forEach((row: string[]) => row.unshift('checkbox'));
+  data.forEach((memoryPiece: any) => memoryPiece.checkbox = true);
 
   const handleSelectOne = (memoryPieceId: string) => { return (value: boolean | null) => {
       const correctNessCopy: Record<string, boolean | null> = {...correctNess};
@@ -168,39 +171,42 @@ export default function PracticeTable({ memoryPiecesStr, memoryPieceIdToSubscrip
 
   return (
   <>
-  <div className="w-full">
-    <table className="table w-full">
-      <thead>
-        <tr>
+  <div className="mt-2 relative overflow-x-auto shadow-md sm:rounded-lg border-2">
+    <table className="w-full text-sm text-center rtl:text-right">
+      <thead className="text-xs uppercase bg-muted">
+        <tr className="border-b">
           {headers.map((header: string) => (
             <TableCell 
               key={header} 
               content={header}
               submitButtonProps={{correctNess, memoryPieceIdToSubscriptionId, createMemoryChecks, refreshPage}}
+              isHeader={true}
             />
           ))}
           <th className="w-24"></th>
         </tr>
       </thead>
       <tbody>
-        {data && data.map((row: string[], index: number) => {
-          const checkbox = row[0];
-          const id = row[row.length - 1];
-          const contents = row.slice(1, row.length - 1);
-          return <tr key={index} className="hover:bg-base-200">
+        {data && data.map((memoryPiece: any, index: number) => {
+          const checkbox = memoryPiece.checkbox ? 'checkbox' : '';
+          const id = memoryPiece.id;
+          return <tr key={index} className="hover:bg-base-200 border-b">
             <TableCell 
               id={id} 
               content={checkbox} 
               onChange={handleSelectOne(id)}
             />
-            {contents.map((elem: string, i: number) => <td key={i}>{elem}</td>)}
+            <td key='content' className='px-6 py-3'>{memoryPiece.content}</td>
+            <td key='description' className='px-6 py-3'>{memoryPiece.description}</td>
+            <td key='labels' className='px-6 py-3'>{memoryPiece.labels.map((label:string) => <Badge key={label} text={label}/>)}</td>
             <td className="w-24">
-              <Link
-                href={`/memorypiece/${id}`}
-                className="btn btn-info btn-sm"
-              >
-                Details
-              </Link>
+              <Button className='h-8 w-16'>
+                              <Link
+                                href={`/memorypiece/${id}`}
+                                >
+                                Details
+                              </Link>
+                            </Button>
             </td>
           </tr>
         })}
