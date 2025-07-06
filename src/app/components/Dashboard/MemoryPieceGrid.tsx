@@ -1,6 +1,6 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from './card';
-import { Badge } from './badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/card';
+import { Badge } from '@/app/components/Badge';
 import { TestResult, getMemoryPieceDetails, MemoryPiece } from './mockData';
 import { Clock, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 
@@ -99,7 +99,7 @@ export const MemoryPieceGrid: React.FC<MemoryPieceGridProps> = ({
     return (
       <Card>
         <CardContent className="p-8 text-center">
-          <p className="text-gray-500">No memory pieces tested in the selected time period</p>
+          <p className="text-gray-500 dark:text-gray-400">No memory pieces tested in the selected time period</p>
         </CardContent>
       </Card>
     );
@@ -108,17 +108,17 @@ export const MemoryPieceGrid: React.FC<MemoryPieceGridProps> = ({
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-gray-900">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
           {limit ? 'Recent Memory Pieces' : 'All Memory Pieces'}
         </h3>
-        <p className="text-sm text-gray-500">{displayStats.length} pieces</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{displayStats.length} pieces</p>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {displayStats.map((stats: any) => (
           <Card 
             key={stats.memoryPiece.id}
-            className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:-translate-y-1 bg-white/80 backdrop-blur-sm border-0"
+            className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:-translate-y-1 bg-white/80 dark:bg-muted backdrop-blur-sm border-0"
             onClick={() => onMemoryPieceClick(stats.memoryPiece)}
           >
             <CardHeader className="pb-2">
@@ -145,19 +145,19 @@ export const MemoryPieceGrid: React.FC<MemoryPieceGridProps> = ({
             <CardContent className="pt-0">
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Avg Score:</span>
+                  <span className="text-gray-600 dark:text-gray-300">Avg Score:</span>
                   <span className="font-medium">{stats.avgScore.toFixed(1)}%</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Last Score:</span>
+                  <span className="text-gray-600 dark:text-gray-300">Last Score:</span>
                   <span className="font-medium">{stats.lastScore.toFixed(1)}%</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Tests:</span>
+                  <span className="text-gray-600 dark:text-gray-300">Tests:</span>
                   <span className="font-medium">{stats.totalTests}</span>
                 </div>
                 <div className="flex justify-between text-sm items-center">
-                  <span className="text-gray-600">Total Time:</span>
+                  <span className="text-gray-600 dark:text-gray-300">Total Time:</span>
                   <span className="font-medium flex items-center gap-1">
                     <Clock className="w-3 h-3" />
                     {formatTime(stats.totalTime)}

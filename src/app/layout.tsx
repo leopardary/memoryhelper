@@ -6,7 +6,7 @@ import "@/app/globals.css";
 import SessionProvider from "@/app/SessionProvider";
 import {ColorsThemeProvider} from '@/providers/colors-theme-provider'
 import {ThemeProvider} from '@/providers/theme-provider'
-import { cn } from '@/app/components/Dashboard/utils'
+import { cn } from '@/app/components/utils'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

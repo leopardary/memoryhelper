@@ -1,8 +1,8 @@
 'use client'
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from './card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs';
-import { Button } from '../button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/tabs';
+import { Button } from '@/app/components/button';
 import { Calendar, Clock } from 'lucide-react';
 import { ProgressChart } from './ProgressChart';
 import { MemoryPieceGrid } from './MemoryPieceGrid';
@@ -60,8 +60,8 @@ const Dashboard = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Performance</h1>
-            <p className="text-gray-600 mt-1">Track your memory piece performance and practice history</p>
+            <h1 className="text-3xl font-bold">Performance</h1>
+            <p className="mt-1">Track your memory piece performance and practice history</p>
           </div>
           
           <div className="flex gap-2">
