@@ -2,7 +2,9 @@
 import Link from "next/link";
 import { MemoryPieceProps } from '@/lib/db/model/types/MemoryPiece.types';
 import SubscribeButton from '@/app/components/SubscribeButton'
+import { Button } from '@/app/components/button'
 import { useState } from 'react';
+import Badge from '@/app/components/Badge';
 
 const Checkbox = ({ checked, onChange }: { checked?: boolean, onChange?: () => void }) => (
   <label>
@@ -20,16 +22,17 @@ const Checkbox = ({ checked, onChange }: { checked?: boolean, onChange?: () => v
   </label>
 );
 
-const TableCell = ({ content, id, checked, onChange }: { 
+const TableCell = ({ content, id, checked, onChange, isHeader }: { 
   content: string; 
   id?: string;
   checked?: boolean;
   onChange?: () => void;
+  isHeader?: boolean;
 }) => {
   if (content === 'checkbox') {
-    return <th key={id}><Checkbox checked={checked} onChange={onChange} /></th>
+    return isHeader ? <th key={id} scope='col' className='px-6 py-3'><Checkbox checked={checked} onChange={onChange} /></th> : <td key={id} className='px-6 py-4'><Checkbox checked={checked} onChange={onChange} /></td>
   } else {
-    return <th key={id}>{content}</th>
+    return isHeader ? <th key={id} scope='col' className='px-6 py-3'>{content}</th> : <td key={id} className='px-6 py-4'>{content}</td>
   }
 }
 
@@ -47,12 +50,12 @@ export default function Table({ memoryPiecesStr, subscriptions, loggedIn, findOr
   
   const headers = ['content', 'description', 'label'];
   const data = memoryPieceIds.map((memoryPiece: MemoryPieceProps) => {
-    return [memoryPiece.content, memoryPiece.description?.split("##").join('  '), memoryPiece.labels, memoryPiece._id];
+    return {content: memoryPiece.content, description: memoryPiece.description?.split("##").join('  '), labels: memoryPiece.labels, id: memoryPiece._id};
   });
 
   if (loggedIn) {
     headers.unshift('checkbox');
-    data.forEach((row: string[]) => row.unshift('checkbox'));
+    data.forEach((memoryPiece: any) => memoryPiece.checkbox = true);
   }
 
   const handleSelectAll = () => {
@@ -82,41 +85,45 @@ export default function Table({ memoryPiecesStr, subscriptions, loggedIn, findOr
   return (
   <>
   {loggedIn && <SubscribeButton memoryPieceIds={selected} findOrCreateSubscriptionsInBatch={findOrCreateSubscriptionsInBatch} removeSubscriptionsInBatch={removeSubscriptionsInBatch} />}
-  <div className="w-full">
-    <table className="table w-full">
-      <thead>
-        <tr>
+  <div className="mt-2 relative overflow-x-auto shadow-md sm:rounded-lg border-2">
+    <table className="w-full text-sm text-center rtl:text-right">
+      <thead className="text-xs uppercase bg-muted">
+        <tr className="border-b">
           {headers.map((header: string) => (
             <TableCell 
               key={header} 
               content={header} 
               checked={header === 'checkbox' ? getHeaderCheckboxState() : undefined}
               onChange={header === 'checkbox' ? handleSelectAll : undefined}
+              isHeader={true}
             />
           ))}
+          {/* column for Details buttons */}
           <th className="w-24"></th>
         </tr>
       </thead>
       <tbody>
-        {data && data.map((row: string[], index: number) => {
-          const checkbox = row[0];
-          const id = row[row.length - 1];
-          const contents = row.slice(1, row.length - 1);
-          return <tr key={index} className="hover:bg-base-200">
+        {data && data.map((memoryPiece: any, index: number) => {
+          const checkbox = memoryPiece.checkbox ? 'checkbox' : '';
+          const id = memoryPiece.id;
+          return <tr key={index} className="hover:bg-base-200 border-b">
             <TableCell 
               id={id} 
               content={checkbox} 
               checked={selected[id]}
               onChange={() => handleSelectOne(id)}
             />
-            {contents.map((elem, i) => <td key={i}>{elem}</td>)}
+            <td key="content" className='px-6 py-3 font-bold'>{memoryPiece.content}</td>
+            <td key="description" className='px-6 py-3'>{memoryPiece.description}</td>
+            <td key="labels" className='px-6 py-3'>{memoryPiece.labels.map((label:string) => <Badge key={label} text={label}/>)}</td>
             <td className="w-24">
-              <Link
-                href={`/memorypiece/${id}`}
-                className="btn btn-info btn-sm"
-              >
-                Details
-              </Link>
+              <Button>
+                <Link
+                  href={`/memorypiece/${id}`}
+                  >
+                  Details
+                </Link>
+              </Button>
             </td>
           </tr>
         })}
