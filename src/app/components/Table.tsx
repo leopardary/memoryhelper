@@ -117,7 +117,7 @@ export default function Table({ memoryPiecesStr, subscriptions, loggedIn, findOr
             <td key="description" className='px-6 py-3'>{memoryPiece.description}</td>
             <td key="labels" className='px-6 py-3'>{memoryPiece.labels.map((label:string) => <Badge key={label} text={label}/>)}</td>
             <td className="w-24">
-              <Button>
+              <Button className='h-8 w-16'>
                 <Link
                   href={`/memorypiece/${id}`}
                   >
