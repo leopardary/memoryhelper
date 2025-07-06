@@ -1,28 +1,24 @@
 export default function Footer() {
   return (
-    <footer className="bg-neutral p-10 text-neutral-content">
-      <div className="footer m-auto max-w-7xl flex flex-row justify-between">
-        <div>
-          <span className="footer-title">Services</span>
-          <a className="link-hover link">Branding</a>
-          <a className="link-hover link">Design</a>
-          <a className="link-hover link">Marketing</a>
-          <a className="link-hover link">Advertisement</a>
-        </div>
-        <div>
-          <span className="footer-title">Company</span>
-          <a className="link-hover link">About us</a>
-          <a className="link-hover link">Contact</a>
-          <a className="link-hover link">Jobs</a>
-          <a className="link-hover link">Press kit</a>
-        </div>
-        <div>
-          <span className="footer-title">Legal</span>
-          <a className="link-hover link">Terms of use</a>
-          <a className="link-hover link">Privacy policy</a>
-          <a className="link-hover link">Cookie policy</a>
-        </div>
-      </div>
-    </footer>
+<footer className="bg-gray-100 rounded-lg shadow-sm m-4 dark:bg-gray-800">
+    <div className="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
+      <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2025 <a href="#" className="hover:underline">MemoryHelper™</a>. All Rights Reserved.
+    </span>
+    <ul className="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 dark:text-gray-400 sm:mt-0">
+        <li>
+            <a href="#" className="hover:underline me-4 md:me-6">About</a>
+        </li>
+        <li>
+            <a href="#" className="hover:underline me-4 md:me-6">Privacy Policy</a>
+        </li>
+        <li>
+            <a href="#" className="hover:underline me-4 md:me-6">Licensing</a>
+        </li>
+        <li>
+            <a href="#" className="hover:underline">Contact</a>
+        </li>
+    </ul>
+    </div>
+</footer>
   );
 }
