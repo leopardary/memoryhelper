@@ -21,9 +21,32 @@ export async function getSubscription(id: string) {
 export async function getSubscriptionsForUser(userId: string) {
   try {
     await connectDB();
-    return await Subscription.find({ userId: userId });
+    return await Subscription.find({ userId: userId }).populate('memoryChecks').populate('memoryPiece');
   } catch (error) {
     console.error(`Subscription for user ${userId} Not Found:`, error);
+    throw error;
+  }
+}
+
+/**
+ * @param userId The id for the current user.
+ * @returns Object for all subscriptions for the user, with the subscriptionId as the key, and `subscription` field to contain the subscription, `memoryChecks` field to contain all according memoryChecks, and `memoryPiece` field to contain the memoryPiece.
+ */
+export async function getSubscriptionWithMemoryPiecesAndChecksForUser(userId: string) {
+  try {
+    await connectDB();
+    const subscriptions = await getSubscriptionsForUser(userId);
+    const subscriptionRecords = subscriptions.reduce((res, subscription) => {
+      res[subscription.id]={};
+      res[subscription.id]['memoryChecks'] = subscription.memoryChecks;
+      res[subscription.id]['subscription'] = subscription;
+      res[subscription.id]['memoryPiece'] = subscription.memoryPiece[0];
+      return res;
+    }, {});
+
+    return subscriptionRecords;
+  } catch (error) {
+    console.error(`Failed to get recent checks for user ${userId}:`, error);
     throw error;
   }
 }

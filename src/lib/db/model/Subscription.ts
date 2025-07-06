@@ -1,6 +1,7 @@
 import mongoose, { Model } from 'mongoose';
 import { SubscriptionProps } from './types/Subscription.types';
 import MemoryCheck from '@/lib/db/model/MemoryCheck'
+import MemoryPiece from '@/lib/db/model/MemoryPiece'
 
 let Subscription: Model<SubscriptionProps>;
 
@@ -36,6 +37,12 @@ if (!mongoose.models.Subscription) {
     ref: MemoryCheck.modelName,
     localField: '_id',
     foreignField: 'subscription',
+  });
+
+  subscriptionSchema.virtual('memoryPiece', {
+    ref: MemoryPiece.modelName,
+    localField: 'memoryPieceId',
+    foreignField: '_id',
   });
 
   // Add compound index to ensure unique user-memoryPiece pairs
