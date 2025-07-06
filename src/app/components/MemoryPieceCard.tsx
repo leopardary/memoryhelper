@@ -1,7 +1,7 @@
 import { MemoryPieceProps } from '@/lib/db/model/types/MemoryPiece.types';
 import Link from "next/link";
 import Image from "next/image";
-import Badge from '@/app/components/Badge';
+import {Badge} from '@/app/components/Badge';
 
 export default function MemoryPieceCard({ memoryPiece }: {memoryPiece: MemoryPieceProps}) {
   const { _id, description, content, labels, imageUrls } = memoryPiece;
@@ -29,7 +29,7 @@ export default function MemoryPieceCard({ memoryPiece }: {memoryPiece: MemoryPie
         </h2>
         <div className="flex flex-wrap gap-2 mt-2">
           {labels && labels.map((label, index) => (
-            <Badge key={index} text={label} />
+            <Badge key={index} variant="outline">{label}</Badge> 
           ))}
         </div>
         <p className="m-2">{`词语: ${wordCombinations}`}</p>

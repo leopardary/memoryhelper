@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { SubjectProps } from "@/lib/db/model/types/Subject.types";
-import Badge from '@/app/components/Badge'
+import {Badge} from '@/app/components/Badge'
 
 export default function SubjectCard({ subject }: { subject: SubjectProps }) {
   const { _id, title, description, imageUrls, labels } = subject;
@@ -27,7 +27,7 @@ export default function SubjectCard({ subject }: { subject: SubjectProps }) {
         </h2> */}
         {labels != undefined && labels.length > 0 && <div className="flex flex-wrap gap-2 mt-2">
           {labels.map((label) => (
-            <Badge text={label} key={label} />
+            <Badge key={label} variant="outline">{label}</Badge>
           ))}
         </div>}
         <p className="my-2 font-serif text-sm italic text-muted-foreground">{description}</p>

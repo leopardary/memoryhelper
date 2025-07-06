@@ -4,7 +4,7 @@ import pickBy from 'lodash/pickBy';
 import { MemoryPieceProps } from '@/lib/db/model/types/MemoryPiece.types';
 import { useTransition, useState } from 'react';
 import { Button } from '@/app/components/button';
-import Badge from '@/app/components/Badge';
+import {Badge} from '@/app/components/Badge';
 
 const Checkbox = ({ onChange }: { onChange?: (value: boolean | null) => void }) => {
   const [isRight, setIsRight] = useState<boolean | null>(null);
@@ -31,23 +31,23 @@ const Checkbox = ({ onChange }: { onChange?: (value: boolean | null) => void }) 
   };}
   return (
   <>
-  <label className='m-2 text-green-500'>
+  <label className='my-2 mr-1 text-green-400 dark:text-green-600'>
     <input 
       type="checkbox" 
       className="checkbox m-1" 
       checked={isRight === true}
       onChange={finalOnChange(true)}
     />
-    Right
+    ✅
   </label>
-  <label className='m-2 text-red-500'>
+  <label className='my-2 ml-1 text-red-400 dark:text-red-600'>
     <input 
       type="checkbox" 
       className="checkbox m-1" 
       checked={isRight === false}
       onChange={finalOnChange(false)}
     />
-    Wrong
+    ❌
   </label>
   </>
 );};
@@ -198,7 +198,7 @@ export default function PracticeTable({ memoryPiecesStr, memoryPieceIdToSubscrip
             />
             <td key='content' className='px-6 py-3'>{memoryPiece.content}</td>
             <td key='description' className='px-6 py-3'>{memoryPiece.description}</td>
-            <td key='labels' className='px-6 py-3'>{memoryPiece.labels.map((label:string) => <Badge key={label} text={label}/>)}</td>
+            <td key='labels' className='px-6 py-3'>{memoryPiece.labels.map((label:string) => <Badge key={label} variant="outline">{label}</Badge>)}</td>
             <td className="w-24">
               <Button className='h-8 w-16'>
                               <Link

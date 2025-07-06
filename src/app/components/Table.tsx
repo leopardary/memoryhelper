@@ -4,7 +4,7 @@ import { MemoryPieceProps } from '@/lib/db/model/types/MemoryPiece.types';
 import SubscribeButton from '@/app/components/SubscribeButton'
 import { Button } from '@/app/components/button'
 import { useState } from 'react';
-import Badge from '@/app/components/Badge';
+import {Badge} from '@/app/components/Badge';
 
 const Checkbox = ({ checked, onChange }: { checked?: boolean, onChange?: () => void }) => (
   <label>
@@ -115,7 +115,7 @@ export default function Table({ memoryPiecesStr, subscriptions, loggedIn, findOr
             />
             <td key="content" className='px-6 py-3 font-bold'>{memoryPiece.content}</td>
             <td key="description" className='px-6 py-3'>{memoryPiece.description}</td>
-            <td key="labels" className='px-6 py-3'>{memoryPiece.labels.map((label:string) => <Badge key={label} text={label}/>)}</td>
+            <td key="labels" className='px-6 py-3'>{memoryPiece.labels.map((label:string) => <Badge key={label}>{label}</Badge>)}</td>
             <td className="w-24">
               <Button className='h-8 w-16'>
                 <Link
