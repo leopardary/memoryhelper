@@ -20,7 +20,7 @@ export default function UnitCard({ unit }: { unit: UnitProps }) {
           />
         </figure>
       </div>
-      <div className="flex flex-col place-items-center">
+      <div className="mb-2 flex flex-col place-items-center">
         <h2 className="text-gray-800 dark:text-gray-100">
           {title}
         </h2>
