@@ -5,6 +5,7 @@ import {UnitProps} from '@/lib/db/model/types/Unit.types'
 import isEmpty from 'lodash/isEmpty'
 import ImageCarousel from '@/app/components/ImageCarousel'
 import Table from '@/app/components/Table'
+import SectionDivider from "@/app/components/SectionDivider";
 import { findOrCreateSubscriptionsInBatch, getSubscriptionsForUser, removeSubscriptionsInBatch } from "@/lib/db/api/subscription"
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/utils/authOptions";
@@ -56,10 +57,10 @@ export default async function Unit({params}: {params: Promise<{id: string}>}) {
   }
   return <>
     <Breadcrumbs segments={breadcrumbsSegments}/>
-    <div className="py-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600">Details</div>
+    <SectionDivider title={'Details'}/>
     <ImageCarousel imageSrcs={unit.imageUrls} imageAlt='' />
-    {!isEmpty(unitChildren) && unitChildren.length > 0 &&<div className="py-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600">Sub Units</div>}
-    {!isEmpty(memoryPieces) && memoryPieces.length > 0 && <div className="py-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600">Memory Pieces</div>}
+    {!isEmpty(unitChildren) && unitChildren.length > 0 && <SectionDivider title={'Sub Units'} />}
+    {!isEmpty(memoryPieces) && memoryPieces.length > 0 && <SectionDivider title={'Memory Pieces'}/>}
   <div className="flex flex-col items-center">
   {!isEmpty(unitChildren) && unitChildren.length > 0 && <div className="my-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {unitChildren.map((unitChild: UnitProps) => (
