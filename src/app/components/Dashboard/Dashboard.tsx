@@ -10,9 +10,60 @@ import { StatsOverview } from './StatsOverview';
 import { HistoryModal } from './HistoryModal';
 import { mockData, MemoryPiece } from './mockData';
 
+interface SubscriptionObj {
+  userId: string;
+  memoryPieceId: string;
+  status: 'new' | 'learning' | 'learned' | 'lapsed';
+  easeFactor: number;
+  currentInterval: number;
+  nextTestDate: string;
+}
+
+interface MemoryPieceObj {
+  id: string;
+  content: string;
+  imageUrls: string[];
+  description: string;
+  labels: string[];
+}
+
+interface MemoryCheckObj {
+  id: string;
+  subscriptionId: string;
+  score: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SubscriptionOverallRecord {
+  subscription: SubscriptionObj;
+  memoryPiece: MemoryPieceObj;
+  memoryChecks: MemoryCheckObj[];
+}
+
 type TimeFilter = 'today' | 'week' | 'month';
 
-const Dashboard = () => {
+interface TestResult {
+  id: string;
+  memoryPieceId: string;
+  score: number;
+  maxScore: number;
+  testDate: string;
+}
+
+const constructTestResults = (filteredMemoryChecks: MemoryCheckObj[], record: Record<string, SubscriptionOverallRecord>): TestResult[] => {
+  return filteredMemoryChecks.map(check => {
+    return {
+      id: check.id,
+      memoryPieceId: record[check.subscriptionId].memoryPiece.id,
+      score: check.score,
+      maxScore: 5,
+      testDate: check.updatedAt
+    }
+  })
+}
+
+const Dashboard = ({record} : {record: any}) => {
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('week');
   const [selectedMemoryPiece, setSelectedMemoryPiece] = useState<MemoryPiece | null>(null);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
@@ -34,9 +85,10 @@ const Dashboard = () => {
         break;
     }
 
-    return mockData.testResults.filter(result => 
-      new Date(result.testDate) >= filterDate
-    );
+    return Object.keys(record).reduce((memoryChecks, subscriptionId) => {
+      record[subscriptionId]['memoryChecks'].filter(check => new Date(check.createdAt) >= filterDate).forEach(check => memoryChecks.push(check));
+      return memoryChecks;
+    }, []);
   };
 
   const filteredResults = filterDataByTime(timeFilter);
@@ -80,7 +132,7 @@ const Dashboard = () => {
         </div>
 
         {/* Stats Overview */}
-        <StatsOverview filteredResults={filteredResults} timeFilter={timeFilter} />
+        <StatsOverview filteredResults={constructTestResults(filteredResults, record)} timeFilter={timeFilter} />
 
         {/* Main Content */}
         <Tabs defaultValue="overview" className="space-y-6">
