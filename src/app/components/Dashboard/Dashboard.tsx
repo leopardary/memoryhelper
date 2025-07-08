@@ -4,44 +4,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/tabs';
 import { Button } from '@/app/components/button';
 import { ClockIcon, CalendarIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
-import { ProgressChart } from '@/app/components/ProgressChart';
 import { AverageScoreChart, AverageScoreData } from '@/app/components/AverageScoreChart';
 import { NumberOfChecksChart, NumberOfChecksData } from '@/app/components/NumberOfChecksChart';
 import { MemoryPieceGrid } from './MemoryPieceGrid';
 import { StatsOverview } from './StatsOverview';
 import { HistoryModal } from './HistoryModal';
-import { mockData, MemoryPiece } from './mockData';
+import { MemoryPiece } from './mockData';
+import {MemoryCheckObj, SubscriptionOverallRecord} from './types';
 
-interface SubscriptionObj {
-  userId: string;
-  memoryPieceId: string;
-  status: 'new' | 'learning' | 'learned' | 'lapsed';
-  easeFactor: number;
-  currentInterval: number;
-  nextTestDate: string;
-}
 
-interface MemoryPieceObj {
-  id: string;
-  content: string;
-  imageUrls: string[];
-  description: string;
-  labels: string[];
-}
-
-interface MemoryCheckObj {
-  id: string;
-  subscriptionId: string;
-  score: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface SubscriptionOverallRecord {
-  subscription: SubscriptionObj;
-  memoryPiece: MemoryPieceObj;
-  memoryChecks: MemoryCheckObj[];
-}
 
 type TimeFilter = 'today' | 'week' | 'month';
 
@@ -196,6 +167,7 @@ const Dashboard = ({record} : {record: any}) => {
             
             <MemoryPieceGrid 
               filteredResults={filteredTestResults}
+              subscriptionData={record}
               onMemoryPieceClick={handleMemoryPieceClick}
               limit={8}
             />
@@ -204,17 +176,26 @@ const Dashboard = ({record} : {record: any}) => {
           <TabsContent value="progress" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Detailed Progress Analysis</CardTitle>
+                <CardTitle>Average Score Trend</CardTitle>
               </CardHeader>
               <CardContent>
-                <ProgressChart data={filteredTestResults} type="area" />
+                <AverageScoreChart data={averageScoreData} type="line" />
               </CardContent>
             </Card>
+            <Card>
+                <CardHeader>
+                  <CardTitle>Number of Checks Trend</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <NumberOfChecksChart data={checkNumData} type="bar" />
+                </CardContent>
+              </Card>
           </TabsContent>
 
           <TabsContent value="memory-pieces" className="space-y-6">
             <MemoryPieceGrid 
               filteredResults={filteredTestResults}
+              subscriptionData={record}
               onMemoryPieceClick={handleMemoryPieceClick}
             />
           </TabsContent>
