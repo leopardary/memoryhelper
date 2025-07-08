@@ -28,15 +28,24 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({ filteredResults, t
   const totalTests = filteredResults.length;
   const avgScore: number = totalTests > 0 ? 
     filteredResults.reduce((sum, result) => sum + (result.score / result.maxScore) * 100, 0) / totalTests : 0;
-  const perfectScores = filteredResults.filter(result => result.score === result.maxScore).length;
-  const avgTimeSpent = totalTests > 0 ?
-    filteredResults.reduce((sum, result) => sum + result.timeSpent, 0) / totalTests : 0;
 
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}m ${remainingSeconds}s`;
-  };
+  const resultMap = filteredResults.reduce((res, testResult) => {
+    if (res[testResult.memoryPieceId] == null) {
+      res[testResult.memoryPieceId]= [];
+    }
+    res[testResult.memoryPieceId].push(testResult);
+    return res;
+  }, {});
+
+  let numRegressed = 0;
+  let numProgressed = 0;
+
+  for (const memoryPieceId of Object.keys(resultMap)) {
+    if (resultMap[memoryPieceId].length < 2) continue;
+    const sortedChecks = resultMap[memoryPieceId].sort((a: TestResult, b: TestResult) => (new Date(a.testDate)) - (new Date(b.testDate)))
+    if (sortedChecks[0].score > sortedChecks[sortedChecks.length - 1].score) numRegressed++;
+    if (sortedChecks[0].score < sortedChecks[sortedChecks.length - 1].score) numProgressed++;
+  }
 
   const getTimeLabel = () => {
     switch (timeFilter) {
@@ -49,10 +58,10 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({ filteredResults, t
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <SummaryCard title="Tests Completed" content={totalTests.toString()} supplement={`tests ${getTimeLabel()}`} />
+      <SummaryCard title="Memory Pieces Tested" content={totalTests.toString()} supplement={`tests ${getTimeLabel()}`} />
       <SummaryCard title="Average Score" content={`${avgScore.toFixed(1)}%`} supplement={`across all tests`} />
-      <SummaryCard title="Perfect Scores" content={perfectScores.toString()} supplement={`${totalTests > 0 ? ((perfectScores / totalTests) * 100).toFixed(1) : 0}% of tests}`} />
-      <SummaryCard title="Avg Time" content={formatTime(Math.round(avgTimeSpent))} supplement={`per test`} />
+      <SummaryCard title="Progresses" content={numProgressed.toString()} supplement={`memory pieces that have made progress`} />
+      <SummaryCard title="Regresses" content={numRegressed.toString()} supplement={`memory pieces that have regressed`} />
     </div>
   );
 };
