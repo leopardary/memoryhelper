@@ -56,7 +56,7 @@ export default function Dropdown(props: DropdownProps) {
             {popupOptions?.map((item) => (
               <div key={item.name} className="group relative flex gap-x-6 rounded-lg p-4 transition-colors hover:bg-muted">
                 <div className="mt-1 flex size-11 flex-none items-center justify-center rounded-lg bg-muted group-hover:bg-accent">
-                  {item.icon && <item.icon aria-hidden="true" className="size-6 text-muted-foreground group-hover:text-primary" />}
+                  {item.icon && <item.icon aria-hidden="true"/>}
                 </div>
                 <div>
                   {item.href ? <ClientLink href={item.href} className="font-semibold text-foreground hover:underline" text={item.name}><span className="absolute inset-0" /></ClientLink> : <button className="font-semibold text-foreground hover:underline" onClick={item.onClick}>{item.name}<span className="absolute inset-0" /></button>}
@@ -72,7 +72,7 @@ export default function Dropdown(props: DropdownProps) {
                 href={item.href}
                 className="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-foreground hover:bg-accent"
               >
-                {item.icon && <item.icon aria-hidden="true" className="size-5 flex-none text-muted-foreground group-hover:text-primary" />}
+                {item.icon && <item.icon aria-hidden="true" />}
                 {item.name}
               </a>
             ))}

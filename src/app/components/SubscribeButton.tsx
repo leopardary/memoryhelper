@@ -2,7 +2,7 @@
 import { useTransition, useState, useCallback } from "react";
 import { Button } from '@/app/components/button';
 import Spinner from '@/app/components/Spinner';
-import { DocumentCheckIcon, ExclamationTriangleIcon, PlusCircleIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
+import { ExclamationTriangleIcon, PlusCircleIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
 
 interface SubscribeButtonProps {
   memoryPieceIds: Record<string, boolean>;

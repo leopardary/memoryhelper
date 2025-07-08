@@ -154,7 +154,7 @@ export const mockData = {
     { id: 'tr16', memoryPieceId: 'mp7', score: 71, maxScore: 100, testDate: '2025-06-08T17:30:00Z', timeSpent: 320, mistakes: ['Wrong trend direction', 'Missing units'] },
     { id: 'tr17', memoryPieceId: 'mp8', score: 84, maxScore: 100, testDate: '2025-06-05T12:00:00Z', timeSpent: 190, mistakes: ['Balancing error'] },
     { id: 'tr18', memoryPieceId: 'mp2', score: 88, maxScore: 100, testDate: '2025-06-03T10:15:00Z', timeSpent: 175, mistakes: [] },
-  ] as TestResult[],
+  ] as any[],
 };
 
 // Helper functions to get related data

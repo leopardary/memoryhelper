@@ -58,7 +58,7 @@ export default async function Unit({params}: {params: Promise<{id: string}>}) {
   return <>
     <Breadcrumbs segments={breadcrumbsSegments}/>
     <SectionDivider title={'Details'}/>
-    <ImageCarousel imageSrcs={unit.imageUrls} imageAlt='' />
+    <ImageCarousel imageSrcs={unit.imageUrls || []} imageAlt='' />
     {!isEmpty(unitChildren) && unitChildren.length > 0 && <SectionDivider title={'Sub Units'} />}
     {!isEmpty(memoryPieces) && memoryPieces.length > 0 && <SectionDivider title={'Memory Pieces'}/>}
     <div className="flex flex-col items-center">

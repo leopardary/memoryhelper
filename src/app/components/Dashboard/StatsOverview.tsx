@@ -29,7 +29,7 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({ filteredResults, t
   const avgScore: number = totalTests > 0 ? 
     filteredResults.reduce((sum, result) => sum + (result.score / result.maxScore) * 100, 0) / totalTests : 0;
 
-  const resultMap = filteredResults.reduce((res, testResult) => {
+  const resultMap = filteredResults.reduce((res: Record<string, TestResult[]>, testResult) => {
     if (res[testResult.memoryPieceId] == null) {
       res[testResult.memoryPieceId]= [];
     }
@@ -42,7 +42,7 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({ filteredResults, t
 
   for (const memoryPieceId of Object.keys(resultMap)) {
     if (resultMap[memoryPieceId].length < 2) continue;
-    const sortedChecks = resultMap[memoryPieceId].sort((a: TestResult, b: TestResult) => (new Date(a.testDate)) - (new Date(b.testDate)))
+    const sortedChecks = resultMap[memoryPieceId].sort((a: TestResult, b: TestResult) => (new Date(a.testDate)).getTime() - (new Date(b.testDate)).getTime())
     if (sortedChecks[0].score > sortedChecks[sortedChecks.length - 1].score) numRegressed++;
     if (sortedChecks[0].score < sortedChecks[sortedChecks.length - 1].score) numProgressed++;
   }

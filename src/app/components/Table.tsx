@@ -4,7 +4,7 @@ import { MemoryPieceProps } from '@/lib/db/model/types/MemoryPiece.types';
 import SubscribeButton from '@/app/components/SubscribeButton'
 import { Button } from '@/app/components/button'
 import { useState } from 'react';
-import {Badge} from '@/app/components/badge';
+import {Badge} from '@/app/components/Badge';
 
 const Checkbox = ({ checked, onChange }: { checked?: boolean, onChange?: () => void }) => (
   <label>

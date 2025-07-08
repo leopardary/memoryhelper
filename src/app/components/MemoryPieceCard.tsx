@@ -1,11 +1,11 @@
 import { MemoryPieceProps } from '@/lib/db/model/types/MemoryPiece.types';
 import Link from "next/link";
 import Image from "next/image";
-import {Badge} from '@/app/components/badge';
+import {Badge} from '@/app/components/Badge';
 
 export default function MemoryPieceCard({ memoryPiece }: {memoryPiece: MemoryPieceProps}) {
   const { _id, description, content, labels, imageUrls } = memoryPiece;
-  const [wordCombinations, sentenceSamples] = description?.split('##');
+  const [wordCombinations, sentenceSamples] = description == null ? ['', ''] : description?.split('##');
 
   return (
     <Link

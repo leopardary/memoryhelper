@@ -4,7 +4,7 @@ import pickBy from 'lodash/pickBy';
 import { MemoryPieceProps } from '@/lib/db/model/types/MemoryPiece.types';
 import { useTransition, useState } from 'react';
 import { Button } from '@/app/components/button';
-import {Badge} from '@/app/components/badge';
+import {Badge} from '@/app/components/Badge';
 
 const Checkbox = ({ onChange }: { onChange?: (value: boolean | null) => void }) => {
   const [isRight, setIsRight] = useState<boolean | null>(null);

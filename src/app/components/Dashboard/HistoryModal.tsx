@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './dialog';
-import { Badge } from '@/app/components/badge';
+import { Badge } from '@/app/components/Badge';
 import { format } from 'date-fns';
 import { Calendar, AlertCircle, CheckCircle } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';

@@ -1,4 +1,5 @@
-import Dashboard, {SubscriptionOverallRecord} from '@/app/components/Dashboard/Dashboard'
+import Dashboard from '@/app/components/Dashboard/Dashboard'
+import {SubscriptionOverallRecord} from '@/app/components/Dashboard/types'
 import { authOptions } from "@/lib/utils/authOptions";
 import { getSubscriptionWithMemoryPiecesAndChecksForUser } from '@/lib/db/api/subscription'
 import { getServerSession } from "next-auth/next";
@@ -8,7 +9,7 @@ export default async function PerformanceDashboard() {
   const user = session?.user;
   const subscriptions = await getSubscriptionWithMemoryPiecesAndChecksForUser(user.id);
 
-  const plainObj: Record<string, SubscriptionOverallRecord> = Object.keys(subscriptions).reduce((obj, subscriptionId) => {
+  const plainObj: Record<string, SubscriptionOverallRecord> = Object.keys(subscriptions).reduce((obj: Record<string, SubscriptionOverallRecord>, subscriptionId) => {
     const rawSubscription = subscriptions[subscriptionId];
     obj[subscriptionId] = {
       subscription: {

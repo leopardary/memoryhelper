@@ -3,7 +3,7 @@ import Image from "next/image";
 import { UnitProps } from "@/lib/db/model/types/Unit.types";
 
 export default function UnitCard({ unit }: { unit: UnitProps }) {
-  const {_id, title, description, imageUrls } = unit;
+  const {_id, title, imageUrls } = unit;
   return (
     <Link
       href={"/unit/" + _id?.toString()}

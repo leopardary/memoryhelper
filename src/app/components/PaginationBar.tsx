@@ -1,6 +1,4 @@
 import Link from "next/link";
-import { Button } from '@/app/components/button'
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 
 interface PaginationBarProps {
   currentPage: number;

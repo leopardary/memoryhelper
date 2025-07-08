@@ -28,6 +28,14 @@ export async function getSubscriptionsForUser(userId: string) {
   }
 }
 
+const getMemoryChecks = (subscription: any) => {
+  return subscription.memoryChecks;
+}
+
+const getMemoryPiece = (subscription: any) => {
+  return subscription.memoryPiece[0];
+}
+
 /**
  * @param userId The id for the current user.
  * @returns Object for all subscriptions for the user, with the subscriptionId as the key, and `subscription` field to contain the subscription, `memoryChecks` field to contain all according memoryChecks, and `memoryPiece` field to contain the memoryPiece.
@@ -36,11 +44,12 @@ export async function getSubscriptionWithMemoryPiecesAndChecksForUser(userId: st
   try {
     await connectDB();
     const subscriptions = await getSubscriptionsForUser(userId);
-    const subscriptionRecords = subscriptions.reduce((res, subscription) => {
-      res[subscription.id]={};
-      res[subscription.id]['memoryChecks'] = subscription.memoryChecks;
-      res[subscription.id]['subscription'] = subscription;
-      res[subscription.id]['memoryPiece'] = subscription.memoryPiece[0];
+    const subscriptionRecords = subscriptions.reduce((res: any, subscription) => {
+      res[subscription.id]={
+        memoryChecks: getMemoryChecks(subscription),
+        subscription: subscription,
+        memoryPiece: getMemoryPiece(subscription)
+      };
       return res;
     }, {});
 

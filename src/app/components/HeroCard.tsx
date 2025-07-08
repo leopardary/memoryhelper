@@ -14,7 +14,7 @@ export interface HeroCardProps {
 
 export function HeroCard(props: HeroCardProps) {
   const {imageSrcs, imageAlt, title, description, href, buttonContent} = props;
-  const [wordCombinations, sentenceSamples] = description?.split("##");
+  const [wordCombinations, sentenceSamples] = description == null ? ['', ''] : description?.split("##");
   return (
   <div className="w-full border-2 md:border-4 rounded-lg">
           <div className="m-2 md:m-4 flex flex-col md:flex-row items-center">

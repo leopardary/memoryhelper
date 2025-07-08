@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/tabs';
 import { Button } from '@/app/components/button';
-import { ClockIcon, CalendarIcon, CalendarDaysIcon, CalendarDateRangeIcon, RectangleStackIcon, GlobeAltIcon } from '@heroicons/react/24/outline';
+import { ClockIcon, CalendarIcon, CalendarDaysIcon, CalendarDateRangeIcon, GlobeAltIcon } from '@heroicons/react/24/outline';
 import { AverageScoreChart, AverageScoreData } from '@/app/components/Dashboard/AverageScoreChart';
 import { NumberOfChecksChart, NumberOfChecksData } from '@/app/components/Dashboard/NumberOfChecksChart';
 import { MemoryPieceGrid } from './MemoryPieceGrid';
@@ -67,7 +67,7 @@ const Dashboard = ({record} : {record: Record<string, SubscriptionOverallRecord>
         throw new Error(`Unsupported time filter: ${timeFilter}`);
     }
 
-    return Object.keys(record).reduce((memoryChecks, subscriptionId) => {
+    return Object.keys(record).reduce((memoryChecks: MemoryCheckObj[], subscriptionId) => {
       record[subscriptionId]['memoryChecks'].filter(check => new Date(check.createdAt) >= filterDate).forEach(check => memoryChecks.push(check));
       return memoryChecks;
     }, []);
@@ -110,7 +110,7 @@ const Dashboard = ({record} : {record: Record<string, SubscriptionOverallRecord>
     }
   };
 
-  const memoryPieceIdToSubscriptionId: Record<string, string> = Object.keys(record).reduce((obj, subscriptionId: string) => {
+  const memoryPieceIdToSubscriptionId: Record<string, string> = Object.keys(record).reduce((obj: Record<string, string>, subscriptionId: string) => {
     obj[record[subscriptionId].memoryPiece.id] = subscriptionId;
     return obj;
   }, {});

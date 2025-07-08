@@ -25,5 +25,5 @@ export default function ClientLink (link: ClientLinkProps) {
     }
   }
   return (
-<Link href={link.href} className={link.className} onClick={closeDropdown}>{link.text ? link.text : link.icon && <><link.icon.icon aria-hidden="true" className="size-5 flex-none text-muted-foreground group-hover:text-primary" /><span>{link.icon.name}</span></>}{link.children}</Link>
+<Link href={link.href} className={link.className} onClick={closeDropdown}>{link.text ? link.text : link.icon && <><link.icon.icon aria-hidden="true" /><span>{link.icon.name}</span></>}{link.children}</Link>
 )}
