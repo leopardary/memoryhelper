@@ -1,23 +1,20 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './dialog';
 import { Badge } from '@/app/components/badge';
-import { MemoryPiece, mockData, getMemoryPieceDetails } from './mockData';
 import { format } from 'date-fns';
-import { Clock, Calendar, AlertCircle, CheckCircle } from 'lucide-react';
+import { Calendar, AlertCircle, CheckCircle } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import {MemoryPieceStat, SubscriptionStatus} from './types';
 
 interface HistoryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  memoryPiece: MemoryPiece | null;
+  memoryPieceStat: MemoryPieceStat | null;
 }
 
-export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, memoryPiece }) => {
-  if (!memoryPiece) return null;
-
-  const details = getMemoryPieceDetails(memoryPiece.id);
-  const testHistory = mockData.testResults
-    .filter(result => result.memoryPieceId === memoryPiece.id)
+export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, memoryPieceStat }) => {
+  if (!memoryPieceStat) return null;
+  const testHistory = memoryPieceStat.results
     .sort((a, b) => new Date(b.testDate).getTime() - new Date(a.testDate).getTime());
 
   const chartData = testHistory
@@ -27,7 +24,6 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, mem
       test: index + 1,
       score: Math.round((result.score / result.maxScore) * 100),
       date: format(new Date(result.testDate), 'MMM dd'),
-      timeSpent: result.timeSpent,
     }));
 
   const avgScore = testHistory.length > 0 ? 
@@ -36,19 +32,13 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, mem
   const bestScore = testHistory.length > 0 ? 
     Math.max(...testHistory.map(result => (result.score / result.maxScore) * 100)) : 0;
 
-  const totalMistakes = testHistory.reduce((sum, result) => sum + result.mistakes.length, 0);
-
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}m ${remainingSeconds}s`;
-  };
-
-  const getDifficultyColor = (difficulty: string) => {
+  const getDifficultyColor = (difficulty: SubscriptionStatus) => {
     switch (difficulty) {
-      case 'easy': return 'bg-green-100 text-green-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'hard': return 'bg-red-100 text-red-800';
+      case 'learned': return 'bg-green-100 text-green-800';
+      case 'learning': return 'bg-yellow-100 text-yellow-800';
+      case 'new': 
+      case 'lapsed':
+        return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -57,30 +47,30 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, mem
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">{memoryPiece.title}</DialogTitle>
-          <p className="text-gray-600 mt-1">{memoryPiece.description}</p>
+          <DialogTitle className="text-xl font-bold">{memoryPieceStat.memoryPiece.content}</DialogTitle>
+          <p className="text-gray-600 mt-1">{memoryPieceStat.memoryPiece.description}</p>
         </DialogHeader>
 
         <div className="space-y-6">
           {/* Memory Piece Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
-            <div>
+            {/* <div>
               <h4 className="font-semibold text-sm text-gray-700 mb-2">Details</h4>
               <div className="space-y-1 text-sm">
                 <p><span className="text-gray-600">Subject:</span> {details?.subject?.name}</p>
                 <p><span className="text-gray-600">Unit:</span> {details?.unit?.name}</p>
                 <p><span className="text-gray-600">Lesson:</span> {details?.lesson?.name}</p>
               </div>
-            </div>
+            </div> */}
             <div>
               <h4 className="font-semibold text-sm text-gray-700 mb-2">Tags & Difficulty</h4>
               <div className="flex flex-wrap gap-1 mb-2">
-                <Badge className={getDifficultyColor(memoryPiece.difficulty)}>
-                  {memoryPiece.difficulty}
+                <Badge className={getDifficultyColor(memoryPieceStat.status)}>
+                  {memoryPieceStat.status}
                 </Badge>
-                {memoryPiece.tags.map(tag => (
-                  <Badge key={tag} variant="outline" className="text-xs">
-                    {tag}
+                {memoryPieceStat.memoryPiece.labels.map(label => (
+                  <Badge key={label} variant="outline" className="text-xs">
+                    {label}
                   </Badge>
                 ))}
               </div>
@@ -100,10 +90,6 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, mem
             <div className="text-center p-4 bg-purple-50 rounded-lg">
               <div className="text-2xl font-bold text-purple-600">{bestScore.toFixed(1)}%</div>
               <div className="text-sm text-gray-600">Best Score</div>
-            </div>
-            <div className="text-center p-4 bg-orange-50 rounded-lg">
-              <div className="text-2xl font-bold text-orange-600">{totalMistakes}</div>
-              <div className="text-sm text-gray-600">Total Mistakes</div>
             </div>
           </div>
 
@@ -159,23 +145,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, mem
                             Score: {result.score}/{result.maxScore} ({Math.round((result.score / result.maxScore) * 100)}%)
                           </span>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <Clock className="w-4 h-4 text-gray-500" />
-                          <span>{formatTime(result.timeSpent)}</span>
-                        </div>
                       </div>
-                      {result.mistakes.length > 0 && (
-                        <div className="mt-2">
-                          <p className="text-xs text-gray-600 mb-1">Mistakes:</p>
-                          <div className="flex flex-wrap gap-1">
-                            {result.mistakes.map((mistake, index) => (
-                              <Badge key={index} variant="outline" className="text-xs bg-red-50 text-red-700">
-                                {mistake}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>

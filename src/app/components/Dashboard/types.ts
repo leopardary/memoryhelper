@@ -1,7 +1,9 @@
+export type SubscriptionStatus = 'new' | 'learning' | 'learned' | 'lapsed';
+
 export interface SubscriptionObj {
   userId: string;
   memoryPieceId: string;
-  status: 'new' | 'learning' | 'learned' | 'lapsed';
+  status: SubscriptionStatus;
   easeFactor: number;
   currentInterval: number;
   nextTestDate: string;
@@ -27,4 +29,22 @@ export interface SubscriptionOverallRecord {
   subscription: SubscriptionObj;
   memoryPiece: MemoryPieceObj;
   memoryChecks: MemoryCheckObj[];
+}
+
+export interface TestResult {
+  id: string;
+  memoryPieceId: string;
+  score: number;
+  maxScore: number;
+  testDate: string;
+}
+
+export interface MemoryPieceStat {
+  memoryPiece: MemoryPieceObj;
+  status: SubscriptionStatus;
+  results: TestResult[];
+  avgScore: number;
+  lastScore: number;
+  trend: 'up' | 'down' | 'stable';
+  totalTests: number;
 }
