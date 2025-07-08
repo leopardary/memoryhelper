@@ -31,8 +31,6 @@ export interface TestResult {
   score: number;
   maxScore: number;
   testDate: string;
-  timeSpent: number; // in seconds
-  mistakes: string[];
 }
 
 export const mockData = {
