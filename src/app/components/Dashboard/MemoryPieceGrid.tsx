@@ -1,57 +1,21 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/card';
 import { Badge } from '@/app/components/badge';
-import { TestResult, getMemoryPieceDetails, MemoryPiece } from './mockData';
+import { TestResult, MemoryPiece } from './mockData';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
-import {MemoryCheckObj, MemoryPieceObj, SubscriptionOverallRecord} from './types';
+import {MemoryPieceStat} from './types';
 
 interface MemoryPieceGridProps {
-  filteredResults: TestResult[];
-  subscriptionData: Record<string, SubscriptionOverallRecord>
+  memoryPieceStats: Record<string, MemoryPieceStat>;
   onMemoryPieceClick: (memoryPiece: MemoryPiece) => void;
   limit?: number;
 }
 
-interface MemoryPieceStat {
-  memoryPiece: MemoryPieceObj;
-  status: 'new' | 'learning' | 'learned' | 'lapsed';
-  results: TestResult[];
-  avgScore: number;
-  lastScore: number;
-  trend: 'up' | 'down' | 'stable';
-  totalTests: number;
-}
-
 export const MemoryPieceGrid: React.FC<MemoryPieceGridProps> = ({ 
-  filteredResults, 
-  subscriptionData,
+  memoryPieceStats,
   onMemoryPieceClick,
   limit 
 }) => {
-  const memoryPieceIdToSubscriptionId: Record<string, string> = Object.keys(subscriptionData).reduce((obj, subscriptionId: string) => {
-    obj[subscriptionData[subscriptionId].memoryPiece.id] = subscriptionId;
-    return obj;
-  }, {});
-  // Group results by memory piece and calculate stats
-  const memoryPieceStats = filteredResults.reduce((acc, result: TestResult) => {
-    const subscriptionId = memoryPieceIdToSubscriptionId[result.memoryPieceId];
-    const memoryPieceObj = subscriptionData[subscriptionId].memoryPiece;
-    const status = subscriptionData[subscriptionId].subscription.status;
-    if (!acc[result.memoryPieceId]) {
-      acc[result.memoryPieceId] = {
-        memoryPiece: memoryPieceObj,
-        status: status,
-        results: [],
-        avgScore: 0,
-        lastScore: 0,
-        trend: 'stable' as 'up' | 'down' | 'stable',
-        totalTests: 0,
-      };
-    }
-
-    acc[result.memoryPieceId].results.push(result);
-    return acc;
-  }, {} as Record<string, MemoryPieceStat>);
 
   // Calculate stats for each memory piece
   Object.values(memoryPieceStats).forEach((stats: any) => {

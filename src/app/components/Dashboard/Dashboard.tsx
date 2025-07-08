@@ -3,32 +3,22 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/tabs';
 import { Button } from '@/app/components/button';
-import { ClockIcon, CalendarIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
-import { AverageScoreChart, AverageScoreData } from '@/app/components/AverageScoreChart';
-import { NumberOfChecksChart, NumberOfChecksData } from '@/app/components/NumberOfChecksChart';
+import { ClockIcon, CalendarIcon, CalendarDaysIcon, CalendarDateRangeIcon, RectangleStackIcon, GlobeAltIcon } from '@heroicons/react/24/outline';
+import { AverageScoreChart, AverageScoreData } from '@/app/components/Dashboard/AverageScoreChart';
+import { NumberOfChecksChart, NumberOfChecksData } from '@/app/components/Dashboard/NumberOfChecksChart';
 import { MemoryPieceGrid } from './MemoryPieceGrid';
 import { StatsOverview } from './StatsOverview';
 import { HistoryModal } from './HistoryModal';
 import { MemoryPiece } from './mockData';
-import {MemoryCheckObj, SubscriptionOverallRecord} from './types';
+import {MemoryCheckObj, SubscriptionOverallRecord, TestResult, MemoryPieceStat} from './types';
 
-
-
-type TimeFilter = 'today' | 'week' | 'month';
-
-interface TestResult {
-  id: string;
-  memoryPieceId: string;
-  score: number;
-  maxScore: number;
-  testDate: string;
-}
+type TimeFilter = 'today' | 'week' | 'month' | 'year' | 'all';
 
 const convertDateToDay = (dateString: string) => {
   return new Date(dateString).toLocaleDateString();
 }
 
-function calculateAverage(arr) {
+function calculateAverage(arr: number[]) {
   const sum = arr.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
   return sum / arr.length;
 }
@@ -45,26 +35,36 @@ const constructTestResults = (filteredMemoryChecks: MemoryCheckObj[], record: Re
   })
 }
 
-const Dashboard = ({record} : {record: any}) => {
+const Dashboard = ({record} : {record: Record<string, SubscriptionOverallRecord>}) => {
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('week');
   const [selectedMemoryPiece, setSelectedMemoryPiece] = useState<MemoryPiece | null>(null);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 
   const filterDataByTime = (timeFilter: TimeFilter) => {
     const now = new Date();
-    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     
     let filterDate: Date;
     switch (timeFilter) {
       case 'today':
-        filterDate = startOfDay;
+        filterDate = new Date(now);
+        filterDate.setHours(0, 0, 0, 0);
         break;
       case 'week':
         filterDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         break;
       case 'month':
-        filterDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        filterDate = new Date(now);
+        filterDate.setMonth(now.getMonth() - 1);
         break;
+      case 'year':
+        filterDate = new Date(now);
+        filterDate.setFullYear(now.getFullYear() - 1);
+        break;
+      case 'all':
+        filterDate = new Date(0); // Unix epoch start
+        break;
+      default:
+        throw new Error(`Unsupported time filter: ${timeFilter}`);
     }
 
     return Object.keys(record).reduce((memoryChecks, subscriptionId) => {
@@ -88,12 +88,12 @@ const Dashboard = ({record} : {record: any}) => {
   const averageScoreData: AverageScoreData[] = Object.keys(filteredTestResultsByDate).reduce((arry: AverageScoreData[], date: string) => {
     arry.push({score: Math.round(calculateAverage(filteredTestResultsByDate[date].map((testResult: TestResult) => testResult.score)) * 10) / 10, date: date});
     return arry;
-  }, []);
+  }, []).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   const checkNumData: NumberOfChecksData[] = Object.keys(filteredTestResultsByDate).reduce((arry: NumberOfChecksData[], date: string) => {
     arry.push({count: filteredTestResultsByDate[date].length, date: date});
     return arry;
-  }, []);
+  }, []).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   const handleMemoryPieceClick = (memoryPiece: MemoryPiece) => {
     setSelectedMemoryPiece(memoryPiece);
@@ -105,8 +105,49 @@ const Dashboard = ({record} : {record: any}) => {
       case 'today': return 'Today';
       case 'week': return 'Past Week';
       case 'month': return 'Past Month';
+      case 'year': return 'Past Year';
+      case 'all': return 'From Beginning';
     }
   };
+
+  const memoryPieceIdToSubscriptionId: Record<string, string> = Object.keys(record).reduce((obj, subscriptionId: string) => {
+    obj[record[subscriptionId].memoryPiece.id] = subscriptionId;
+    return obj;
+  }, {});
+
+  const memoryPieceStats = filteredTestResults.reduce((acc, result: TestResult) => {
+    const subscriptionId = memoryPieceIdToSubscriptionId[result.memoryPieceId];
+    const memoryPieceObj = record[subscriptionId].memoryPiece;
+    const status = record[subscriptionId].subscription.status;
+    if (!acc[result.memoryPieceId]) {
+      acc[result.memoryPieceId] = {
+        memoryPiece: memoryPieceObj,
+        status: status,
+        results: [],
+        avgScore: 0,
+        lastScore: 0,
+        trend: 'stable' as 'up' | 'down' | 'stable',
+        totalTests: 0,
+      };
+    }
+  
+    acc[result.memoryPieceId].results.push(result);
+    return acc;
+  }, {} as Record<string, MemoryPieceStat>);
+
+  const filterIcon = (filter: TimeFilter) => {
+    if (filter === 'today') {
+      return <ClockIcon className="w-4 h-4" />;
+    } else if (filter === 'week') {
+      return <CalendarDateRangeIcon className="w-4 h-4" />;
+    } else if (filter === 'month') {
+      return <CalendarDaysIcon className="w-4 h-4" />;
+    } else if (filter === 'year') {
+      return <CalendarIcon className="w-4 h-4" />;
+    } else if (filter === 'all') {
+      return <GlobeAltIcon className="w-4 h-4" />;
+    }
+  }
 
   return (
     <div className="min-h-screen w-full p-6">
@@ -119,14 +160,14 @@ const Dashboard = ({record} : {record: any}) => {
           </div>
           
           <div className="flex gap-2">
-            {(['today', 'week', 'month'] as TimeFilter[]).map((filter) => (
+            {(['today', 'week', 'month', 'year', 'all'] as TimeFilter[]).map((filter) => (
               <Button
                 key={filter}
                 variant={timeFilter === filter ? 'default' : 'outline'}
                 onClick={() => setTimeFilter(filter)}
                 className="flex items-center gap-2"
               >
-                {filter === 'today' ? <ClockIcon className="w-4 h-4" /> : filter === 'week' ? <CalendarIcon className="w-4 h-4" /> : <CalendarDaysIcon className="w-4 h-4" />}
+                {filterIcon(filter)}
                 {getTimeFilterLabel(filter)}
               </Button>
             ))}
@@ -166,8 +207,7 @@ const Dashboard = ({record} : {record: any}) => {
             </div>
             
             <MemoryPieceGrid 
-              filteredResults={filteredTestResults}
-              subscriptionData={record}
+              memoryPieceStats={memoryPieceStats}
               onMemoryPieceClick={handleMemoryPieceClick}
               limit={8}
             />
@@ -194,8 +234,7 @@ const Dashboard = ({record} : {record: any}) => {
 
           <TabsContent value="memory-pieces" className="space-y-6">
             <MemoryPieceGrid 
-              filteredResults={filteredTestResults}
-              subscriptionData={record}
+              memoryPieceStats={memoryPieceStats}
               onMemoryPieceClick={handleMemoryPieceClick}
             />
           </TabsContent>
@@ -205,7 +244,7 @@ const Dashboard = ({record} : {record: any}) => {
         <HistoryModal
           isOpen={isHistoryModalOpen}
           onClose={() => setIsHistoryModalOpen(false)}
-          memoryPiece={selectedMemoryPiece}
+          memoryPieceStat={selectedMemoryPiece?.id != null && selectedMemoryPiece?.id != '' ? memoryPieceStats?.[selectedMemoryPiece.id] : null}
         />
       </div>
     </div>
