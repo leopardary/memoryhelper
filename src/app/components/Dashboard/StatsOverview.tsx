@@ -57,8 +57,9 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({ filteredResults, t
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <SummaryCard title="Memory Pieces Tested" content={totalTests.toString()} supplement={`tests ${getTimeLabel()}`} />
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <SummaryCard title="Memory Checks" content={totalTests.toString()} supplement={`tests ${getTimeLabel()}`} />
+      <SummaryCard title="Memory Pieces" content={Object.keys(resultMap).length.toString()} supplement={`memory pieces ${getTimeLabel()}`} />
       <SummaryCard title="Average Score" content={`${avgScore.toFixed(1)}%`} supplement={`across all tests`} />
       <SummaryCard title="Progresses" content={numProgressed.toString()} supplement={`memory pieces that have made progress`} />
       <SummaryCard title="Regresses" content={numRegressed.toString()} supplement={`memory pieces that have regressed`} />
