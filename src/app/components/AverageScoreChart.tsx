@@ -1,39 +1,25 @@
 import React from 'react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { TestResult, getMemoryPieceDetails } from './mockData';
-import { format } from 'date-fns';
 
-interface ProgressChartProps {
-  data: TestResult[];
+export interface AverageScoreData {
+  date: string,
+  score: number,
+}
+
+interface AverageScoreChartProps {
+  data: AverageScoreData[];
   type: 'line' | 'area' | 'bar';
 }
 
-export const ProgressChart: React.FC<ProgressChartProps> = ({ data, type }) => {
-  const chartData = data
-    .sort((a, b) => new Date(a.testDate).getTime() - new Date(b.testDate).getTime())
-    .map(result => {
-      const details = getMemoryPieceDetails(result.memoryPieceId);
-      return {
-        date: format(new Date(result.testDate), 'MMM dd'),
-        score: Math.round((result.score / result.maxScore) * 100),
-        title: details?.memoryPiece.title || 'Unknown',
-        subject: details?.subject?.name || 'Unknown',
-        timeSpent: result.timeSpent,
-      };
-    });
+export const AverageScoreChart: React.FC<AverageScoreChartProps> = ({ data, type }) => {
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+        <div className="bg-background p-3 border border-gray-200 dark:border-gray-800 rounded-lg shadow-lg">
           <p className="font-medium">{`${label}`}</p>
-          <p className="text-blue-600">{`Score: ${data.score}%`}</p>
-          <p className="text-sm text-gray-500">{`${data.title}`}</p>
-          <p className="text-sm text-gray-500">{`Subject: ${data.subject}`}</p>
-          {data.timeSpent && (
-            <p className="text-sm text-gray-500">{`Time: ${Math.floor(data.timeSpent / 60)}m ${data.timeSpent % 60}s`}</p>
-          )}
+          <p className="text-blue-600 dark:text-blue-400">{`Average Score: ${data.score}`}</p>
         </div>
       );
     }
@@ -42,7 +28,7 @@ export const ProgressChart: React.FC<ProgressChartProps> = ({ data, type }) => {
 
   const renderChart = () => {
     const commonProps = {
-      data: chartData,
+      data: data,
       margin: { top: 5, right: 30, left: 20, bottom: 5 },
     };
 
@@ -52,7 +38,7 @@ export const ProgressChart: React.FC<ProgressChartProps> = ({ data, type }) => {
           <LineChart {...commonProps}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
             <XAxis dataKey="date" stroke="#666" />
-            <YAxis stroke="#666" domain={[0, 100]} />
+            <YAxis stroke="#666" domain={[0, 5]} />
             <Tooltip content={<CustomTooltip />} />
             <Line 
               type="monotone" 
@@ -70,7 +56,7 @@ export const ProgressChart: React.FC<ProgressChartProps> = ({ data, type }) => {
           <AreaChart {...commonProps}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
             <XAxis dataKey="date" stroke="#666" />
-            <YAxis stroke="#666" domain={[0, 100]} />
+            <YAxis stroke="#666" domain={[0, 5]} />
             <Tooltip content={<CustomTooltip />} />
             <Area 
               type="monotone" 
@@ -88,7 +74,7 @@ export const ProgressChart: React.FC<ProgressChartProps> = ({ data, type }) => {
           <BarChart {...commonProps}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
             <XAxis dataKey="date" stroke="#666" />
-            <YAxis stroke="#666" domain={[0, 100]} />
+            <YAxis stroke="#666" domain={[0, 5]} />
             <Tooltip content={<CustomTooltip />} />
             <Bar dataKey="score" fill="#3B82F6" radius={[4, 4, 0, 0]} />
           </BarChart>
@@ -99,9 +85,9 @@ export const ProgressChart: React.FC<ProgressChartProps> = ({ data, type }) => {
     }
   };
 
-  if (chartData.length === 0) {
+  if (data.length === 0) {
     return (
-      <div className="h-64 flex items-center justify-center text-gray-500">
+      <div className="h-64 flex items-center justify-center text-gray-500 dark:text-gray-400">
         No test data available for the selected time period
       </div>
     );

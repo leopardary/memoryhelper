@@ -4,7 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/tabs';
 import { Button } from '@/app/components/button';
 import { ClockIcon, CalendarIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
-import { ProgressChart } from './ProgressChart';
+import { ProgressChart } from '@/app/components/ProgressChart';
+import { AverageScoreChart, AverageScoreData } from '@/app/components/AverageScoreChart';
+import { NumberOfChecksChart, NumberOfChecksData } from '@/app/components/NumberOfChecksChart';
 import { MemoryPieceGrid } from './MemoryPieceGrid';
 import { StatsOverview } from './StatsOverview';
 import { HistoryModal } from './HistoryModal';
@@ -51,6 +53,15 @@ interface TestResult {
   testDate: string;
 }
 
+const convertDateToDay = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString();
+}
+
+function calculateAverage(arr) {
+  const sum = arr.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+  return sum / arr.length;
+}
+
 const constructTestResults = (filteredMemoryChecks: MemoryCheckObj[], record: Record<string, SubscriptionOverallRecord>): TestResult[] => {
   return filteredMemoryChecks.map(check => {
     return {
@@ -58,7 +69,7 @@ const constructTestResults = (filteredMemoryChecks: MemoryCheckObj[], record: Re
       memoryPieceId: record[check.subscriptionId].memoryPiece.id,
       score: check.score,
       maxScore: 5,
-      testDate: check.updatedAt
+      testDate: convertDateToDay(check.updatedAt)
     }
   })
 }
@@ -92,6 +103,26 @@ const Dashboard = ({record} : {record: any}) => {
   };
 
   const filteredResults = filterDataByTime(timeFilter);
+
+  const filteredTestResults = constructTestResults(filteredResults, record);
+
+  const filteredTestResultsByDate = filteredTestResults.reduce((res: any, testResult: TestResult) => {
+    if (res[testResult.testDate] == null) {
+      res[testResult.testDate] = [];
+    }
+    res[testResult.testDate].push(testResult);
+    return res;
+  }, {})
+
+  const averageScoreData: AverageScoreData[] = Object.keys(filteredTestResultsByDate).reduce((arry: AverageScoreData[], date: string) => {
+    arry.push({score: Math.round(calculateAverage(filteredTestResultsByDate[date].map((testResult: TestResult) => testResult.score)) * 10) / 10, date: date});
+    return arry;
+  }, []);
+
+  const checkNumData: NumberOfChecksData[] = Object.keys(filteredTestResultsByDate).reduce((arry: NumberOfChecksData[], date: string) => {
+    arry.push({count: filteredTestResultsByDate[date].length, date: date});
+    return arry;
+  }, []);
 
   const handleMemoryPieceClick = (memoryPiece: MemoryPiece) => {
     setSelectedMemoryPiece(memoryPiece);
@@ -132,7 +163,7 @@ const Dashboard = ({record} : {record: any}) => {
         </div>
 
         {/* Stats Overview */}
-        <StatsOverview filteredResults={constructTestResults(filteredResults, record)} timeFilter={timeFilter} />
+        <StatsOverview filteredResults={filteredTestResults} timeFilter={timeFilter} />
 
         {/* Main Content */}
         <Tabs defaultValue="overview" className="space-y-6">
@@ -146,25 +177,25 @@ const Dashboard = ({record} : {record: any}) => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Performance Trend</CardTitle>
+                  <CardTitle>Average Score Trend</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ProgressChart data={filteredResults} type="line" />
+                  <AverageScoreChart data={averageScoreData} type="line" />
                 </CardContent>
               </Card>
               
               <Card>
                 <CardHeader>
-                  <CardTitle>Score Distribution</CardTitle>
+                  <CardTitle>Number of Checks Trend</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ProgressChart data={filteredResults} type="bar" />
+                  <NumberOfChecksChart data={checkNumData} type="bar" />
                 </CardContent>
               </Card>
             </div>
             
             <MemoryPieceGrid 
-              filteredResults={filteredResults}
+              filteredResults={filteredTestResults}
               onMemoryPieceClick={handleMemoryPieceClick}
               limit={8}
             />
@@ -176,14 +207,14 @@ const Dashboard = ({record} : {record: any}) => {
                 <CardTitle>Detailed Progress Analysis</CardTitle>
               </CardHeader>
               <CardContent>
-                <ProgressChart data={filteredResults} type="area" />
+                <ProgressChart data={filteredTestResults} type="area" />
               </CardContent>
             </Card>
           </TabsContent>
 
           <TabsContent value="memory-pieces" className="space-y-6">
             <MemoryPieceGrid 
-              filteredResults={filteredResults}
+              filteredResults={filteredTestResults}
               onMemoryPieceClick={handleMemoryPieceClick}
             />
           </TabsContent>
