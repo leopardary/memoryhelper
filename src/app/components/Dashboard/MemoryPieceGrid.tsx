@@ -2,42 +2,56 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/card';
 import { Badge } from '@/app/components/badge';
 import { TestResult, getMemoryPieceDetails, MemoryPiece } from './mockData';
-import { Clock, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import {MemoryCheckObj, MemoryPieceObj, SubscriptionOverallRecord} from './types';
 
 interface MemoryPieceGridProps {
   filteredResults: TestResult[];
+  subscriptionData: Record<string, SubscriptionOverallRecord>
   onMemoryPieceClick: (memoryPiece: MemoryPiece) => void;
   limit?: number;
 }
 
+interface MemoryPieceStat {
+  memoryPiece: MemoryPieceObj;
+  status: 'new' | 'learning' | 'learned' | 'lapsed';
+  results: TestResult[];
+  avgScore: number;
+  lastScore: number;
+  trend: 'up' | 'down' | 'stable';
+  totalTests: number;
+}
+
 export const MemoryPieceGrid: React.FC<MemoryPieceGridProps> = ({ 
   filteredResults, 
+  subscriptionData,
   onMemoryPieceClick,
   limit 
 }) => {
+  const memoryPieceIdToSubscriptionId: Record<string, string> = Object.keys(subscriptionData).reduce((obj, subscriptionId: string) => {
+    obj[subscriptionData[subscriptionId].memoryPiece.id] = subscriptionId;
+    return obj;
+  }, {});
   // Group results by memory piece and calculate stats
-  const memoryPieceStats = filteredResults.reduce((acc, result) => {
-    const details = getMemoryPieceDetails(result.memoryPieceId);
-    if (!details) return acc;
-
+  const memoryPieceStats = filteredResults.reduce((acc, result: TestResult) => {
+    const subscriptionId = memoryPieceIdToSubscriptionId[result.memoryPieceId];
+    const memoryPieceObj = subscriptionData[subscriptionId].memoryPiece;
+    const status = subscriptionData[subscriptionId].subscription.status;
     if (!acc[result.memoryPieceId]) {
       acc[result.memoryPieceId] = {
-        memoryPiece: details.memoryPiece,
-        subject: details.subject,
-        unit: details.unit,
-        lesson: details.lesson,
+        memoryPiece: memoryPieceObj,
+        status: status,
         results: [],
         avgScore: 0,
         lastScore: 0,
         trend: 'stable' as 'up' | 'down' | 'stable',
         totalTests: 0,
-        totalTime: 0,
       };
     }
 
     acc[result.memoryPieceId].results.push(result);
     return acc;
-  }, {} as Record<string, any>);
+  }, {} as Record<string, MemoryPieceStat>);
 
   // Calculate stats for each memory piece
   Object.values(memoryPieceStats).forEach((stats: any) => {
@@ -50,7 +64,6 @@ export const MemoryPieceGrid: React.FC<MemoryPieceGridProps> = ({
       sum + (r.score / r.maxScore) * 100, 0) / stats.totalTests;
     stats.lastScore = (stats.results[stats.results.length - 1].score / 
                       stats.results[stats.results.length - 1].maxScore) * 100;
-    stats.totalTime = stats.results.reduce((sum: number, r: TestResult) => sum + r.timeSpent, 0);
 
     // Calculate trend
     if (stats.results.length >= 2) {
@@ -62,8 +75,8 @@ export const MemoryPieceGrid: React.FC<MemoryPieceGridProps> = ({
       const secondAvg = secondHalf.reduce((sum: number, r: TestResult) => 
         sum + (r.score / r.maxScore) * 100, 0) / secondHalf.length;
       
-      if (secondAvg > firstAvg + 5) stats.trend = 'up';
-      else if (secondAvg < firstAvg - 5) stats.trend = 'down';
+      if (secondAvg > firstAvg) stats.trend = 'up';
+      else if (secondAvg < firstAvg) stats.trend = 'down';
       else stats.trend = 'stable';
     }
   });
@@ -75,24 +88,23 @@ export const MemoryPieceGrid: React.FC<MemoryPieceGridProps> = ({
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'easy': return 'bg-green-100 text-green-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'hard': return 'bg-red-100 text-red-800';
+      case 'learned': 
+        return 'bg-green-100 text-green-800';
+      case 'learning': 
+        return 'bg-yellow-100 text-yellow-800';
+      case 'new': 
+      case 'lapsed':
+        return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getTrendIcon = (trend: string) => {
     switch (trend) {
-      case 'up': return <TrendingUp className="w-4 h-4 text-green-600" />;
-      case 'down': return <TrendingDown className="w-4 h-4 text-red-600" />;
-      default: return <Minus className="w-4 h-4 text-gray-600" />;
+      case 'up': return <TrendingUp className="w-4 h-4 text-green-600 dark:text-green-400" />;
+      case 'down': return <TrendingDown className="w-4 h-4 text-red-600 dark:text-red-400" />;
+      default: return <Minus className="w-4 h-4 text-gray-600 dark:text-gray-400" />;
     }
-  };
-
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    return `${minutes}m`;
   };
 
   if (displayStats.length === 0) {
@@ -111,7 +123,7 @@ export const MemoryPieceGrid: React.FC<MemoryPieceGridProps> = ({
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
           {limit ? 'Recent Memory Pieces' : 'All Memory Pieces'}
         </h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400">{displayStats.length} pieces</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{displayStats.length} memory pieces</p>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -124,22 +136,17 @@ export const MemoryPieceGrid: React.FC<MemoryPieceGridProps> = ({
             <CardHeader className="pb-2">
               <div className="flex justify-between items-start">
                 <CardTitle className="text-sm font-medium line-clamp-2 flex-1">
-                  {stats.memoryPiece.title}
+                  {stats.memoryPiece.content}
                 </CardTitle>
                 {getTrendIcon(stats.trend)}
               </div>
               <div className="flex flex-wrap gap-1 mt-2">
                 <Badge 
                   variant="outline" 
-                  className={getDifficultyColor(stats.memoryPiece.difficulty)}
+                  className={getDifficultyColor(stats.status)}
                 >
-                  {stats.memoryPiece.difficulty}
+                  {stats.status}
                 </Badge>
-                {stats.subject && (
-                  <Badge variant="outline" style={{ backgroundColor: `${stats.subject.color}20`, color: stats.subject.color }}>
-                    {stats.subject.name}
-                  </Badge>
-                )}
               </div>
             </CardHeader>
             <CardContent className="pt-0">
@@ -155,13 +162,6 @@ export const MemoryPieceGrid: React.FC<MemoryPieceGridProps> = ({
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600 dark:text-gray-300">Tests:</span>
                   <span className="font-medium">{stats.totalTests}</span>
-                </div>
-                <div className="flex justify-between text-sm items-center">
-                  <span className="text-gray-600 dark:text-gray-300">Total Time:</span>
-                  <span className="font-medium flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    {formatTime(stats.totalTime)}
-                  </span>
                 </div>
               </div>
             </CardContent>
