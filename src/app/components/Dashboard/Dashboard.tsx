@@ -153,13 +153,13 @@ const Dashboard = ({record} : {record: Record<string, SubscriptionOverallRecord>
     <div className="min-h-screen w-full p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold">Performance</h1>
             <p className="mt-1">Track your memory piece performance and practice history</p>
           </div>
           
-          <div className="flex gap-2">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2 ">
             {(['today', 'week', 'month', 'year', 'all'] as TimeFilter[]).map((filter) => (
               <Button
                 key={filter}
