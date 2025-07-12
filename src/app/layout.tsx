@@ -41,7 +41,7 @@ export default function RootLayout({
           <ThemeProvider>
             <ColorsThemeProvider>
               <Navbar />
-              <main className="p-4 max-w-7xl m-auto min-w-[300px] font-serif">{children}</main>
+              <main className="p-4 max-w-7xl m-auto min-w-[300px] font-serif h-screen">{children}</main>
               <Footer />
             </ColorsThemeProvider>
           </ThemeProvider>
