@@ -15,6 +15,7 @@ interface ClientLinkProps {
   text: string;
   children?: ReactNode;
   icon?: ClientLinkIconProps;
+  onClick?: () => void;
 }
 
 export default function ClientLink (link: ClientLinkProps) {
@@ -23,6 +24,7 @@ export default function ClientLink (link: ClientLinkProps) {
     if (elem) {
       elem.blur();
     }
+    link?.onClick?.();
   }
   return (
 <Link href={link.href} className={link.className} onClick={closeDropdown}>{link.text ? link.text : link.icon && <><link.icon.icon aria-hidden="true" /><span>{link.icon.name}</span></>}{link.children}</Link>

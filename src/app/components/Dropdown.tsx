@@ -1,6 +1,7 @@
+'use client'
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
 import ClientLink from '@/app/components/ClientLink'
-import { FC, ReactElement } from 'react';
+import { FC, ReactElement, useRef, useCallback } from 'react';
 
 // Reference：https://tailwindcss.com/plus/ui-blocks/marketing/elements/flyout-menus
 
@@ -39,9 +40,15 @@ interface DropdownProps {
 
 export default function Dropdown(props: DropdownProps) {
   const { button, popupOptions, quickActions } = props;
+  const dropdownButtonRef = useRef<HTMLButtonElement>(null);
+
+  const toggleOpen = useCallback(() => {
+    dropdownButtonRef.current?.click();
+  }, [dropdownButtonRef.current]);
+
   return (
     <Popover className="relative mt-1.5">
-      <PopoverButton className="inline-flex items-center gap-x-1 text-sm/6 font-semibold">
+      <PopoverButton className="inline-flex items-center gap-x-1 text-sm/6 font-semibold" ref={dropdownButtonRef}>
         {button.title && <span className='font-semibold'>{button.title}</span>}
         {button.icon}
         {/* <ChevronDownIcon aria-hidden="true" className="size-5 fill-muted-foreground" /> */}
@@ -59,7 +66,7 @@ export default function Dropdown(props: DropdownProps) {
                   {item.icon && <item.icon aria-hidden="true"/>}
                 </div>
                 <div>
-                  {item.href ? <ClientLink href={item.href} className="font-semibold text-foreground hover:underline" text={item.name}><span className="absolute inset-0" /></ClientLink> : <button className="font-semibold text-foreground hover:underline" onClick={item.onClick}>{item.name}<span className="absolute inset-0" /></button>}
+                  {item.href ? <ClientLink href={item.href} onClick={() => toggleOpen()} className="font-semibold text-foreground hover:underline" text={item.name}><span className="absolute inset-0" /></ClientLink> : <button className="font-semibold text-foreground hover:underline" onClick={() => {toggleOpen(); item?.onClick?.();}}>{item.name}<span className="absolute inset-0" /></button>}
                   <p className="mt-1 text-muted-foreground font-semibold">{item.description}</p>
                 </div>
               </div>
