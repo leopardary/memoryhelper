@@ -40,7 +40,7 @@ export default function RootLayout({
             <ColorsThemeProvider>
             <div className={cn(`${geistSans.variable} ${geistMono.variable} w-full relative bg-background antialiased min-h-screen flex flex-col items-center`)}>
               <Navbar />
-              <main className="w-full p-4 max-w-7xl mb-auto min-w-[300px] font-serif">{children}</main>
+              <main className="w-full p-4 max-w-7xl mb-auto min-w-[300px] font-serif z-0">{children}</main>
               <Footer />
               </div>
             </ColorsThemeProvider>
