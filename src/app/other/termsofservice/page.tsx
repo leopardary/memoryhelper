@@ -7,7 +7,7 @@ export default function TermsOfService() {
     <p className="mb-8"><span className="font-semibold">App Name:</span> MemoryHelper</p>
 
     <h2 className="text-2xl font-semibold mt-10 mb-4">1. Acceptance of Terms</h2>
-    <p className="mb-4">By accessing or using MemoryHelper, you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you may not use the App.</p>
+    <p className="mb-4">By accessing or using MemoryHelper, you agree to be bound by these Terms of Service (&ldquo;Terms&rdquo;). If you do not agree to these Terms, you may not use the App.</p>
 
     <h2 className="text-2xl font-semibold mt-10 mb-4">2. Changes to Terms</h2>
     <p className="mb-4">We may update these Terms from time to time. If we make material changes, we will notify you by updating the effective date at the top of this page. Continued use of the App after changes constitutes your acceptance of the new Terms.</p>
@@ -31,7 +31,7 @@ export default function TermsOfService() {
     <p className="mb-4">You may stop using the App at any time. If you would like us to delete your account and associated information, please contact us at <a href="mailto:yourmemoryhelper@gmail.com" className="text-blue-600 hover:underline">yourmemoryhelper@gmail.com</a>.</p>
 
     <h2 className="text-2xl font-semibold mt-10 mb-4">7. Disclaimer of Warranties</h2>
-    <p className="mb-4">The App is provided "as is" and "as available" without warranties of any kind, either express or implied. We do not guarantee that the App will be error-free, uninterrupted, or free from harmful components.</p>
+    <p className="mb-4">The App is provided &ldquo;as is&rdquo; and &ldquo;as available&rdquo; without warranties of any kind, either express or implied. We do not guarantee that the App will be error-free, uninterrupted, or free from harmful components.</p>
 
     <h2 className="text-2xl font-semibold mt-10 mb-4">8. Limitation of Liability</h2>
     <p className="mb-4">To the maximum extent permitted by law, MemoryHelper shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or data, arising out of your use or inability to use the App.</p>
