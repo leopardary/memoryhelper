@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import { Calendar, AlertCircle, CheckCircle } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import {MemoryPieceStat, SubscriptionStatus} from './types';
+import ClientLink from '@/app/components/ClientLink';
 
 interface HistoryModalProps {
   isOpen: boolean;
@@ -43,11 +44,12 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, mem
     }
   };
 
+  const memoryPieceDetailsLink = <ClientLink href={`/memorypiece/${memoryPieceStat.memoryPiece.id}`} className="font-semibold text-foreground hover:underline" text={memoryPieceStat.memoryPiece.content}><span className="absolute inset-0" /></ClientLink>
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">{memoryPieceStat.memoryPiece.content}</DialogTitle>
+          <DialogTitle className="text-xl font-bold">{memoryPieceDetailsLink}</DialogTitle>
           <p className="text-gray-600 dark:text-gray-400 mt-1">{memoryPieceStat.memoryPiece.description}</p>
         </DialogHeader>
 
