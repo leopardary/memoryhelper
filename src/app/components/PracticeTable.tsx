@@ -56,14 +56,14 @@ interface SubmitButtonProps {
   correctNess?: Record<string, boolean>;
   memoryPieceIdToSubscriptionId?: Record<string, string>,
   createMemoryChecks?: (correctNess: Record<string, boolean>) => Promise<{createdMemoryChecks: string[], updatedSubscriptions: string[]}>;
-  refreshPage?: () => Promise<void>;
+  redirectPage?: () => Promise<void>;
 }
 
 const SubmitButton = (props: SubmitButtonProps) => {
   const correctNess = props.correctNess;
   const memoryPieceIdToSubscriptionId = props.memoryPieceIdToSubscriptionId;
   const createMemoryChecks = props.createMemoryChecks;
-  const refreshPage = props.refreshPage;
+  const redirectPage = props.redirectPage;
   const driedCorrectNess = pickBy(correctNess, val => val != null);
   const subscriptionCorrectness: Record<string, boolean> = {};
   if (memoryPieceIdToSubscriptionId != null) {
@@ -81,8 +81,8 @@ const SubmitButton = (props: SubmitButtonProps) => {
         const { createdMemoryChecks, updatedSubscriptions } = await createMemoryChecks(subscriptionCorrectness);
         if (createdMemoryChecks.length == Object.keys(subscriptionCorrectness).length && updatedSubscriptions.length == Object.keys(subscriptionCorrectness).length) {
           setSuccess(1);
-          if (refreshPage != null) {
-            await refreshPage();
+          if (redirectPage != null) {
+            await redirectPage();
           }
         } else {
           setSuccess(-1);
@@ -110,7 +110,7 @@ const TableCell = ({ content, id, onChange, submitButtonProps, isHeader }: {
   if (content === 'checkbox') {
     return isHeader ? <th key={id} scope='col' className='px-6 py-3'><Checkbox onChange={onChange} /></th> : <td key={id} className='px-6 py-4'><Checkbox onChange={onChange} /></td>
   } else if (content == 'submitButton') {
-    return <th key={'submit'}><SubmitButton correctNess={submitButtonProps?.correctNess} memoryPieceIdToSubscriptionId={submitButtonProps?.memoryPieceIdToSubscriptionId} createMemoryChecks={submitButtonProps?.createMemoryChecks} refreshPage={submitButtonProps?.refreshPage} /></th>
+    return <th key={'submit'}><SubmitButton correctNess={submitButtonProps?.correctNess} memoryPieceIdToSubscriptionId={submitButtonProps?.memoryPieceIdToSubscriptionId} createMemoryChecks={submitButtonProps?.createMemoryChecks} redirectPage={submitButtonProps?.redirectPage} /></th>
   } else {
     return isHeader ? <th key={id} scope='col' className='px-6 py-3'>{content}</th> : <td key={id} className='px-6 py-4'>{content}</td>
   }
@@ -122,10 +122,10 @@ interface TableProps {
   // The according Subscription ids in the same order with memoryPiecesStr.
   memoryPieceIdToSubscriptionId: Record<string, string>;
   createMemoryChecks: (correctNess: Record<string, boolean>) => Promise<{createdMemoryChecks: string[], updatedSubscriptions: string[]}>;
-  refreshPage: () => Promise<void>;
+  redirectPage: () => Promise<void>;
 }
 
-export default function PracticeTable({ memoryPiecesStr, memoryPieceIdToSubscriptionId, createMemoryChecks, refreshPage }: TableProps) {
+export default function PracticeTable({ memoryPiecesStr, memoryPieceIdToSubscriptionId, createMemoryChecks, redirectPage }: TableProps) {
   const memoryPieceIds = JSON.parse(memoryPiecesStr);
   // object to maintain the correctness for each memory piece, with key being the id for the memory piece, and value being the correctness.
   const [correctNess, setCorrectNess] = useState({});
@@ -179,7 +179,7 @@ export default function PracticeTable({ memoryPiecesStr, memoryPieceIdToSubscrip
             <TableCell 
               key={header} 
               content={header}
-              submitButtonProps={{correctNess, memoryPieceIdToSubscriptionId, createMemoryChecks, refreshPage}}
+              submitButtonProps={{correctNess, memoryPieceIdToSubscriptionId, createMemoryChecks, redirectPage}}
               isHeader={true}
             />
           ))}

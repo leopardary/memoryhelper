@@ -24,11 +24,11 @@ export default async function Practice() {
   const memoryPieceIdToSubscriptionId: Record<string, string> = {};
   subscriptionsDue.forEach(subscription => memoryPieceIdToSubscriptionId[subscription.memoryPieceId.toString()] = subscription._id.toString());
   const memoryPiecesToCheck = await findMemoryPiecesInBatch(subscriptionsDue.map(subscription => subscription.memoryPieceId.toString()));
-  const refreshPage = async () => {
+  const redirectPage = async () => {
     'use server'
-    redirect('/practice');
+    redirect('/performance');
   }
   return (<div className="flex flex-col items-center">
-        <PracticeTable memoryPiecesStr={JSON.stringify(memoryPiecesToCheck)} memoryPieceIdToSubscriptionId={memoryPieceIdToSubscriptionId} createMemoryChecks={createMemoryChecks} refreshPage={refreshPage} />
+        <PracticeTable memoryPiecesStr={JSON.stringify(memoryPiecesToCheck)} memoryPieceIdToSubscriptionId={memoryPieceIdToSubscriptionId} createMemoryChecks={createMemoryChecks} redirectPage={redirectPage} />
       </div>)
 }

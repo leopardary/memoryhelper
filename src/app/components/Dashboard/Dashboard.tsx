@@ -36,7 +36,7 @@ const constructTestResults = (filteredMemoryChecks: MemoryCheckObj[], record: Re
 }
 
 const Dashboard = ({record} : {record: Record<string, SubscriptionOverallRecord>}) => {
-  const [timeFilter, setTimeFilter] = useState<TimeFilter>('week');
+  const [timeFilter, setTimeFilter] = useState<TimeFilter>('today');
   const [selectedMemoryPiece, setSelectedMemoryPiece] = useState<MemoryPiece | null>(null);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 
