@@ -48,12 +48,12 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, mem
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">{memoryPieceStat.memoryPiece.content}</DialogTitle>
-          <p className="text-gray-600 mt-1">{memoryPieceStat.memoryPiece.description}</p>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">{memoryPieceStat.memoryPiece.description}</p>
         </DialogHeader>
 
         <div className="space-y-6">
           {/* Memory Piece Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-gray-950 rounded-lg">
             {/* <div>
               <h4 className="font-semibold text-sm text-gray-700 mb-2">Details</h4>
               <div className="space-y-1 text-sm">
@@ -63,7 +63,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, mem
               </div>
             </div> */}
             <div>
-              <h4 className="font-semibold text-sm text-gray-700 mb-2">Tags & Difficulty</h4>
+              <h4 className="font-semibold text-sm text-gray-700 dark:text-gray-300 mb-2">Tags & Difficulty</h4>
               <div className="flex flex-wrap gap-1 mb-2">
                 <Badge className={getDifficultyColor(memoryPieceStat.status)}>
                   {memoryPieceStat.status}
@@ -80,22 +80,22 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, mem
           {/* Statistics */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="text-center p-4 bg-blue-50 rounded-lg">
-              <div className="text-2xl font-bold text-blue-600">{testHistory.length}</div>
-              <div className="text-sm text-gray-600">Total Tests</div>
+              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{testHistory.length}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Total Tests</div>
             </div>
-            <div className="text-center p-4 bg-green-50 rounded-lg">
-              <div className="text-2xl font-bold text-green-600">{avgScore.toFixed(1)}%</div>
-              <div className="text-sm text-gray-600">Average Score</div>
+            <div className="text-center p-4 bg-green-50 dark:bg-green-950 rounded-lg">
+              <div className="text-2xl font-bold text-green-600 dark:text-green-400">{avgScore.toFixed(1)}%</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Average Score</div>
             </div>
-            <div className="text-center p-4 bg-purple-50 rounded-lg">
-              <div className="text-2xl font-bold text-purple-600">{bestScore.toFixed(1)}%</div>
-              <div className="text-sm text-gray-600">Best Score</div>
+            <div className="text-center p-4 bg-purple-50 dark:bg-purple-950 rounded-lg">
+              <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{bestScore.toFixed(1)}%</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Best Score</div>
             </div>
           </div>
 
           {/* Progress Chart */}
           {testHistory.length > 0 && (
-            <div className="bg-white p-4 rounded-lg border">
+            <div className="bg-white dark:bg-background p-4 rounded-lg border">
               <h4 className="font-semibold mb-4">Score Progress</h4>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
@@ -121,7 +121,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, mem
           )}
 
           {/* Test History */}
-          <div className="bg-white rounded-lg border">
+          <div className="bg-white dark:bg-background rounded-lg border">
             <h4 className="font-semibold p-4 border-b">Test History</h4>
             <div className="divide-y max-h-64 overflow-y-auto">
               {testHistory.map((result) => (
@@ -129,17 +129,17 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, mem
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <Calendar className="w-4 h-4 text-gray-500" />
-                        <span className="text-sm text-gray-600">
+                        <Calendar className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
                           {format(new Date(result.testDate), 'PPp')}
                         </span>
                       </div>
                       <div className="flex items-center gap-4 text-sm">
                         <div className="flex items-center gap-1">
                           {result.score === result.maxScore ? (
-                            <CheckCircle className="w-4 h-4 text-green-500" />
+                            <CheckCircle className="w-4 h-4 text-green-500 dark:text-green-400" />
                           ) : (
-                            <AlertCircle className="w-4 h-4 text-orange-500" />
+                            <AlertCircle className="w-4 h-4 text-orange-500 dark:text-orange-400" />
                           )}
                           <span className="font-medium">
                             Score: {result.score}/{result.maxScore} ({Math.round((result.score / result.maxScore) * 100)}%)
