@@ -4,7 +4,6 @@ import logo from "@public/favicon.png";
 import UserMenuButton from "@/app/components/Navbar/UserMenuButton";
 import { authOptions } from "@/lib/utils/authOptions";
 import { getServerSession } from "next-auth/next";
-import '@/app/components/styles/Navbar.scss'
 import UserSessionDropDown from './UserSessionDropDown';
 
 const Logo = () => (
