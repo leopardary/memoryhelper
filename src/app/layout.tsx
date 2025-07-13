@@ -34,15 +34,15 @@ export default function RootLayout({
   type="image/png"
   sizes="32x32"
 />
-      <body
-        className={cn(`${geistSans.variable} ${geistMono.variable} w-full min-h-svh relative bg-background antialiased`)}
-      >
+      <body>
         <SessionProvider>
           <ThemeProvider>
             <ColorsThemeProvider>
+            <div className={cn(`${geistSans.variable} ${geistMono.variable} w-full relative bg-background antialiased min-h-screen flex flex-col items-center`)}>
               <Navbar />
-              <main className="p-4 max-w-7xl m-auto min-w-[300px] font-serif h-screen">{children}</main>
+              <main className="w-full p-4 max-w-7xl mb-auto min-w-[300px] font-serif">{children}</main>
               <Footer />
+              </div>
             </ColorsThemeProvider>
           </ThemeProvider>
         </SessionProvider>

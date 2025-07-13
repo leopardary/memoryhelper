@@ -17,9 +17,9 @@ export default async function Navbar() {
   const session = await 
   getServerSession(authOptions);
   return (
-      <div className="max-w-7xl m-auto flex flex-row gap-2 justify-between font-serif">
+      <div className="w-full max-w-7xl flex flex-row gap-2 justify-between font-serif sticky top-0 bg-background">
         <Logo />
-        <div className="m-3 flex flex-row gap-2 items-center">
+        <div className="my-1 mx-3 flex flex-row gap-2 items-center">
           {session && <UserSessionDropDown/>}
           <UserMenuButton session={session} />
         </div>
