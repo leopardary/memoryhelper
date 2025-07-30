@@ -11,15 +11,13 @@ export async function createMemoryPiece(data: CreateMemoryPieceInput) {
 export async function getMemoryPiece(id: string) {
   await connectDB();
   return MemoryPiece.findById(id)
-    .populate('subject')
-    .populate('unit');
+    .populate('units');
 }
 
 export async function getMemoryPiecesByUnit(unitId: string) {
   await connectDB();
   return MemoryPiece.find({ unit: unitId })
-    .populate('subject')
-    .populate('unit');
+    .populate('units');
 }
 
 export async function updateMemoryPiece(id: string, data: UpdateMemoryPieceInput) {
@@ -40,8 +38,7 @@ export async function deleteMemoryPiece(id: string) {
 export async function getMemoryPieceByContent(content: string) {
   await connectDB();
   return MemoryPiece.findOne({ content })
-    .populate('subject')
-    .populate('unit');
+    .populate('units');
 }
 
 // Check existence or create MemoryPiece
@@ -67,7 +64,7 @@ export async function findMemoryPiecesInBatch(ids: string[]) {
   const memoryPieces = [];
   for (const id of ids) {
     try {
-      const memoryPiece = await MemoryPiece.findById(id).populate('subject');
+      const memoryPiece = await MemoryPiece.findById(id);
       memoryPieces.push(memoryPiece);
     } catch (e) {
       console.error(`MemoryPiece with id ${id} not found due to error: `, e);
