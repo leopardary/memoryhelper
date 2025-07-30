@@ -2,7 +2,8 @@ import { Types } from 'mongoose';
 
 export interface MemoryPieceProps {
   _id?: Types.ObjectId;
-  units?: Types.ObjectId[];
+  subject: Types.ObjectId;
+  unit?: Types.ObjectId;
   content: string;
   imageUrls?: string[];
   description?: string;
