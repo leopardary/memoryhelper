@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"userId":{"$numberInt":"1"},"memoryPieceId":{"$numberInt":"1"}},"name":"userId_1_memoryPieceId_1","background":true,"unique":true}],"uuid":"594b999fe3ba4ad3a0d8e86ee8efa9a5","collectionName":"subscriptions","type":"collection"}
