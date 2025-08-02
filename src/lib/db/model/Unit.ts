@@ -27,7 +27,7 @@ if (!mongoose.models.Unit) {
   unitSchema.virtual('memoryPieces', {
     ref: MemoryPiece.modelName,
     localField: '_id',
-    foreignField: 'unit',
+    foreignField: 'units',
   });
 
   Unit = mongoose.model<UnitProps>('Unit', unitSchema);
