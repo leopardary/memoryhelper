@@ -3,7 +3,7 @@ import {getSubjectByTitle} from '@/lib/db/api/subject';
 import {findOrCreateMemoryPiece} from '@/lib/db/api/memory-piece'
 import {findOrCreateUnit} from '@/lib/db/api/unit'
 import { connectDB } from '@/lib/db/utils';
-import data from '@/lib/db/data/chinese/all_seed_data';
+import data from '@/lib/db/data/chinese/scripts/all_seed_data';
 
 function getDataField(data: any, key: string) {
   return data[key];
