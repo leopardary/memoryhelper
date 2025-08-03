@@ -10,6 +10,8 @@ import { findOrCreateSubscriptionsInBatch, getSubscriptionsForUser, removeSubscr
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/utils/authOptions";
 import UploadedImage from '@/app/components/UploadedImage';
+import { addMemoryPieceToUnit } from '@/lib/db/api/memory-piece';
+import CreateMemoryPieceForm from '@/app/components/CreateMemoryPieceForm';
 
 function getSubjectTitle(unit: any) {
   return unit?.subject.title;
@@ -56,13 +58,15 @@ export default async function Unit({params}: {params: Promise<{id: string}>}) {
       }
     })
   }
+  const hasSubUnits = !isEmpty(unitChildren) && unitChildren.length > 0;
+  const hasMemoryPieces = !isEmpty(memoryPieces) && memoryPieces.length > 0;
   return <>
     <Breadcrumbs segments={breadcrumbsSegments}/>
     <SectionDivider title={'Details'}/>
     <ImageCarousel imageSrcs={unit.imageUrls || []} imageAlt='' />
-    {!isEmpty(unitChildren) && unitChildren.length > 0 && <SectionDivider title={'Sub Units'} />}
-    {!isEmpty(memoryPieces) && memoryPieces.length > 0 && <SectionDivider title={'Memory Pieces'}/>}
-    <UploadedImage />
+    {hasSubUnits && <SectionDivider title={'Sub Units'} />}
+    {hasMemoryPieces && memoryPieces.length > 0 && <SectionDivider title={'Memory Pieces'}/>}
+    <CreateMemoryPieceForm unitId={unitId} addMemoryPieceToUnit={addMemoryPieceToUnit} />
     <div className="flex flex-col items-center">
     {!isEmpty(unitChildren) && unitChildren.length > 0 && <div className="my-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {unitChildren.map((unitChild: UnitProps) => <UnitCard unit={unitChild} key={unitChild._id?.toString()} />)}
