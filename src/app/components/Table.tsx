@@ -56,6 +56,8 @@ export default function Table({ memoryPiecesStr, subscriptions, loggedIn, findOr
   if (loggedIn) {
     headers.unshift('checkbox');
     data.forEach((memoryPiece: any) => memoryPiece.checkbox = true);
+  } else {
+    headers.unshift('');
   }
 
   const handleSelectAll = () => {

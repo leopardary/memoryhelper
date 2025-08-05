@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import ImageUploader from '@/app/components/ImageUploader';
+import Image from "next/image";
 
 export default function Page() {
   const [imageUrl, setImageUrl] = useState('');
@@ -10,7 +11,7 @@ export default function Page() {
     <div className="max-w-md mx-auto p-4">
       <ImageUploader onUploaded={setImageUrl} />
       {imageUrl && (
-        <img src={imageUrl} alt="Uploaded" className="mt-4 rounded-lg shadow" />
+        <Image src={imageUrl} alt="Uploaded" className="mt-4 rounded-lg shadow" />
       )}
     </div>
   );

@@ -3,6 +3,7 @@
 import { useDropzone } from 'react-dropzone';
 import { useCallback, useState } from 'react';
 import { X } from 'lucide-react';
+import Image from "next/image";
 
 export type UploadedImage = {
   url: string;
@@ -48,7 +49,9 @@ export default function CreateMemoryPieceForm({ unitId, addMemoryPieceToUnit, un
           body: JSON.stringify({ fileName: file.name, fileType: file.type, filePath: unitPath }),
         });
 
-        const { uploadUrl, publicUrl, key } = await res.json();
+        const { uploadUrl, publicUrl } = await res.json();
+
+        const key = unitPath + '/' + file.name;
 
         await fetch(uploadUrl, {
           method: 'PUT',
@@ -63,7 +66,7 @@ export default function CreateMemoryPieceForm({ unitId, addMemoryPieceToUnit, un
     }
 
     setUploading(false);
-  }, []);
+  }, [unitPath]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -162,10 +165,12 @@ export default function CreateMemoryPieceForm({ unitId, addMemoryPieceToUnit, un
           <div className="mt-4 grid grid-cols-3 gap-4">
             {images.map(img => (
               <div key={img.key} className="relative group">
-                <img
+                <Image
                   src={img.url}
                   alt="Uploaded"
                   className="w-full h-32 object-cover rounded shadow"
+                  width={40}
+                  height={40}
                 />
                 <button
                   type="button"
