@@ -70,6 +70,44 @@ export async function findOrCreateUnit(unit: CreateUnitInput) {
   }
 }
 
+export interface AddSubUnitProps {
+  parentUnitId: string,
+  title: string,
+  description: string,
+  imageUrls: string[]
+}
+
+/**
+ * To add subUnit based on the passed in props.
+ */
+export async function addSubUnit(props: AddSubUnitProps) {
+  const {parentUnitId, title, description, imageUrls} = props;
+  try {
+    if (imageUrls && !validateImagePath(imageUrls)) {
+      throw new Error(`Image file not found: ${imageUrls}`);
+    }
+    const parentUnit = await getUnit(parentUnitId);
+    if (parentUnit == null) {
+      throw new Error("Parent Unit not found.");
+    }
+    const siblingUnits = await Unit.find({ parentUnit: parentUnit });
+    const existingOrderIndices = siblingUnits.map(unit => (unit.order || 0));
+    const order = Math.max(...existingOrderIndices) + 1;
+    // Unit is uniquely defined by the combination of [title, parentUnit, subject]
+    const record = await Unit.findOneAndUpdate(
+      { title: title, parentUnit: parentUnit, subject: parentUnit.subject },
+      { title: title, parentUnit: parentUnit, subject: parentUnit.subject, description, imageUrls, order },
+      { upsert: true, new: true }
+    );
+    
+    console.log('Unit found or created:', record);
+    return record;
+  } catch (error) {
+    console.error('Error in findOrCreateUnit:', error);
+    throw error;
+  }
+}
+
 export async function getDirectChildrenBySubject(subjectId: string) {
   await connectDB();
   return Unit.find({ 
