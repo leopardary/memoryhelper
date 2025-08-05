@@ -1,36 +1,41 @@
-'use client';
-
-import { useDropzone } from 'react-dropzone';
+'use client'
+import CreateMemoryPieceForm, {AddMemoryPieceToUnitProps, UploadedImage} from '@/app/components/CreateMemoryPieceForm';
+import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import { useCallback, useState } from 'react';
+import { Button } from '@/app/components/button';
+import { useDropzone } from 'react-dropzone';
 import { X } from 'lucide-react';
+import { AddSubUnitProps } from '@/lib/db/api/unit';
 
-export type UploadedImage = {
-  url: string;
-  key: string;
-};
-
-export interface AddMemoryPieceToUnitProps {
+interface CreateMemoryPiecePanelProps {
   unitId: string;
-  content: string;
-  imageUrls: string[];
-  description?: string;
-  descriptionFunc?: () => string;
-  labels: string[];
-}
-
-export interface CreateMemoryPieceFormProps {
-  unitId: string;
-  // server util to save the new memoryPiece {@see memory-piece#addMemoryPieceToUnit}
   addMemoryPieceToUnit: (props: AddMemoryPieceToUnitProps) => Promise<boolean>;
-  submitCallback?: () => void;
+  setModalOpen: (open: boolean) => void
 }
 
-export default function CreateMemoryPieceForm({ unitId, addMemoryPieceToUnit, submitCallback } : CreateMemoryPieceFormProps) {
+function CreateMemoryPiecePanel({unitId, addMemoryPieceToUnit, setModalOpen}: CreateMemoryPiecePanelProps) {
+  return  <DialogPanel
+              transition
+              className="w-full max-w-md rounded-xl bg-popover p-6 text-foreground shadow-xl ring-1 ring-border backdrop-blur-2xl duration-300 ease-out data-closed:scale-95 data-closed:opacity-0"
+            >
+              <DialogTitle as="h3" className="mb-4 text-base/7 font-medium leading-7 text-foreground">
+                Add MemoryPiece
+              </DialogTitle>
+              <CreateMemoryPieceForm unitId={unitId} addMemoryPieceToUnit={addMemoryPieceToUnit} submitCallback={() => setModalOpen(false)}/>
+            </DialogPanel>
+}
+
+interface CreateSubUnitPanelProps {
+  unitId: string;
+  addSubUnit: (props: AddSubUnitProps) => Promise<void>;
+  setModalOpen: (open: boolean) => void
+}
+
+function CreateSubUnitForm({ unitId, addSubUnit, setModalOpen } : CreateSubUnitPanelProps) {
   const [images, setImages] = useState<UploadedImage[]>([]);
   const [uploading, setUploading] = useState(false);
-  const [content, setContent] = useState('');
+  const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [labels, setLabels] = useState<string>('');
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     setUploading(true);
@@ -85,32 +90,31 @@ export default function CreateMemoryPieceForm({ unitId, addMemoryPieceToUnit, su
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await addMemoryPieceToUnit({
-      unitId,
-      content,
+    const res = await addSubUnit({
+      parentUnitId: unitId,
+      title,
+      description,
       imageUrls: images.map(image => image.url),
-      labels: labels.split(',')
     })
 
-    if (res) {
+    if (res != null) {
       alert('Submitted!');
-      setContent('');
+      setTitle('');
       setDescription('');
       setImages([]);
-      setLabels('');
     }
-    submitCallback?.();
+    setModalOpen?.(false);
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 max-w-xl mx-auto">
       <div>
-        <label className="block mb-1 font-medium">Content</label>
+        <label className="block mb-1 font-medium">Title</label>
         <input
           type="text"
           className="w-full border rounded px-3 py-2"
-          value={content}
-          onChange={e => setContent(e.target.value)}
+          value={title}
+          onChange={e => setTitle(e.target.value)}
           required
         />
       </div>
@@ -122,16 +126,6 @@ export default function CreateMemoryPieceForm({ unitId, addMemoryPieceToUnit, su
           value={description}
           onChange={e => setDescription(e.target.value)}
           rows={3}
-        />
-      </div>
-
-      <div>
-        <label className="block mb-1 font-medium">Labels</label>
-        <input
-          type="text"
-          className="w-full border rounded px-3 py-2"
-          value={labels}
-          onChange={e => setLabels(e.target.value)}
         />
       </div>
 
@@ -180,11 +174,48 @@ export default function CreateMemoryPieceForm({ unitId, addMemoryPieceToUnit, su
 
       <button
         type="submit"
-        disabled={uploading || !content || images.length === 0}
+        disabled={uploading || !title || images.length === 0}
         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400"
       >
         Submit
       </button>
     </form>
   );
+}
+
+function CreateSubUnitPanel({unitId, addSubUnit, setModalOpen}: CreateSubUnitPanelProps) {
+  return  <DialogPanel
+              transition
+              className="w-full max-w-md rounded-xl bg-popover p-6 text-foreground shadow-xl ring-1 ring-border backdrop-blur-2xl duration-300 ease-out data-closed:scale-95 data-closed:opacity-0"
+            >
+              <DialogTitle as="h3" className="mb-4 text-base/7 font-medium leading-7 text-foreground">
+                Add Unit
+              </DialogTitle>
+              <CreateSubUnitForm unitId={unitId} addSubUnit={addSubUnit} setModalOpen={() => setModalOpen(false)}/>
+            </DialogPanel>
+}
+
+
+interface AddContentModalProps {
+  unitId: string
+  hasSubUnits: boolean;
+  hasMemoryPieces: boolean;
+  addMemoryPieceToUnit: (props: AddMemoryPieceToUnitProps) => Promise<boolean>;
+  addSubUnit: (props: AddSubUnitProps) => Promise<any>;
+}
+
+export default function AddContentModal(props: AddContentModalProps) {
+  const [modalOpen, setModalOpen] = useState(false);
+  const {unitId, hasSubUnits, addMemoryPieceToUnit, addSubUnit} = props;
+  const panel = hasSubUnits ? <CreateSubUnitPanel unitId={unitId} addSubUnit={addSubUnit} setModalOpen={setModalOpen} /> : <CreateMemoryPiecePanel unitId={unitId} addMemoryPieceToUnit={addMemoryPieceToUnit} setModalOpen={setModalOpen} />
+  return (
+    <>
+    <Button onClick={() => setModalOpen(!modalOpen)}>{modalOpen ? 'Close Modal' : 'Open Modal'}</Button>
+    <Dialog open={modalOpen} as="div" className="relative z-10 focus:outline-none" onClose={() => setModalOpen(false)}>
+        <div className="fixed inset-0 z-10 w-screen overflow-y-auto bg-black/50 backdrop-blur-sm">
+          <div className="flex min-h-full items-center justify-center p-4">
+            {panel}
+          </div>
+        </div>
+      </Dialog></>);
 }
