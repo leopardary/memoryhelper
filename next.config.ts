@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { hostname: "lh3.googleusercontent.com" },
       { hostname: "chineselearning.cloudfront.gcdn.top" },
+      { hostname: "memoryhelper.s3.us-west-1.amazonaws.com"}
     ]
   },
   // Enable following config for build with less resources

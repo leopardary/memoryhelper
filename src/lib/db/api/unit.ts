@@ -1,3 +1,4 @@
+'use server'
 import Unit from '@/lib/db/model/Unit';
 import { connectDB } from '@/lib/db/utils';
 import { CreateUnitInput, UpdateUnitInput } from '@/lib/db/model/types/Unit.types';

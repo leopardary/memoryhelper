@@ -10,10 +10,11 @@ import { AddSubUnitProps } from '@/lib/db/api/unit';
 interface CreateMemoryPiecePanelProps {
   unitId: string;
   addMemoryPieceToUnit: (props: AddMemoryPieceToUnitProps) => Promise<boolean>;
-  setModalOpen: (open: boolean) => void
+  setModalOpen: (open: boolean) => void;
+  unitPath: string;
 }
 
-function CreateMemoryPiecePanel({unitId, addMemoryPieceToUnit, setModalOpen}: CreateMemoryPiecePanelProps) {
+function CreateMemoryPiecePanel({unitId, addMemoryPieceToUnit, setModalOpen, unitPath}: CreateMemoryPiecePanelProps) {
   return  <DialogPanel
               transition
               className="w-full max-w-md rounded-xl bg-popover p-6 text-foreground shadow-xl ring-1 ring-border backdrop-blur-2xl duration-300 ease-out data-closed:scale-95 data-closed:opacity-0"
@@ -21,17 +22,18 @@ function CreateMemoryPiecePanel({unitId, addMemoryPieceToUnit, setModalOpen}: Cr
               <DialogTitle as="h3" className="mb-4 text-base/7 font-medium leading-7 text-foreground">
                 Add MemoryPiece
               </DialogTitle>
-              <CreateMemoryPieceForm unitId={unitId} addMemoryPieceToUnit={addMemoryPieceToUnit} submitCallback={() => setModalOpen(false)}/>
+              <CreateMemoryPieceForm unitId={unitId} addMemoryPieceToUnit={addMemoryPieceToUnit} submitCallback={() => setModalOpen(false)} unitPath={unitPath} />
             </DialogPanel>
 }
 
 interface CreateSubUnitPanelProps {
   unitId: string;
   addSubUnit: (props: AddSubUnitProps) => Promise<void>;
-  setModalOpen: (open: boolean) => void
+  setModalOpen: (open: boolean) => void;
+  unitPath: string;
 }
 
-function CreateSubUnitForm({ unitId, addSubUnit, setModalOpen } : CreateSubUnitPanelProps) {
+function CreateSubUnitForm({ unitId, addSubUnit, setModalOpen, unitPath } : CreateSubUnitPanelProps) {
   const [images, setImages] = useState<UploadedImage[]>([]);
   const [uploading, setUploading] = useState(false);
   const [title, setTitle] = useState('');
@@ -49,7 +51,7 @@ function CreateSubUnitForm({ unitId, addSubUnit, setModalOpen } : CreateSubUnitP
         const res = await fetch('/api/s3/upload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fileName: file.name, fileType: file.type }),
+          body: JSON.stringify({ fileName: file.name, fileType: file.type, filePath: unitPath }),
         });
 
         const { uploadUrl, publicUrl, key } = await res.json();
@@ -121,11 +123,11 @@ function CreateSubUnitForm({ unitId, addSubUnit, setModalOpen } : CreateSubUnitP
 
       <div>
         <label className="block mb-1 font-medium">Description</label>
-        <textarea
+        <input
+          type="text"
           className="w-full border rounded px-3 py-2"
           value={description}
           onChange={e => setDescription(e.target.value)}
-          rows={3}
         />
       </div>
 
@@ -202,12 +204,13 @@ interface AddContentModalProps {
   hasMemoryPieces: boolean;
   addMemoryPieceToUnit: (props: AddMemoryPieceToUnitProps) => Promise<boolean>;
   addSubUnit: (props: AddSubUnitProps) => Promise<any>;
+  unitPath: string;
 }
 
 export default function AddContentModal(props: AddContentModalProps) {
   const [modalOpen, setModalOpen] = useState(false);
-  const {unitId, hasSubUnits, addMemoryPieceToUnit, addSubUnit} = props;
-  const panel = hasSubUnits ? <CreateSubUnitPanel unitId={unitId} addSubUnit={addSubUnit} setModalOpen={setModalOpen} /> : <CreateMemoryPiecePanel unitId={unitId} addMemoryPieceToUnit={addMemoryPieceToUnit} setModalOpen={setModalOpen} />
+  const {unitId, hasSubUnits, addMemoryPieceToUnit, addSubUnit, unitPath} = props;
+  const panel = hasSubUnits ? <CreateSubUnitPanel unitId={unitId} addSubUnit={addSubUnit} setModalOpen={setModalOpen} unitPath={unitPath} /> : <CreateMemoryPiecePanel unitId={unitId} addMemoryPieceToUnit={addMemoryPieceToUnit} setModalOpen={setModalOpen} unitPath={unitPath} />
   return (
     <>
     <Button onClick={() => setModalOpen(!modalOpen)}>{modalOpen ? 'Close Modal' : 'Open Modal'}</Button>
