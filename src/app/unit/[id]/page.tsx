@@ -48,8 +48,12 @@ export default async function Unit({params}: {params: Promise<{id: string}>}) {
   const subscriptions: Record<string, boolean> = {};
   memoryPieces.forEach((memoryPiece: any) => subscriptions[memoryPiece._id] = false);
   let existingSubscriptions: string[] = [];
+  const user = session?.user;
+  let editMode = false;
+  if (user?.name == "Wenjiao Wang") {
+    editMode = true;
+  }
   if (isEmpty(unitChildren) && !isEmpty(memoryPieces) && session) {
-    const user = session.user;
     // Move to a global state
     existingSubscriptions = (await getSubscriptionsForUser(user.id)).map(subscription => subscription.memoryPieceId.toString());
     memoryPieces.forEach((memoryPiece: any) => {
@@ -62,12 +66,12 @@ export default async function Unit({params}: {params: Promise<{id: string}>}) {
   const hasSubUnits = !isEmpty(unitChildren) && unitChildren.length > 0;
   const hasMemoryPieces = !isEmpty(memoryPieces) && memoryPieces.length > 0;
   return <>
+    {editMode && <div className='w-full flex flex-row justify-center'><AddContentModal unitId={unitId} addMemoryPieceToUnit={addMemoryPieceToUnit} addSubUnit={addSubUnit} hasMemoryPieces={hasMemoryPieces} hasSubUnits={hasSubUnits} unitPath={unitPath} /></div>}
     <Breadcrumbs segments={breadcrumbsSegments}/>
     <SectionDivider title={'Details'}/>
     <ImageCarousel imageSrcs={unit.imageUrls || []} imageAlt='' />
     {hasSubUnits && <SectionDivider title={'Sub Units'} />}
     {hasMemoryPieces && memoryPieces.length > 0 && <SectionDivider title={'Memory Pieces'}/>}
-    <AddContentModal unitId={unitId} addMemoryPieceToUnit={addMemoryPieceToUnit} addSubUnit={addSubUnit} hasMemoryPieces={hasMemoryPieces} hasSubUnits={hasSubUnits} unitPath={unitPath} />
     <div className="flex flex-col items-center">
     {!isEmpty(unitChildren) && unitChildren.length > 0 && <div className="my-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {unitChildren.map((unitChild: UnitProps) => <UnitCard unit={unitChild} key={unitChild._id?.toString()} />)}

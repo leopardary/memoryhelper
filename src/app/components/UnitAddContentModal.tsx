@@ -6,6 +6,7 @@ import { Button } from '@/app/components/button';
 import { useDropzone } from 'react-dropzone';
 import { X } from 'lucide-react';
 import { AddSubUnitProps } from '@/lib/db/api/unit';
+import Image from "next/image";
 
 interface CreateMemoryPiecePanelProps {
   unitId: string;
@@ -54,7 +55,9 @@ function CreateSubUnitForm({ unitId, addSubUnit, setModalOpen, unitPath } : Crea
           body: JSON.stringify({ fileName: file.name, fileType: file.type, filePath: unitPath }),
         });
 
-        const { uploadUrl, publicUrl, key } = await res.json();
+        const { uploadUrl, publicUrl } = await res.json();
+
+        const key = unitPath + '/' + file.name;
 
         await fetch(uploadUrl, {
           method: 'PUT',
@@ -69,7 +72,7 @@ function CreateSubUnitForm({ unitId, addSubUnit, setModalOpen, unitPath } : Crea
     }
 
     setUploading(false);
-  }, []);
+  }, [unitPath]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -156,10 +159,12 @@ function CreateSubUnitForm({ unitId, addSubUnit, setModalOpen, unitPath } : Crea
           <div className="mt-4 grid grid-cols-3 gap-4">
             {images.map(img => (
               <div key={img.key} className="relative group">
-                <img
+                <Image
                   src={img.url}
                   alt="Uploaded"
                   className="w-full h-32 object-cover rounded shadow"
+                  width={40}
+                  height={40}
                 />
                 <button
                   type="button"
@@ -185,7 +190,7 @@ function CreateSubUnitForm({ unitId, addSubUnit, setModalOpen, unitPath } : Crea
   );
 }
 
-function CreateSubUnitPanel({unitId, addSubUnit, setModalOpen}: CreateSubUnitPanelProps) {
+function CreateSubUnitPanel({unitId, addSubUnit, setModalOpen, unitPath}: CreateSubUnitPanelProps) {
   return  <DialogPanel
               transition
               className="w-full max-w-md rounded-xl bg-popover p-6 text-foreground shadow-xl ring-1 ring-border backdrop-blur-2xl duration-300 ease-out data-closed:scale-95 data-closed:opacity-0"
@@ -193,7 +198,7 @@ function CreateSubUnitPanel({unitId, addSubUnit, setModalOpen}: CreateSubUnitPan
               <DialogTitle as="h3" className="mb-4 text-base/7 font-medium leading-7 text-foreground">
                 Add Unit
               </DialogTitle>
-              <CreateSubUnitForm unitId={unitId} addSubUnit={addSubUnit} setModalOpen={() => setModalOpen(false)}/>
+              <CreateSubUnitForm unitId={unitId} addSubUnit={addSubUnit} setModalOpen={() => setModalOpen(false)} unitPath={unitPath}/>
             </DialogPanel>
 }
 
