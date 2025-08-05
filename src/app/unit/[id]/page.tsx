@@ -9,7 +9,6 @@ import SectionDivider from "@/app/components/SectionDivider";
 import { findOrCreateSubscriptionsInBatch, getSubscriptionsForUser, removeSubscriptionsInBatch } from "@/lib/db/api/subscription"
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/utils/authOptions";
-import UploadedImage from '@/app/components/UploadedImage';
 import { addMemoryPieceToUnit } from '@/lib/db/api/memory-piece';
 import { addSubUnit } from '@/lib/db/api/unit';
 import AddContentModal from '@/app/components/UnitAddContentModal'
@@ -42,6 +41,7 @@ export default async function Unit({params}: {params: Promise<{id: string}>}) {
   breadcrumbsSegments.unshift({name: getSubjectTitle(unit), url: `/subject/${unit?.subject.id}`});
   // prefix with home.
   breadcrumbsSegments.unshift({name: 'Home', url: `/`});
+  const unitPath = breadcrumbsSegments.map(seg => seg.name).join('/');
   // The unit has either childrern unit, or memoryPieces.
   const unitChildren = getChildren(unit);
   const memoryPieces = getMemoryPieces(unit);
@@ -67,12 +67,12 @@ export default async function Unit({params}: {params: Promise<{id: string}>}) {
     <ImageCarousel imageSrcs={unit.imageUrls || []} imageAlt='' />
     {hasSubUnits && <SectionDivider title={'Sub Units'} />}
     {hasMemoryPieces && memoryPieces.length > 0 && <SectionDivider title={'Memory Pieces'}/>}
-    <AddContentModal unitId={unitId} addMemoryPieceToUnit={addMemoryPieceToUnit} addSubUnit={addSubUnit} hasMemoryPieces={hasMemoryPieces} hasSubUnits={hasSubUnits} />
+    <AddContentModal unitId={unitId} addMemoryPieceToUnit={addMemoryPieceToUnit} addSubUnit={addSubUnit} hasMemoryPieces={hasMemoryPieces} hasSubUnits={hasSubUnits} unitPath={unitPath} />
     <div className="flex flex-col items-center">
     {!isEmpty(unitChildren) && unitChildren.length > 0 && <div className="my-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {unitChildren.map((unitChild: UnitProps) => <UnitCard unit={unitChild} key={unitChild._id?.toString()} />)}
         </div>}
-    {!isEmpty(memoryPieces) && memoryPieces.length > 0 && <><UploadedImage /><Table memoryPiecesStr={JSON.stringify(memoryPieces)} subscriptions={subscriptions} loggedIn={session != null} findOrCreateSubscriptionsInBatch={findOrCreateSubscriptionsInBatch} removeSubscriptionsInBatch={removeSubscriptionsInBatch}/></>}
+    {!isEmpty(memoryPieces) && memoryPieces.length > 0 && <><Table memoryPiecesStr={JSON.stringify(memoryPieces)} subscriptions={subscriptions} loggedIn={session != null} findOrCreateSubscriptionsInBatch={findOrCreateSubscriptionsInBatch} removeSubscriptionsInBatch={removeSubscriptionsInBatch}/></>}
     </div>
   </>
 }

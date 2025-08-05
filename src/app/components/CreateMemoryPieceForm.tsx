@@ -22,10 +22,11 @@ export interface CreateMemoryPieceFormProps {
   unitId: string;
   // server util to save the new memoryPiece {@see memory-piece#addMemoryPieceToUnit}
   addMemoryPieceToUnit: (props: AddMemoryPieceToUnitProps) => Promise<boolean>;
+  unitPath: string;
   submitCallback?: () => void;
 }
 
-export default function CreateMemoryPieceForm({ unitId, addMemoryPieceToUnit, submitCallback } : CreateMemoryPieceFormProps) {
+export default function CreateMemoryPieceForm({ unitId, addMemoryPieceToUnit, unitPath, submitCallback } : CreateMemoryPieceFormProps) {
   const [images, setImages] = useState<UploadedImage[]>([]);
   const [uploading, setUploading] = useState(false);
   const [content, setContent] = useState('');
@@ -44,7 +45,7 @@ export default function CreateMemoryPieceForm({ unitId, addMemoryPieceToUnit, su
         const res = await fetch('/api/s3/upload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fileName: file.name, fileType: file.type }),
+          body: JSON.stringify({ fileName: file.name, fileType: file.type, filePath: unitPath }),
         });
 
         const { uploadUrl, publicUrl, key } = await res.json();
@@ -88,6 +89,7 @@ export default function CreateMemoryPieceForm({ unitId, addMemoryPieceToUnit, su
     const res = await addMemoryPieceToUnit({
       unitId,
       content,
+      description,
       imageUrls: images.map(image => image.url),
       labels: labels.split(',')
     })

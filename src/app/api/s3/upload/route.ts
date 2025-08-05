@@ -9,9 +9,9 @@ const s3 = new S3({
 });
 
 export async function POST(req: Request) {
-  const { fileName, fileType } = await req.json();
+  const { fileName, fileType, filePath } = await req.json();
 
-  const fileKey = `uploads/${Date.now()}-${fileName}`;
+  const fileKey = `${filePath}/${fileName}`;
 
   const url = await s3.getSignedUrlPromise('putObject', {
     Bucket: process.env.S3_BUCKET_NAME!,
