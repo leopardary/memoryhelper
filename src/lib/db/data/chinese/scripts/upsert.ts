@@ -69,8 +69,7 @@ export async function processSeedData() {
         description,
         imageUrls,
         labels,
-        unit: lessonRecord.id,
-        subject: yuwen_subject_result.id,
+        units: [lessonRecord.id],
       })
     }
         console.log('Seed data processing completed successfully');

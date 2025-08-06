@@ -9,8 +9,8 @@ export async function migrateMemoryPieces() {
     await connectDB();
     const originalMemoryPieces = await MemoryPiece.find();
     for (const memoryPiece of originalMemoryPieces) {
-      memoryPiece.units = [memoryPiece.unit];
-      memoryPiece.unit = undefined; // or: delete post.author;
+      // memoryPiece.units = [memoryPiece.units];
+      // memoryPiece.unit = undefined; // or: delete post.author;
       await memoryPiece.save();
     }
   } catch (error) {
