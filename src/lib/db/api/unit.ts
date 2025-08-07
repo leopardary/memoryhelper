@@ -3,6 +3,7 @@ import Unit from '@/lib/db/model/Unit';
 import { connectDB } from '@/lib/db/utils';
 import { CreateUnitInput, UpdateUnitInput } from '@/lib/db/model/types/Unit.types';
 import { validateImagePath } from '@/lib/utils/fileValidation';
+import { revalidatePath } from 'next/cache'
 
 export async function createUnit(data: CreateUnitInput) {
   await connectDB();
@@ -100,7 +101,7 @@ export async function addSubUnit(props: AddSubUnitProps) {
       { title: title, parentUnit: parentUnit, subject: parentUnit.subject, description, imageUrls, order },
       { upsert: true, new: true }
     );
-    
+    revalidatePath(`/unit/${parentUnitId}`);
     console.log('Unit found or created:', record);
     return record;
   } catch (error) {
