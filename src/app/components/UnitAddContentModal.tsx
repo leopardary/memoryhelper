@@ -48,16 +48,15 @@ function CreateSubUnitForm({ unitId, addSubUnit, setModalOpen, unitPath } : Crea
       if (!file.type.startsWith('image/')) continue;
       if (file.size > 5 * 1024 * 1024) continue; // 5MB max
 
+      const key = unitPath + '/' + title + '/' + file.name;
       try {
         const res = await fetch('/api/s3/upload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fileName: file.name, fileType: file.type, filePath: unitPath }),
+          body: JSON.stringify({ fileName: file.name, fileType: file.type, filePath: unitPath + '/' + title }),
         });
 
         const { uploadUrl, publicUrl } = await res.json();
-
-        const key = unitPath + '/' + file.name;
 
         await fetch(uploadUrl, {
           method: 'PUT',
@@ -72,7 +71,7 @@ function CreateSubUnitForm({ unitId, addSubUnit, setModalOpen, unitPath } : Crea
     }
 
     setUploading(false);
-  }, [unitPath]);
+  }, [unitPath, title]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,

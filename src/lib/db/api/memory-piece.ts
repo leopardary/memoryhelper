@@ -4,6 +4,7 @@ import { connectDB } from '@/lib/db/utils';
 import { CreateMemoryPieceInput, UpdateMemoryPieceInput } from '@/lib/db/model/types/MemoryPiece.types';
 import { getSubscriptionsDueToCheckForUser } from '@/lib/db/api/subscription';
 import { getUnit } from '@/lib/db/api/unit';
+import { revalidatePath } from 'next/cache'
 
 export async function createMemoryPiece(data: CreateMemoryPieceInput) {
   await connectDB();
@@ -96,6 +97,7 @@ export async function addMemoryPieceToUnit(spec: AddMemoryPieceToUnitProps): Pro
         }
       }
       await existingMemoryPiece.save();
+      revalidatePath(`/unit/${unit?.id}`);
     }
     return true;
   } catch {
