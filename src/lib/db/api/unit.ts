@@ -1,5 +1,6 @@
 'use server'
 import Unit from '@/lib/db/model/Unit';
+import { getSubject } from '@/lib/db/api/subject';
 import { connectDB } from '@/lib/db/utils';
 import { CreateUnitInput, UpdateUnitInput } from '@/lib/db/model/types/Unit.types';
 import { revalidatePath } from 'next/cache'
@@ -71,11 +72,14 @@ export async function findOrCreateUnit(unit: CreateUnitInput) {
   }
 }
 
-export interface AddSubUnitProps {
-  parentUnitId: string,
+interface UnitBaseProps {
   title: string,
   description: string,
   imageUrls: string[]
+}
+
+export interface AddSubUnitProps extends UnitBaseProps {
+  parentUnitId: string
 }
 
 /**
@@ -103,6 +107,38 @@ export async function addSubUnit(props: AddSubUnitProps) {
     revalidatePath(`/unit/${parentUnitId}`);
     console.log('Unit found or created:', record);
     return record;
+  } catch (error) {
+    console.error('Error in findOrCreateUnit:', error);
+    throw error;
+  }
+}
+
+export interface AddRootUnitProps extends UnitBaseProps {
+  subjectId: string,
+}
+
+export async function addRootUnitForSubject(props: AddRootUnitProps) {
+  const {subjectId, title, description, imageUrls} = props;
+  try {
+    if (!imageUrls) {
+      throw new Error(`Image file not found: ${imageUrls}`);
+    }
+    const subject = await getSubject(subjectId);
+    if (subject == null) {
+      throw new Error("Subject not found.");
+    }
+    const siblingUnits = await getDirectChildrenBySubject(subjectId);
+    const existingOrderIndices = siblingUnits.map(unit => (unit.order || 0));
+    const order = Math.max(...existingOrderIndices) + 1;
+    // Unit is uniquely defined by the combination of [title, parentUnit, subject]
+    const record = await Unit.findOneAndUpdate(
+      { title: title, subject: subject },
+      { title: title, subject: subject, description, imageUrls, order },
+      { upsert: true, new: true }
+    );
+    revalidatePath(`/subject/${subjectId}`);
+    console.log('Unit found or created:', record);
+    return record.title;
   } catch (error) {
     console.error('Error in findOrCreateUnit:', error);
     throw error;
