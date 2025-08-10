@@ -2,7 +2,6 @@
 import Unit from '@/lib/db/model/Unit';
 import { connectDB } from '@/lib/db/utils';
 import { CreateUnitInput, UpdateUnitInput } from '@/lib/db/model/types/Unit.types';
-import { validateImagePath } from '@/lib/utils/fileValidation';
 import { revalidatePath } from 'next/cache'
 
 export async function createUnit(data: CreateUnitInput) {
@@ -53,7 +52,7 @@ export async function deleteUnit(id: string) {
 // Check existence or create unit
 export async function findOrCreateUnit(unit: CreateUnitInput) {
   try {
-    if (unit.imageUrls && !validateImagePath(unit.imageUrls)) {
+    if (!unit.imageUrls) {
       throw new Error(`Image file not found: ${unit.imageUrls}`);
     }
 
@@ -85,7 +84,7 @@ export interface AddSubUnitProps {
 export async function addSubUnit(props: AddSubUnitProps) {
   const {parentUnitId, title, description, imageUrls} = props;
   try {
-    if (imageUrls && !validateImagePath(imageUrls)) {
+    if (!imageUrls) {
       throw new Error(`Image file not found: ${imageUrls}`);
     }
     const parentUnit = await getUnit(parentUnitId);

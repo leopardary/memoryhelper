@@ -1,7 +1,10 @@
 import SubjectCard from "@/app/components/SubjectCard";
 import PaginationBar from "@/app/components/PaginationBar";
-import {getSubjectCount, getSubjectsWithPagination} from "@/lib/db/api/subject";
-import {HeroCard} from '@/app/components/HeroCard'
+import {getSubjectCount, getSubjectsWithPagination, findOrCreateSubject} from "@/lib/db/api/subject";
+import {HeroCard} from '@/app/components/HeroCard';
+import { authOptions } from "@/lib/utils/authOptions";
+import { getServerSession } from "next-auth/next";
+import AddSubjectModal from '@/app/components/AddSubjectModal';
 
 export default async function Home(props: {
   searchParams: Promise<{
@@ -14,9 +17,17 @@ export default async function Home(props: {
   const heroItemCount = 1;
   const totalItemCount = await getSubjectCount();
   const totalPages = Math.ceil((totalItemCount - heroItemCount) / pageSize);
+  const session = await getServerSession(authOptions);
+  let editMode = false;
+  const user = session?.user;
+  if (user?.name == "Wenjiao Wang") {
+    editMode = true;
+  }
 
   const subjects = await getSubjectsWithPagination(currentPage, pageSize, heroItemCount);
   return (
+    <>
+    {editMode && <div className='w-full flex flex-row justify-center'><AddSubjectModal findOrCreateSubject={findOrCreateSubject} /></div>}
     <div className="flex flex-col items-center">
       {currentPage === 1 && subjects.length > 0 && (<HeroCard imageSrcs={subjects[0].imageUrls} imageAlt={subjects[0].title} title={subjects[0].title} description={subjects[0].description} href={"/subject/" + subjects[0].id} buttonContent={"Check it out"} />)}
 
@@ -29,5 +40,6 @@ export default async function Home(props: {
         <PaginationBar currentPage={currentPage} totalPages={totalPages} />
       )}
     </div>
+    </>
   );
 }
