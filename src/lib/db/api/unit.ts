@@ -106,7 +106,7 @@ export async function addSubUnit(props: AddSubUnitProps) {
     );
     revalidatePath(`/unit/${parentUnitId}`);
     console.log('Unit found or created:', record);
-    return record;
+    return record.title;
   } catch (error) {
     console.error('Error in findOrCreateUnit:', error);
     throw error;

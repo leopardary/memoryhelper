@@ -212,17 +212,29 @@ interface AddContentModalProps {
 }
 
 export default function AddContentModal(props: AddContentModalProps) {
-  const [modalOpen, setModalOpen] = useState(false);
-  const {unitId, hasSubUnits, addMemoryPieceToUnit, addSubUnit, unitPath} = props;
-  const panel = hasSubUnits ? <CreateSubUnitPanel unitId={unitId} addSubUnit={addSubUnit} setModalOpen={setModalOpen} unitPath={unitPath} /> : <CreateMemoryPiecePanel unitId={unitId} addMemoryPieceToUnit={addMemoryPieceToUnit} setModalOpen={setModalOpen} unitPath={unitPath} />
+  const [createSubUnitModalOpen, setCreateSubUnitModalOpen] = useState(false);
+  const [createMemoryPieceModalOpen, setCreateMemoryPieceModalOpen] = useState(false);
+  const {unitId, hasSubUnits, hasMemoryPieces, addMemoryPieceToUnit, addSubUnit, unitPath} = props;
+  const createSubUnitPanel = <CreateSubUnitPanel unitId={unitId} addSubUnit={addSubUnit} setModalOpen={setCreateSubUnitModalOpen} unitPath={unitPath} />;
+  const createMemoryPiecePanel = <CreateMemoryPiecePanel unitId={unitId} addMemoryPieceToUnit={addMemoryPieceToUnit} setModalOpen={setCreateMemoryPieceModalOpen} unitPath={unitPath} />;
   return (
     <>
-    <Button onClick={() => setModalOpen(!modalOpen)}>{modalOpen ? 'Close Modal' : 'Open Modal'}</Button>
-    <Dialog open={modalOpen} as="div" className="relative z-10 focus:outline-none" onClose={() => setModalOpen(false)}>
+    {!hasMemoryPieces && <><Button onClick={() => setCreateSubUnitModalOpen(!createSubUnitModalOpen)}>{createSubUnitModalOpen ? 'Close Modal' : 'Create SubUnit'}</Button>
+    <Dialog open={createSubUnitModalOpen} as="div" className="relative z-10 focus:outline-none" onClose={() => setCreateSubUnitModalOpen(false)}>
         <div className="fixed inset-0 z-10 w-screen overflow-y-auto bg-black/50 backdrop-blur-sm">
           <div className="flex min-h-full items-center justify-center p-4">
-            {panel}
+            {createSubUnitPanel}
           </div>
         </div>
-      </Dialog></>);
+      </Dialog></>
+    }
+    {!hasSubUnits && <><Button onClick={() => setCreateMemoryPieceModalOpen(!createMemoryPieceModalOpen)}>{createMemoryPieceModalOpen ? 'Close Modal' : 'Create MemoryPiece'}</Button>
+    <Dialog open={createMemoryPieceModalOpen} as="div" className="relative z-10 focus:outline-none" onClose={() => setCreateMemoryPieceModalOpen(false)}>
+        <div className="fixed inset-0 z-10 w-screen overflow-y-auto bg-black/50 backdrop-blur-sm">
+          <div className="flex min-h-full items-center justify-center p-4">
+            {createMemoryPiecePanel}
+          </div>
+        </div>
+      </Dialog></>}
+      </>);
 }
