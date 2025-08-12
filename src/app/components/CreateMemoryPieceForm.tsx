@@ -32,7 +32,34 @@ export default function CreateMemoryPieceForm({ unitId, addMemoryPieceToUnit, un
   const [uploading, setUploading] = useState(false);
   const [content, setContent] = useState('');
   const [description, setDescription] = useState('');
+  const [generating, setGenerating] = useState(false);
   const [labels, setLabels] = useState<string>('');
+
+    const handleGenerate = async () => {
+    if (!content) {
+      alert("请先输入 content");
+      return;
+    }
+    setGenerating(true);
+    try {
+      const res = await fetch("/api/generate-chinese-character-description", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setDescription(data.description);
+      } else {
+        alert(data.error || "生成失败");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("生成描述时出错");
+    } finally {
+      setGenerating(false);
+    }
+  };
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     setUploading(true);
@@ -127,6 +154,14 @@ export default function CreateMemoryPieceForm({ unitId, addMemoryPieceToUnit, un
           onChange={e => setDescription(e.target.value)}
           rows={3}
         />
+        <button
+            type="button"
+            onClick={handleGenerate}
+            disabled={generating}
+            className="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400"
+          >
+            {generating ? "生成中..." : "Generate"}
+          </button>
       </div>
 
       <div>
