@@ -138,6 +138,19 @@ export default function PracticeTable({ memoryPiecesStr, memoryPieceIdToSubscrip
   headers.unshift('submitButton');
   data.forEach((memoryPiece: any) => memoryPiece.checkbox = true);
 
+  const handleRead = async (text: string) => {
+    const res = await fetch("/api/read-text", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    audio.play();
+  };
+
   const handleSelectOne = (memoryPieceId: string) => { return (value: boolean | null) => {
       const correctNessCopy: Record<string, boolean | null> = {...correctNess};
       if (correctNessCopy[memoryPieceId] === true) {
@@ -197,7 +210,7 @@ export default function PracticeTable({ memoryPiecesStr, memoryPieceIdToSubscrip
               onChange={handleSelectOne(id)}
             />
             <td key='content' className='px-6 py-3'>{memoryPiece.content}</td>
-            <td key='description' className='px-6 py-3'>{memoryPiece.description}</td>
+            <td key='description' className='px-6 py-3'>{memoryPiece.description}<Button className='h-8 w-16' onClick={() => handleRead(memoryPiece.description?.split('##')[0].split('/')[0])}>Read</Button></td>
             <td key='labels' className='px-6 py-3'>{memoryPiece.labels.map((label:string) => <Badge key={label} variant="outline">{label}</Badge>)}</td>
             <td className="w-24">
               <Button className='h-8 w-16'>
