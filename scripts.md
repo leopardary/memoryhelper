@@ -31,6 +31,7 @@ git clone git@github.com:leopardary/memoryhelper.git
 ```
 
 ## Setup caddy
+https://caddyserver.com/docs/install#debian-ubuntu-raspbian
 
 change :80 to your endpoint like simple.memoryhelper.com
 
