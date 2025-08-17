@@ -12,10 +12,12 @@ export interface HeroCardProps {
   imageAlt: string;
   title?: string;
   description?: string;
-  href: string;
+  href?: string;
   buttonContent?: string;
   // The memoryPiece will be masked if testMode is true.
   testMode?: boolean;
+  correctHandler?: () => Promise<void>;
+  wrongHandler?: () => Promise<void>
 }
 
 const hideKeyWord = (keyWord: string, content: string) => content.replaceAll(keyWord, '▢');
@@ -25,12 +27,12 @@ const ImageSize = 400;
 const ImageMask = () => <div className="w-[400px] h-[400px] bg-muted rounded-lg animate-pulse"></div>
 
 export function HeroCard(props: HeroCardProps) {
-  const {imageSrcs, imageAlt, title, description, href, buttonContent, testMode} = props;
+  const {imageSrcs, imageAlt, title, description, href, buttonContent, testMode, correctHandler, wrongHandler} = props;
   const [wordCombinations, sentenceSamples] = description == null ? ['', ''] : description?.split(DESCRIPTION_SEPARATOR);
   const sentences = sentenceSamples?.split(SENTENCE_SEPARATOR);
   const [readyToSubmit, setReadyToSubmit] = useState<boolean>();
   const readContentIcon = useCallback((content: string) => <SpeakerWaveIcon className="ml-2 size-6 flex-none rounded-lg bg-muted group-hover:bg-accent hover:cursor-pointer" onClick={() => handleRead(content)}/>, []);
-  const testButtons = !readyToSubmit ? <Button className="ml-4 mt-4 w-20 h-6" onClick={() => setReadyToSubmit(true)} >Ready</Button> : <div className="ml-4 mt-4 w-20 h-6 flex flex-row justify-between"><Button className="w-6 h-6 bg-green-300 dark:bg-green-700 hover:bg-green-400 dark:hover:bg-green-600"><CheckIcon className="" /></Button><Button className="w-6 h-6 bg-red-300 dark:bg-red-700 hover:bg-red-400 dark:hover:bg-red-600"><XMarkIcon className="" /></Button></div>
+  const testButtons = !readyToSubmit ? <Button className="ml-4 mt-4 w-20 h-6" onClick={() => setReadyToSubmit(true)} >Ready</Button> : <div className="ml-4 mt-4 w-20 h-6 flex flex-row justify-between"><Button className="w-6 h-6 bg-green-300 dark:bg-green-700 hover:bg-green-400 dark:hover:bg-green-600" onClick={() => {setReadyToSubmit(false); correctHandler?.();}}><CheckIcon className="" /></Button><Button className="w-6 h-6 bg-red-300 dark:bg-red-700 hover:bg-red-400 dark:hover:bg-red-600" onClick={() => {setReadyToSubmit(false); wrongHandler?.()}}><XMarkIcon className="" /></Button></div>
   return (
   <div className="w-full border-2 md:border-4 rounded-lg">
           <div className="m-2 md:m-4 flex flex-col md:flex-row items-center">
@@ -60,7 +62,7 @@ export function HeroCard(props: HeroCardProps) {
                 testMode && testButtons
               }
               {!isEmpty(buttonContent) && <Link
-                href={href}
+                href={href || ''}
                 className="btn-primary btn"
               >
                 <Button>{buttonContent}</Button>

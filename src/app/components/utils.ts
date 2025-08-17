@@ -20,3 +20,9 @@ export const handleRead = async (text: string) => {
   const audio = new Audio(url);
   audio.play();
 };
+
+export interface MemoryCheckProps {
+  subscription: string;
+  // if number, betweeon 0 - 100.
+  score: number | boolean;
+}
