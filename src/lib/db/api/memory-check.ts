@@ -3,6 +3,7 @@ import MemoryCheck from '@/lib/db/model/MemoryCheck';
 import { connectDB } from '@/lib/db/utils';
 import { MemoryCheckProps } from '@/app/components/utils';
 import { UpdateMemoryCheckInput } from '@/lib/db/model/types/MemoryCheck.types';
+import { processSubscriptions } from '@/lib/db/api/subscription';
 
 export async function getMemoryCheck(id: string) {
   await connectDB();
@@ -28,6 +29,7 @@ export async function createMemoryCheck(memoryCheck: MemoryCheckProps) {
   const score = await normalizeScore(memoryCheck.score);
   try {
     await MemoryCheck.create({ ...memoryCheck, score: score });
+    await processSubscriptions([memoryCheck.subscription]);
   } catch (e) {
     console.error(`MemoryCheck ${memoryCheck} not found due to error: `, e);
     return false;
