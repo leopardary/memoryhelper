@@ -4,7 +4,8 @@ import Image from "next/image";
 import isEmpty from 'lodash/isEmpty';
 import { Button } from '@/app/components/button';
 import {DESCRIPTION_SEPARATOR, SENTENCE_SEPARATOR, handleRead} from '@/app/components/utils';
-import { SpeakerWaveIcon } from "@heroicons/react/24/outline";
+import { SpeakerWaveIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { useCallback, useState } from "react";
 
 export interface HeroCardProps {
   imageSrcs?: string[];
@@ -23,17 +24,17 @@ const ImageSize = 400;
 
 const ImageMask = () => <div className="w-[400px] h-[400px] bg-muted rounded-lg animate-pulse"></div>
 
-
-
 export function HeroCard(props: HeroCardProps) {
   const {imageSrcs, imageAlt, title, description, href, buttonContent, testMode} = props;
   const [wordCombinations, sentenceSamples] = description == null ? ['', ''] : description?.split(DESCRIPTION_SEPARATOR);
   const sentences = sentenceSamples?.split(SENTENCE_SEPARATOR);
-  const ReadContentIcon = (content: string) => <SpeakerWaveIcon className="ml-2 size-6 flex-none rounded-lg bg-muted group-hover:bg-accent hover:cursor-pointer" onClick={() => handleRead(content)}/>
+  const [readyToSubmit, setReadyToSubmit] = useState<boolean>();
+  const readContentIcon = useCallback((content: string) => <SpeakerWaveIcon className="ml-2 size-6 flex-none rounded-lg bg-muted group-hover:bg-accent hover:cursor-pointer" onClick={() => handleRead(content)}/>, []);
+  const testButtons = !readyToSubmit ? <Button className="ml-4 mt-4 w-20 h-6" onClick={() => setReadyToSubmit(true)} >Ready</Button> : <div className="ml-4 mt-4 w-20 h-6 flex flex-row justify-between"><Button className="w-6 h-6 bg-green-300 dark:bg-green-700 hover:bg-green-400 dark:hover:bg-green-600"><CheckIcon className="" /></Button><Button className="w-6 h-6 bg-red-300 dark:bg-red-700 hover:bg-red-400 dark:hover:bg-red-600"><XMarkIcon className="" /></Button></div>
   return (
   <div className="w-full border-2 md:border-4 rounded-lg">
           <div className="m-2 md:m-4 flex flex-col md:flex-row items-center">
-            {testMode ? <ImageMask /> : <Image
+            {testMode && !readyToSubmit ? <ImageMask /> : <Image
               src={imageSrcs?.[0] || ""}
               alt={imageAlt}
               width={ImageSize}
@@ -43,18 +44,21 @@ export function HeroCard(props: HeroCardProps) {
             />}
             <div className="m-2 md:items-baseline">
               <div className="flex flex-row items-center">
-                <h1 className="text-5xl font-bold font-serif">{testMode ? hideKeyWord(title || '', title || '') : title}</h1>{ReadContentIcon(title||'')}
+                <h1 className="text-5xl font-bold font-serif">{testMode && !readyToSubmit ? hideKeyWord(title || '', title || '') : title}</h1>{readContentIcon(title||'')}
               </div>
               <div className="flex flex-row ml-2 pt-6">
-              <p className="italic text-muted-foreground">{testMode ? hideKeyWord(title || '', wordCombinations) : wordCombinations}</p>
-              {ReadContentIcon(wordCombinations||'')}
+              <p className="italic text-muted-foreground">{testMode && !readyToSubmit ? hideKeyWord(title || '', wordCombinations) : wordCombinations}</p>
+              {readContentIcon(wordCombinations||'')}
               </div>
               {sentences?.map((content: string) => 
                 (<div key={content} className="flex flex-row ml-2 pt-2">
-                <p className="italic text-muted-foreground">{`${testMode ? hideKeyWord(title || '', content) : content}`}</p>
-                {ReadContentIcon(content||'')}
+                <p className="italic text-muted-foreground">{`${testMode && !readyToSubmit ? hideKeyWord(title || '', content) : content}`}</p>
+                {readContentIcon(content||'')}
                 </div>)
                 )}
+              {
+                testMode && testButtons
+              }
               {!isEmpty(buttonContent) && <Link
                 href={href}
                 className="btn-primary btn"
