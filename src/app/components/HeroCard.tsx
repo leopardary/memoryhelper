@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import isEmpty from 'lodash/isEmpty';
 import { Button } from '@/app/components/button';
-import {DESCRIPTION_SEPARATOR, SENTENCE_SEPARATOR} from '@/app/components/utils';
+import {DESCRIPTION_SEPARATOR, SENTENCE_SEPARATOR, handleRead} from '@/app/components/utils';
 import { SpeakerWaveIcon } from "@heroicons/react/24/outline";
 
 export interface HeroCardProps {
@@ -29,16 +29,6 @@ export function HeroCard(props: HeroCardProps) {
   const {imageSrcs, imageAlt, title, description, href, buttonContent, testMode} = props;
   const [wordCombinations, sentenceSamples] = description == null ? ['', ''] : description?.split(DESCRIPTION_SEPARATOR);
   const sentences = sentenceSamples?.split(SENTENCE_SEPARATOR);
-    const handleRead = async (text: string) => {
-    const res = await fetch("/api/read-text", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text }),
-    });
-    const data = await res.json();
-    const audio = new Audio(data?.url);
-    audio.play();
-  };
   const ReadContentIcon = (content: string) => <SpeakerWaveIcon className="ml-2 size-6 flex-none rounded-lg bg-muted group-hover:bg-accent hover:cursor-pointer" onClick={() => handleRead(content)}/>
   return (
   <div className="w-full border-2 md:border-4 rounded-lg">

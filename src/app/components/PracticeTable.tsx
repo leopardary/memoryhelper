@@ -5,6 +5,7 @@ import { MemoryPieceProps } from '@/lib/db/model/types/MemoryPiece.types';
 import { useTransition, useState } from 'react';
 import { Button } from '@/app/components/button';
 import {Badge} from '@/app/components/Badge';
+import {handleRead} from '@/app/components/utils';
 
 const Checkbox = ({ onChange }: { onChange?: (value: boolean | null) => void }) => {
   const [isRight, setIsRight] = useState<boolean | null>(null);
@@ -30,7 +31,7 @@ const Checkbox = ({ onChange }: { onChange?: (value: boolean | null) => void }) 
     }
   };}
   return (
-  <>
+  <div className='flex-nowrap'>
   <label className='my-2 mr-1 text-green-400 dark:text-green-600'>
     <input 
       type="checkbox" 
@@ -49,8 +50,8 @@ const Checkbox = ({ onChange }: { onChange?: (value: boolean | null) => void }) 
     />
     ❌
   </label>
-  </>
-);};
+  </div>
+  );};
 
 interface SubmitButtonProps {
   correctNess?: Record<string, boolean>;
@@ -137,19 +138,6 @@ export default function PracticeTable({ memoryPiecesStr, memoryPieceIdToSubscrip
 
   headers.unshift('submitButton');
   data.forEach((memoryPiece: any) => memoryPiece.checkbox = true);
-
-  const handleRead = async (text: string) => {
-    const res = await fetch("/api/read-text", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text }),
-    });
-
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const audio = new Audio(url);
-    audio.play();
-  };
 
   const handleSelectOne = (memoryPieceId: string) => { return (value: boolean | null) => {
       const correctNessCopy: Record<string, boolean | null> = {...correctNess};
