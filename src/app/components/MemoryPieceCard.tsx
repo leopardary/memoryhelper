@@ -2,10 +2,12 @@ import { MemoryPieceProps } from '@/lib/db/model/types/MemoryPiece.types';
 import Link from "next/link";
 import Image from "next/image";
 import {Badge} from '@/app/components/Badge';
+import {DESCRIPTION_SEPARATOR, SENTENCE_SEPARATOR} from '@/app/components/utils'
 
 export default function MemoryPieceCard({ memoryPiece }: {memoryPiece: MemoryPieceProps}) {
   const { _id, description, content, labels, imageUrls } = memoryPiece;
-  const [wordCombinations, sentenceSamples] = description == null ? ['', ''] : description?.split('##');
+  const [wordCombinations, sentenceSamples] = description == null ? ['', ''] : description?.split(DESCRIPTION_SEPARATOR);
+  const sentences = sentenceSamples.split(SENTENCE_SEPARATOR);
 
   return (
     <Link
@@ -32,8 +34,8 @@ export default function MemoryPieceCard({ memoryPiece }: {memoryPiece: MemoryPie
             <Badge key={index} variant="outline">{label}</Badge> 
           ))}
         </div>
-        <p className="m-2">{`词语: ${wordCombinations}`}</p>
-        <p className="m-2">{`例句: ${sentenceSamples}`}</p>
+        <p className="m-2">{`${wordCombinations}`}</p>
+        {sentences?.map((content: string) => (<p key={content} className="m-2">{`${content}`}</p>))}
       </div>
     </Link>
   );
