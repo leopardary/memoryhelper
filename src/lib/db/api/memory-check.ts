@@ -1,12 +1,8 @@
 'use server'
 import MemoryCheck from '@/lib/db/model/MemoryCheck';
 import { connectDB } from '@/lib/db/utils';
-import { CreateMemoryCheckInput, UpdateMemoryCheckInput } from '@/lib/db/model/types/MemoryCheck.types';
-
-export async function createMemoryCheck(data: CreateMemoryCheckInput) {
-  await connectDB();
-  return MemoryCheck.create(data);
-}
+import { MemoryCheckProps } from '@/app/components/utils';
+import { UpdateMemoryCheckInput } from '@/lib/db/model/types/MemoryCheck.types';
 
 export async function getMemoryCheck(id: string) {
   await connectDB();
@@ -27,10 +23,16 @@ export async function deleteMemoryCheck(id: string) {
   return MemoryCheck.findByIdAndDelete(id);
 }
 
-interface MemoryCheckProps {
-  subscription: string;
-  // if number, betweeon 0 - 100.
-  score: number | boolean;
+export async function createMemoryCheck(memoryCheck: MemoryCheckProps) {
+  await connectDB();
+  const score = await normalizeScore(memoryCheck.score);
+  try {
+    await MemoryCheck.create({ ...memoryCheck, score: score });
+  } catch (e) {
+    console.error(`MemoryCheck ${memoryCheck} not found due to error: `, e);
+    return false;
+  }
+  return true;
 }
 
 export async function createMemoryCheckInBatch(data: MemoryCheckProps[]) {
