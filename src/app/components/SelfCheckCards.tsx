@@ -15,7 +15,8 @@ interface SelfCheckCardsProps {
 }
 
 export default function SelfCheckCards({ memoryPiecesStr, memoryPieceIdToSubscriptionId, createMemoryCheck, redirectPage}: SelfCheckCardsProps) {
-  const memoryPieceIds = JSON.parse(memoryPiecesStr);
+  const limit = 15;
+  const memoryPieceIds = JSON.parse(memoryPiecesStr).splice(0, limit);
   const [currentMemoryPieceIndex, setCurrentMemoryPieceIndex] = useState(0);
   const data = memoryPieceIds.map((memoryPiece: MemoryPieceProps) => {
     return {content: memoryPiece.content, description: memoryPiece.description, imageUrls: memoryPiece.imageUrls, labels: memoryPiece.labels, id: memoryPiece._id};
@@ -30,22 +31,25 @@ export default function SelfCheckCards({ memoryPiecesStr, memoryPieceIdToSubscri
   }
 
   const wrongHandler = async () => {
-    await createMemoryCheck({subscription: currentMemoryPieceProps.id, score: false});
+    await createMemoryCheck({subscription: memoryPieceIdToSubscriptionId[currentMemoryPieceProps.id], score: false});
     if (currentMemoryPieceIndex < data.length) {
       setCurrentMemoryPieceIndex(currentMemoryPieceIndex + 1);
     }
   }
   if (currentMemoryPieceProps) {
     return (
-      <HeroCard 
-        imageSrcs={currentMemoryPieceProps.imageUrls} 
-        imageAlt={currentMemoryPieceProps.content} 
-        title={currentMemoryPieceProps.content} 
-        description={currentMemoryPieceProps.description} 
-        testMode={true} 
-        correctHandler={correctHandler} 
-        wrongHandler={wrongHandler}
-      />)
+      <div className="w-full flex flex-col items-center">
+        <h1 className="font-serif font-bold">{`${currentMemoryPieceIndex+1}/${memoryPieceIds.length}`}</h1>
+        <HeroCard 
+          imageSrcs={currentMemoryPieceProps.imageUrls} 
+          imageAlt={currentMemoryPieceProps.content} 
+          title={currentMemoryPieceProps.content} 
+          description={currentMemoryPieceProps.description} 
+          testMode={true} 
+          correctHandler={correctHandler} 
+          wrongHandler={wrongHandler}
+        />
+      </div>)
   } else if (currentMemoryPieceIndex >= data.length) {
     return (
       <div className="flex flex-col justify-center">

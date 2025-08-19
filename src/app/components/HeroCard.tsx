@@ -22,7 +22,7 @@ export interface HeroCardProps {
 
 const hideKeyWord = (keyWord: string, content: string) => content.replaceAll(keyWord, '▢');
 
-const ImageSize = 400;
+const ImageSize = 384;
 
 const ImageMask = () => <div className="w-[400px] h-[400px] bg-muted rounded-lg animate-pulse"></div>
 
