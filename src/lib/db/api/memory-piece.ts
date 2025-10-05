@@ -125,3 +125,23 @@ export async function memoryPieceToPracticeToday(userId: string) {
   const dueSubscriptions = (await getSubscriptionsDueToCheckForUser(userId));
   return await findMemoryPiecesInBatch(dueSubscriptions.map(subscription => subscription.memoryPieceId.toString()));
 }
+
+// Search memory pieces by content, description, or labels
+export async function searchMemoryPieces(query: string, limit: number = 10) {
+  await connectDB();
+
+  if (!query || query.trim().length === 0) {
+    return [];
+  }
+
+  const searchRegex = new RegExp(query.trim(), 'i');
+
+  return MemoryPiece.find({
+    $or: [
+      { content: searchRegex }
+    ]
+  })
+  .limit(limit)
+  .lean()
+  .exec();
+}

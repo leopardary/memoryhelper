@@ -5,6 +5,7 @@ import UserMenuButton from "@/app/components/Navbar/UserMenuButton";
 import { authOptions } from "@/lib/utils/authOptions";
 import { getServerSession } from "next-auth/next";
 import UserSessionDropDown from './UserSessionDropDown';
+import SearchBar from './SearchBar';
 
 const Logo = () => (
   <Link href="/" className="flex flex-row text-xl items-center">
@@ -13,13 +14,14 @@ const Logo = () => (
   </Link>);
 
 export default async function Navbar() {
-  const session = await 
+  const session = await
   getServerSession(authOptions);
   return (
       <div className="w-full max-w-7xl flex flex-row gap-2 justify-between font-serif sticky top-0 bg-background z-10">
         <Logo />
         <div className="my-1 mx-3 flex flex-row gap-2 items-center">
-          {session && 
+          <SearchBar />
+          {session &&
           <div className='flex flex-row items-center'>
             <span className="text-base/7 font-semibold text-foreground mr-9">
             {`Hi, ${session.user.name.split(' ')[0]}`}
