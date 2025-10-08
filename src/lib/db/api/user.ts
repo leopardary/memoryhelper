@@ -12,6 +12,26 @@ export async function getUserByEmail(email: string) {
   }
 }
 
+export async function getUser(id: string) {
+  try {
+    await connectDB();
+    return await User.findById(id);
+  } catch (error) {
+    console.error(`User with id ${id} Not Found:`, error);
+    throw error;
+  }
+}
+
+export async function getUsers() {
+  try {
+    await connectDB();
+    return await User.find().select('-password').sort({ email: 1 });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    throw error;
+  }
+}
+
 export async function findOrCreateUser(user: CreateUserInput) {
   await connectDB();
   try {
@@ -20,7 +40,7 @@ export async function findOrCreateUser(user: CreateUserInput) {
       user,
       { upsert: true, new: true }
     );
-    
+
     console.log('User found or created:', record);
     return record;
   } catch (error) {
