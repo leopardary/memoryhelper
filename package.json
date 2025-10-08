@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed:roles": "tsx scripts/seed-roles.ts"
+    "seed:roles": "tsx scripts/seed-roles.ts",
+    "make-admin": "tsx scripts/make-admin.ts"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.4",
