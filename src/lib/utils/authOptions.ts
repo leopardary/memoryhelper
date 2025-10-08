@@ -3,6 +3,7 @@ import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { getUserByEmail, findOrCreateUser } from "@/lib/db/api/user"
+import { getUserPermissions, isAdministrator } from "@/lib/utils/permissions";
 import bcrypt from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
@@ -41,12 +42,19 @@ export const authOptions: NextAuthOptions = {
       if (user && user.email) {
         const dbUser = await getUserByEmail(user.email);
         token.id = dbUser?.id;
+        token.defaultRole = dbUser?.defaultRole;
       }
       return token;
     },
     async session({ session, token }) {
-      if (session.user) {
+      if (session.user && token.id) {
         session.user.id = token.id as string;
+        session.user.defaultRole = token.defaultRole as string;
+
+        // Add permissions and admin status to session
+        const userId = token.id as string;
+        session.user.isAdmin = await isAdministrator(userId);
+        session.user.permissions = await getUserPermissions(userId);
       }
       return session;
     },
@@ -55,7 +63,7 @@ export const authOptions: NextAuthOptions = {
         if (user.email == null || user.email.length == 0) {
           throw new Error('User doesn\'t have valid email');
         }
-        await findOrCreateUser({ name: user.name || '', email: user.email, imageUrl: user.image || ''});
+        await findOrCreateUser({ name: user.name || '', email: user.email, imageUrl: user.image || '', defaultRole: 'visitor' });
         return true;
       }
       return false;
