@@ -9,7 +9,12 @@ if (!mongoose.models.User) {
       name: { type: String, required: true },
       email: { type: String, required: true, unique: true },
       imageUrl: { type: String },
-      password: { type: String }
+      password: { type: String },
+      defaultRole: {
+        type: String,
+        enum: ['visitor', 'student', 'teacher', 'administrator'],
+        default: 'visitor'
+      }
     },
     { timestamps: true, collection: 'users' }
   );
@@ -19,19 +24,25 @@ if (!mongoose.models.User) {
     localField: '_id',
     foreignField: 'userId',
   });
-  
+
   userSchema.virtual('sessions', {
     ref: 'Session',
     localField: '_id',
     foreignField: 'userId',
   });
-  
+
   userSchema.virtual('memoryChecks', {
     ref: 'MemoryCheck',
     localField: '_id',
     foreignField: 'userId',
   });
-  
+
+  userSchema.virtual('userRoles', {
+    ref: 'UserRole',
+    localField: '_id',
+    foreignField: 'userId',
+  });
+
   User = mongoose.model<UserProps>('User', userSchema);
 } else {
   User = mongoose.models.User as Model<UserProps>;

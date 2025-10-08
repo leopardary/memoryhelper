@@ -1,4 +1,5 @@
 import { Types } from 'mongoose';
+import { RoleName } from './Role.types';
 
 export interface UserProps {
   _id: Types.ObjectId | string;
@@ -6,6 +7,7 @@ export interface UserProps {
   email: string;
   imageUrl?: string;
   password?: string;
+  defaultRole: RoleName;  // Fallback role when no specific assignment
   createdAt?: Date;
   updatedAt?: Date;
 }
