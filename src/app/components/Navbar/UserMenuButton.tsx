@@ -3,7 +3,7 @@ import { Session } from "next-auth";
 import profilePicPlaceHolder from "@public/images/user/profile-pic-placeholder.jpg";
 import Image from "next/image";
 import { signIn, signOut } from "next-auth/react";
-import { UserCircleIcon, ArrowLeftStartOnRectangleIcon, ArrowRightEndOnRectangleIcon, UserPlusIcon, Cog8ToothIcon } from "@heroicons/react/24/outline"
+import { UserCircleIcon, ArrowLeftStartOnRectangleIcon, ArrowRightEndOnRectangleIcon, UserPlusIcon, Cog8ToothIcon, ShieldCheckIcon } from "@heroicons/react/24/outline"
 import Dropdown from "@/app/components/Dropdown";
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import { Button } from '@/app/components/button'
@@ -70,6 +70,7 @@ interface UserMenuButtonProps {
 }
 export default function UserMenuButton({ session }: UserMenuButtonProps) {
   const loggedIn = session?.user;
+  const isAdmin = session?.user?.isAdmin;
   const [modalOpen, setModalOpen] = useState(false);
 
   const userImage = loggedIn ? (
@@ -83,13 +84,19 @@ export default function UserMenuButton({ session }: UserMenuButtonProps) {
         ) : (
           <UserCircleIcon className="h-6 w-6" />
         )
-  
+
   const userOptions = loggedIn ? [
+    ...(isAdmin ? [{
+      name: "Manage Roles",
+      description: "Manage user roles and permissions.",
+      href: "/admin/roles",
+      icon: ShieldCheckIcon
+    }] : []),
     {name: "Settings", description: "Set the appearance of your app.", onClick: () => setModalOpen(true), icon: Cog8ToothIcon },
     {name: "Sign out", description: "Sign out from your personal account.", onClick: () => signOut({callbackUrl:"/"}), icon: ArrowLeftStartOnRectangleIcon }
   ] : [
-    {name: "Sign In with Google", onClick: () => signIn("google", { callbackUrl: "/"}), icon: ArrowRightEndOnRectangleIcon, description: "Sign in with your personal Google account"}, 
-    {name: "Sign In with Account", href: "/auth/signin", icon: ArrowRightEndOnRectangleIcon, description: "Sign in with your previously created account."}, 
+    {name: "Sign In with Google", onClick: () => signIn("google", { callbackUrl: "/"}), icon: ArrowRightEndOnRectangleIcon, description: "Sign in with your personal Google account"},
+    {name: "Sign In with Account", href: "/auth/signin", icon: ArrowRightEndOnRectangleIcon, description: "Sign in with your previously created account."},
     {name: "Create Account", href: "/auth/signup", icon: UserPlusIcon, description: "Create your own account for this app."}
   ]
   return (
