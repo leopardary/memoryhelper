@@ -1,31 +1,28 @@
 'use client'
 import {UploadedImage} from '@/app/components/CreateMemoryPieceForm';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { Button } from '@/app/components/button';
 import { useDropzone } from 'react-dropzone';
 import { X } from 'lucide-react';
 import Image from "next/image";
+import { SubjectProps } from '@/lib/db/model/types/Subject.types';
 
-interface AddSubjectProps {
-  title: string;
-  description: string;
-  imageUrls: string[];
-  labels: string[];
-}
-
-interface CreateSubjectFormProps extends AddSubjectModalProps {
+interface EditSubjectFormProps {
+  subject: SubjectProps;
+  updateSubject: (id: string, data: any) => Promise<any>;
   setModalOpen: (open: boolean) => void;
-  onSuccess?: (subject: any) => void;
+  onSuccess: () => void;
 }
 
-
-function CreateSubjectForm({findOrCreateSubject, setModalOpen, onSuccess}: CreateSubjectFormProps) {
-  const [images, setImages] = useState<UploadedImage[]>([]);
+function EditSubjectForm({subject, updateSubject, setModalOpen, onSuccess}: EditSubjectFormProps) {
+  const [images, setImages] = useState<UploadedImage[]>(
+    subject.imageUrls?.map(url => ({ url, key: url })) || []
+  );
   const [uploading, setUploading] = useState(false);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [labels, setLabels] = useState<string>('');
+  const [title, setTitle] = useState(subject.title);
+  const [description, setDescription] = useState(subject.description || '');
+  const [labels, setLabels] = useState<string>(subject.labels?.join(', ') || '');
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     setUploading(true);
@@ -68,11 +65,14 @@ function CreateSubjectForm({findOrCreateSubject, setModalOpen, onSuccess}: Creat
 
   const removeImage = async (key: string) => {
     try {
-      await fetch('/api/s3/delete', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key }),
-      });
+      // Only delete from S3 if it's a newly uploaded image (not the original)
+      if (!subject.imageUrls?.includes(key)) {
+        await fetch('/api/s3/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key }),
+        });
+      }
       setImages(prev => prev.filter(img => img.key !== key));
     } catch (err) {
       console.error('Delete failed:', err);
@@ -81,34 +81,24 @@ function CreateSubjectForm({findOrCreateSubject, setModalOpen, onSuccess}: Creat
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const subjectData = {
-      title,
-      description,
-      imageUrls: images.map(image => image.url),
-      labels: labels.split(',').map(l => l.trim()).filter(Boolean),
-    };
 
-    const res = await findOrCreateSubject(subjectData);
+    try {
+      const res = await updateSubject(subject._id.toString(), {
+        title,
+        description,
+        imageUrls: images.map(image => image.url),
+        labels: labels.split(',').map(l => l.trim()).filter(Boolean),
+      });
 
-    if (res != null) {
-      alert('Subject created successfully!');
-
-      // Call onSuccess with the created subject data
-      if (onSuccess) {
-        onSuccess({
-          _id: res._id || res,
-          ...subjectData,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        });
+      if (res != null) {
+        alert('Subject updated successfully!');
+        onSuccess();
+        setModalOpen(false);
       }
-
-      setTitle('');
-      setDescription('');
-      setImages([]);
-      setLabels('');
+    } catch (error) {
+      console.error('Update error:', error);
+      alert('Failed to update subject');
     }
-    setModalOpen?.(false);
   };
 
   return (
@@ -126,22 +116,21 @@ function CreateSubjectForm({findOrCreateSubject, setModalOpen, onSuccess}: Creat
 
       <div>
         <label className="block mb-1 font-medium">Description</label>
-        <input
-          type="text"
-          className="w-full border rounded px-3 py-2"
+        <textarea
+          className="w-full border rounded px-3 py-2 min-h-[100px]"
           value={description}
           onChange={e => setDescription(e.target.value)}
         />
       </div>
 
       <div>
-        <label className="block mb-1 font-medium">Labels</label>
+        <label className="block mb-1 font-medium">Labels (comma-separated)</label>
         <input
           type="text"
           className="w-full border rounded px-3 py-2"
           value={labels}
           onChange={e => setLabels(e.target.value)}
-          required
+          placeholder="e.g. Chinese, HSK 1, Beginner"
         />
       </div>
 
@@ -174,8 +163,8 @@ function CreateSubjectForm({findOrCreateSubject, setModalOpen, onSuccess}: Creat
                   src={img.url}
                   alt="Uploaded"
                   className="w-full h-32 object-cover rounded shadow"
-                  width={40}
-                  height={40}
+                  width={128}
+                  height={128}
                 />
                 <button
                   type="button"
@@ -190,45 +179,61 @@ function CreateSubjectForm({findOrCreateSubject, setModalOpen, onSuccess}: Creat
         )}
       </div>
 
-      <button
-        type="submit"
-        disabled={uploading || !title || images.length === 0}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400"
-      >
-        Submit
-      </button>
+      <div className="flex gap-2">
+        <button
+          type="submit"
+          disabled={uploading || !title || images.length === 0}
+          className="flex-1 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400"
+        >
+          Update Subject
+        </button>
+        <button
+          type="button"
+          onClick={() => setModalOpen(false)}
+          className="px-4 py-2 border rounded hover:bg-gray-100"
+        >
+          Cancel
+        </button>
+      </div>
     </form>
   );
 }
 
-function CreateSubjectPanel({findOrCreateSubject, setModalOpen, onSuccess}: CreateSubjectFormProps) {
-  return  <DialogPanel
-              transition
-              className="w-full max-w-md rounded-xl bg-popover p-6 text-foreground shadow-xl ring-1 ring-border backdrop-blur-2xl duration-300 ease-out data-closed:scale-95 data-closed:opacity-0"
-            >
-              <DialogTitle as="h3" className="mb-4 text-base/7 font-medium leading-7 text-foreground">
-                Add Subject
-              </DialogTitle>
-              <CreateSubjectForm findOrCreateSubject={findOrCreateSubject} setModalOpen={setModalOpen} onSuccess={onSuccess}/>
-            </DialogPanel>
+interface EditSubjectModalProps {
+  subject: SubjectProps;
+  updateSubject: (id: string, data: any) => Promise<any>;
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
 }
 
-interface AddSubjectModalProps {
-  findOrCreateSubject: (props: AddSubjectProps) => Promise<any>;
-  onSuccess?: (subject: any) => void;
-}
-
-export default function AddSubjectModal({findOrCreateSubject, onSuccess}: AddSubjectModalProps) {
-  const [modalOpen, setModalOpen] = useState(false);
-  const panel = <CreateSubjectPanel findOrCreateSubject={findOrCreateSubject} setModalOpen={setModalOpen} onSuccess={onSuccess}/>
+export default function EditSubjectModal({
+  subject,
+  updateSubject,
+  isOpen,
+  onClose,
+  onSuccess
+}: EditSubjectModalProps) {
   return (
-    <>
-    <Button onClick={() => setModalOpen(!modalOpen)}>Create</Button>
-    <Dialog open={modalOpen} as="div" className="relative z-10 focus:outline-none" onClose={() => setModalOpen(false)}>
-        <div className="fixed inset-0 z-10 w-screen overflow-y-auto bg-black/50 backdrop-blur-sm">
-          <div className="flex min-h-full items-center justify-center p-4">
-            {panel}
-          </div>
+    <Dialog open={isOpen} as="div" className="relative z-10 focus:outline-none" onClose={onClose}>
+      <div className="fixed inset-0 z-10 w-screen overflow-y-auto bg-black/50 backdrop-blur-sm">
+        <div className="flex min-h-full items-center justify-center p-4">
+          <DialogPanel
+            transition
+            className="w-full max-w-2xl rounded-xl bg-popover p-6 text-foreground shadow-xl ring-1 ring-border backdrop-blur-2xl duration-300 ease-out data-closed:scale-95 data-closed:opacity-0"
+          >
+            <DialogTitle as="h3" className="mb-4 text-base/7 font-medium leading-7 text-foreground">
+              Edit Subject
+            </DialogTitle>
+            <EditSubjectForm
+              subject={subject}
+              updateSubject={updateSubject}
+              setModalOpen={onClose}
+              onSuccess={onSuccess}
+            />
+          </DialogPanel>
         </div>
-      </Dialog></>);
+      </div>
+    </Dialog>
+  );
 }

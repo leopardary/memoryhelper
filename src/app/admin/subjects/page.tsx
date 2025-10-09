@@ -2,8 +2,16 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/utils/authOptions';
 import { hasPermission } from '@/lib/utils/permissions';
 import { redirect } from 'next/navigation';
-import { findOrCreateSubject } from '@/lib/db/api/subject';
-import AddSubjectModal from '@/app/components/AddSubjectModal';
+import { findOrCreateSubject, deleteSubject } from '@/lib/db/api/subject';
+import Subject from '@/lib/db/model/Subject';
+import { connectDB } from '@/lib/db/utils';
+import SubjectManagement from './SubjectManagement';
+
+async function getSubjectsForManagement() {
+  await connectDB();
+  // Get subjects without populating units (we only need basic subject info)
+  return Subject.find().sort({ createdAt: -1 }).lean();
+}
 
 export default async function AdminSubjectsPage() {
   const session = await getServerSession(authOptions);
@@ -18,16 +26,20 @@ export default async function AdminSubjectsPage() {
     redirect('/');
   }
 
+  const subjects = await getSubjectsForManagement();
+
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="container mx-auto py-8 px-4 max-w-7xl">
       <h1 className="text-3xl font-bold mb-6">Manage Subjects</h1>
       <p className="text-muted-foreground mb-8">
-        Create and manage subjects in the application
+        Create new subjects and manage existing ones
       </p>
 
-      <div className="flex justify-center">
-        <AddSubjectModal findOrCreateSubject={findOrCreateSubject} />
-      </div>
+      <SubjectManagement
+        subjectsData={JSON.stringify(subjects)}
+        findOrCreateSubject={findOrCreateSubject}
+        deleteSubject={deleteSubject}
+      />
     </div>
   );
 }

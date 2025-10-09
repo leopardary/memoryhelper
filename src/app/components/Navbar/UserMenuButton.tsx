@@ -94,8 +94,8 @@ export default function UserMenuButton({ session }: UserMenuButtonProps) {
       icon: ShieldCheckIcon
     }] : []),
     ...(canManageSubject ? [{
-      name: "Add Subject",
-      description: "Create a new subject in the app.",
+      name: "Manage Subjects",
+      description: "Create and manage subjects in the app.",
       href: "/admin/subjects",
       icon: PlusCircleIcon
     }] : []),
