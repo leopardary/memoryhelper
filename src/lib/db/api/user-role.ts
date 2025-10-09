@@ -53,7 +53,7 @@ export async function removeUserRoleByDetails(userId: string, roleId: string, su
   return UserRole.findOneAndDelete({
     userId,
     roleId,
-    subjectId: subjectId || null
+    subjectId: subjectId
   });
 }
 
@@ -61,7 +61,7 @@ export async function getAllUsersWithRole(roleId: string, subjectId?: string | n
   await connectDB();
   const query: any = { roleId };
   if (subjectId !== undefined) {
-    query.subjectId = subjectId || null;
+    query.subjectId = subjectId;
   }
   return UserRole.find(query).populate('userId');
 }
