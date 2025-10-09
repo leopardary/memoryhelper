@@ -31,16 +31,23 @@ export async function getAllSubjects() {
 
 export async function updateSubject(id: string, data: UpdateSubjectInput) {
   await connectDB();
-  return Subject.findByIdAndUpdate(
-    id,
-    data,
-    { new: true, runValidators: true }
-  );
+  try {
+    const result = await Subject.findByIdAndUpdate(
+      id,
+      data,
+      { new: true, runValidators: true, lean: true }
+    );
+    return result;
+  } catch (error) {
+    console.error('Error updating subject:', error);
+    throw error;
+  }
 }
 
 export async function deleteSubject(id: string) {
   await connectDB();
-  return Subject.findByIdAndDelete(id);
+  const result = await Subject.findByIdAndDelete(id);
+  return result ? { success: true, id } : { success: false, id };
 }
 
 export async function getSubjectCount() {
