@@ -13,6 +13,8 @@ MemoryHelper is a Next.js 15 application for spaced repetition learning, built w
 - `npm run build` - Build for production
 - `npm start` - Start production server
 - `npm run lint` - Run ESLint
+- `npm run seed:roles` - Seed default roles into database (run once on setup)
+- `npm run make-admin <email>` - Assign administrator role to a user (bootstrapping)
 
 ### TypeScript Path Aliases
 - `@/*` → `./src/*`
@@ -88,12 +90,24 @@ The SRS implementation is in `src/lib/utils/subscriptionUtils.ts`:
 - **API Layer**: `src/lib/db/api/` - Data access functions for each model
   - `memory-piece.ts`, `subscription.ts`, `unit.ts`, `subject.ts`, `user.ts`, `memory-check.ts`
 
-### Authentication
+### Authentication & Authorization
 
+**Authentication**:
 - NextAuth configuration in `src/lib/utils/authOptions.ts`
 - Providers: Google OAuth + Credentials (email/password with bcrypt)
 - Protected routes via middleware (`middleware.ts`): `/review`, `/practice`
 - User management in `src/lib/db/api/user.ts`
+
+**Role-Based Access Control (RBAC)**:
+- 4 role levels: `visitor` (default), `student`, `teacher`, `administrator`
+- 6 permission types: `view`, `practice`, `manage_content`, `manage_student`, `manage_subject`, `manage_teacher`
+- Hybrid model: Global roles (visitor, administrator) and subject-scoped roles (student, teacher)
+- Models: `Role` (definitions), `UserRole` (assignments), `User.defaultRole` (fallback)
+- Permission checking: `src/lib/utils/permissions.ts` - use `hasPermission()`, `isAdministrator()`
+- Client-side hook: `usePermissions()` for checking session permissions
+- Component: `<PermissionGate>` for conditional rendering based on permissions
+- Admin UI: `/admin/roles` for role management (administrators only)
+- See `RBAC_GUIDE.md` for complete documentation
 
 ### Image Handling
 
@@ -153,6 +167,7 @@ Next.js server actions are used for mutations (e.g., `createMemoryChecks` in pra
 - `/selfcheck` - Self-initiated practice
 - `/performance` - User performance analytics
 - `/auth/signin`, `/auth/signup` - Authentication pages
+- `/admin/roles` - Role management UI (administrators only)
 
 ## API Routes
 
@@ -162,6 +177,8 @@ Next.js server actions are used for mutations (e.g., `createMemoryChecks` in pra
 - `/api/s3/delete` - Delete S3 images
 - `/api/generate-chinese-character-description` - AI-generated descriptions
 - `/api/read-text` - Text extraction utilities
+- `/api/search` - Fulltext search for memory pieces
+- `/api/admin/user-roles` - Role assignment management (administrators only)
 
 ## Production Deployment
 
