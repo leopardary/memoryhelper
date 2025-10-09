@@ -3,7 +3,7 @@ import { Session } from "next-auth";
 import profilePicPlaceHolder from "@public/images/user/profile-pic-placeholder.jpg";
 import Image from "next/image";
 import { signIn, signOut } from "next-auth/react";
-import { UserCircleIcon, ArrowLeftStartOnRectangleIcon, ArrowRightEndOnRectangleIcon, UserPlusIcon, Cog8ToothIcon, ShieldCheckIcon } from "@heroicons/react/24/outline"
+import { UserCircleIcon, ArrowLeftStartOnRectangleIcon, ArrowRightEndOnRectangleIcon, UserPlusIcon, Cog8ToothIcon, ShieldCheckIcon, PlusCircleIcon } from "@heroicons/react/24/outline"
 import Dropdown from "@/app/components/Dropdown";
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import { Button } from '@/app/components/button'
@@ -71,6 +71,7 @@ interface UserMenuButtonProps {
 export default function UserMenuButton({ session }: UserMenuButtonProps) {
   const loggedIn = session?.user;
   const isAdmin = session?.user?.isAdmin;
+  const canManageSubject = session?.user?.permissions?.includes('manage_subject');
   const [modalOpen, setModalOpen] = useState(false);
 
   const userImage = loggedIn ? (
@@ -91,6 +92,12 @@ export default function UserMenuButton({ session }: UserMenuButtonProps) {
       description: "Manage user roles and permissions.",
       href: "/admin/roles",
       icon: ShieldCheckIcon
+    }] : []),
+    ...(canManageSubject ? [{
+      name: "Add Subject",
+      description: "Create a new subject in the app.",
+      href: "/admin/subjects",
+      icon: PlusCircleIcon
     }] : []),
     {name: "Settings", description: "Set the appearance of your app.", onClick: () => setModalOpen(true), icon: Cog8ToothIcon },
     {name: "Sign out", description: "Sign out from your personal account.", onClick: () => signOut({callbackUrl:"/"}), icon: ArrowLeftStartOnRectangleIcon }
