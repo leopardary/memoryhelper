@@ -112,7 +112,7 @@ export async function getUserPermissions(
     const permissions = new Set<Permission>();
 
     // Get administrator role
-    const adminRole = await Role.findOne({ name: 'administrator' });
+    const adminRole = await Role.findOne({ name: 'administrator' }).lean();
     if (adminRole) {
       const globalAdmin = await UserRole.findOne({
         userId,
@@ -120,7 +120,8 @@ export async function getUserPermissions(
         subjectId: null
       });
       if (globalAdmin) {
-        return adminRole.permissions;
+        // Return all permissions for administrator
+        return [...(adminRole.permissions || [])];
       }
     }
 
@@ -129,7 +130,9 @@ export async function getUserPermissions(
       const subjectRoles = await UserRole.find({ userId, subjectId }).populate('roleId');
       for (const userRole of subjectRoles) {
         const role: any = userRole.roleId;
-        role?.permissions?.forEach((p: Permission) => permissions.add(p));
+        if (role?.permissions && Array.isArray(role.permissions)) {
+          role.permissions.forEach((p: Permission) => permissions.add(p));
+        }
       }
     }
 
@@ -137,14 +140,18 @@ export async function getUserPermissions(
     const globalRoles = await UserRole.find({ userId, subjectId: null }).populate('roleId');
     for (const userRole of globalRoles) {
       const role: any = userRole.roleId;
-      role?.permissions?.forEach((p: Permission) => permissions.add(p));
+      if (role?.permissions && Array.isArray(role.permissions)) {
+        role.permissions.forEach((p: Permission) => permissions.add(p));
+      }
     }
 
     // Get default role permissions
     const user = await User.findById(userId);
     if (user?.defaultRole) {
-      const defaultRole = await Role.findOne({ name: user.defaultRole });
-      defaultRole?.permissions?.forEach((p: Permission) => permissions.add(p));
+      const defaultRole = await Role.findOne({ name: user.defaultRole }).lean();
+      if (defaultRole?.permissions && Array.isArray(defaultRole.permissions)) {
+        defaultRole.permissions.forEach((p: Permission) => permissions.add(p));
+      }
     }
 
     return Array.from(permissions);
