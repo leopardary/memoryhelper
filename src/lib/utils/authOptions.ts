@@ -55,6 +55,15 @@ export const authOptions: NextAuthOptions = {
         const userId = token.id as string;
         session.user.isAdmin = await isAdministrator(userId);
         session.user.permissions = await getUserPermissions(userId);
+
+        // Fetch fresh user data to get latest name and imageUrl
+        if (token.email) {
+          const dbUser = await getUserByEmail(token.email as string);
+          if (dbUser) {
+            session.user.name = dbUser.name;
+            session.user.image = dbUser.imageUrl;
+          }
+        }
       }
       return session;
     },

@@ -3,7 +3,7 @@ import { Session } from "next-auth";
 import profilePicPlaceHolder from "@public/images/user/profile-pic-placeholder.jpg";
 import Image from "next/image";
 import { signIn, signOut } from "next-auth/react";
-import { UserCircleIcon, ArrowLeftStartOnRectangleIcon, ArrowRightEndOnRectangleIcon, UserPlusIcon, Cog8ToothIcon, ShieldCheckIcon, PlusCircleIcon } from "@heroicons/react/24/outline"
+import { UserCircleIcon, ArrowLeftStartOnRectangleIcon, ArrowRightEndOnRectangleIcon, UserPlusIcon, Cog8ToothIcon, ShieldCheckIcon, PlusCircleIcon, UserIcon } from "@heroicons/react/24/outline"
 import Dropdown from "@/app/components/Dropdown";
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import { Button } from '@/app/components/button'
@@ -87,6 +87,12 @@ export default function UserMenuButton({ session }: UserMenuButtonProps) {
         )
 
   const userOptions = loggedIn ? [
+    {
+      name: "Profile",
+      description: "View and edit your profile.",
+      href: "/profile",
+      icon: UserIcon
+    },
     ...(isAdmin ? [{
       name: "Manage Roles",
       description: "Manage user roles and permissions.",
