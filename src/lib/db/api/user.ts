@@ -35,14 +35,24 @@ export async function getUsers() {
 export async function findOrCreateUser(user: CreateUserInput) {
   await connectDB();
   try {
-    const record = await User.findOneAndUpdate(
-      { email: user.email },
-      user,
-      { upsert: true, new: true }
-    );
+    // Check if user exists
+    const existingUser = await User.findOne({ email: user.email });
 
-    console.log('User found or created:', record);
-    return record;
+    if (existingUser) {
+      // User exists - only update name if it changed, don't overwrite imageUrl
+      // This preserves custom profile images users have uploaded
+      if (existingUser.name !== user.name) {
+        existingUser.name = user.name;
+        await existingUser.save();
+      }
+      console.log('Existing user found:', existingUser);
+      return existingUser;
+    } else {
+      // User doesn't exist - create new user with all provided data
+      const newUser = await User.create(user);
+      console.log('New user created:', newUser);
+      return newUser;
+    }
   } catch (error) {
     console.error('Error in findOrCreateUser:', error);
     throw error;
