@@ -10,12 +10,11 @@ import Image from "next/image";
 
 interface CreateMemoryPiecePanelProps {
   unitId: string;
-  addMemoryPieceToUnit: (props: AddMemoryPieceToUnitProps) => Promise<boolean>;
   setModalOpen: (open: boolean) => void;
   unitPath: string;
 }
 
-function CreateMemoryPiecePanel({unitId, addMemoryPieceToUnit, setModalOpen, unitPath}: CreateMemoryPiecePanelProps) {
+function CreateMemoryPiecePanel({unitId, setModalOpen, unitPath}: CreateMemoryPiecePanelProps) {
   return  <DialogPanel
               transition
               className="w-full max-w-md rounded-xl bg-popover p-6 text-foreground shadow-xl ring-1 ring-border backdrop-blur-2xl duration-300 ease-out data-closed:scale-95 data-closed:opacity-0"
@@ -23,18 +22,17 @@ function CreateMemoryPiecePanel({unitId, addMemoryPieceToUnit, setModalOpen, uni
               <DialogTitle as="h3" className="mb-4 text-base/7 font-medium leading-7 text-foreground">
                 Add MemoryPiece
               </DialogTitle>
-              <CreateMemoryPieceForm unitId={unitId} addMemoryPieceToUnit={addMemoryPieceToUnit} submitCallback={() => setModalOpen(false)} unitPath={unitPath} />
+              <CreateMemoryPieceForm unitId={unitId} submitCallback={() => setModalOpen(false)} unitPath={unitPath} />
             </DialogPanel>
 }
 
 interface CreateSubUnitPanelProps {
   unitId: string;
-  addSubUnit: (props: AddSubUnitProps) => Promise<void>;
   setModalOpen: (open: boolean) => void;
   unitPath: string;
 }
 
-function CreateSubUnitForm({ unitId, addSubUnit, setModalOpen, unitPath } : CreateSubUnitPanelProps) {
+function CreateSubUnitForm({ unitId, setModalOpen, unitPath } : CreateSubUnitPanelProps) {
   const [images, setImages] = useState<UploadedImage[]>([]);
   const [uploading, setUploading] = useState(false);
   const [title, setTitle] = useState('');
@@ -94,18 +92,36 @@ function CreateSubUnitForm({ unitId, addSubUnit, setModalOpen, unitPath } : Crea
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await addSubUnit({
-      parentUnitId: unitId,
-      title,
-      description,
-      imageUrls: images.map(image => image.url),
-    })
 
-    if (res != null) {
-      alert('Submitted!');
-      setTitle('');
-      setDescription('');
-      setImages([]);
+    try {
+      const response = await fetch('/api/admin/units/create-sub', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          parentUnitId: unitId,
+          title,
+          description,
+          imageUrls: images.map(image => image.url),
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.details || error.error || 'Failed to create sub-unit');
+      }
+
+      const res = await response.json();
+
+      if (res != null) {
+        alert('Sub-unit created successfully!');
+        setTitle('');
+        setDescription('');
+        setImages([]);
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Create sub-unit error:', error);
+      alert('Failed to create sub-unit');
     }
     setModalOpen?.(false);
   };
@@ -189,7 +205,7 @@ function CreateSubUnitForm({ unitId, addSubUnit, setModalOpen, unitPath } : Crea
   );
 }
 
-function CreateSubUnitPanel({unitId, addSubUnit, setModalOpen, unitPath}: CreateSubUnitPanelProps) {
+function CreateSubUnitPanel({unitId, setModalOpen, unitPath}: CreateSubUnitPanelProps) {
   return  <DialogPanel
               transition
               className="w-full max-w-md rounded-xl bg-popover p-6 text-foreground shadow-xl ring-1 ring-border backdrop-blur-2xl duration-300 ease-out data-closed:scale-95 data-closed:opacity-0"
@@ -197,7 +213,7 @@ function CreateSubUnitPanel({unitId, addSubUnit, setModalOpen, unitPath}: Create
               <DialogTitle as="h3" className="mb-4 text-base/7 font-medium leading-7 text-foreground">
                 Add Unit
               </DialogTitle>
-              <CreateSubUnitForm unitId={unitId} addSubUnit={addSubUnit} setModalOpen={() => setModalOpen(false)} unitPath={unitPath}/>
+              <CreateSubUnitForm unitId={unitId} setModalOpen={() => setModalOpen(false)} unitPath={unitPath}/>
             </DialogPanel>
 }
 
@@ -206,20 +222,18 @@ interface AddContentModalProps {
   unitId: string
   hasSubUnits: boolean;
   hasMemoryPieces: boolean;
-  addMemoryPieceToUnit: (props: AddMemoryPieceToUnitProps) => Promise<boolean>;
-  addSubUnit: (props: AddSubUnitProps) => Promise<any>;
   unitPath: string;
 }
 
 export default function AddContentModal(props: AddContentModalProps) {
   const [createSubUnitModalOpen, setCreateSubUnitModalOpen] = useState(false);
   const [createMemoryPieceModalOpen, setCreateMemoryPieceModalOpen] = useState(false);
-  const {unitId, hasSubUnits, hasMemoryPieces, addMemoryPieceToUnit, addSubUnit, unitPath} = props;
-  const createSubUnitPanel = <CreateSubUnitPanel unitId={unitId} addSubUnit={addSubUnit} setModalOpen={setCreateSubUnitModalOpen} unitPath={unitPath} />;
-  const createMemoryPiecePanel = <CreateMemoryPiecePanel unitId={unitId} addMemoryPieceToUnit={addMemoryPieceToUnit} setModalOpen={setCreateMemoryPieceModalOpen} unitPath={unitPath} />;
+  const {unitId, hasSubUnits, hasMemoryPieces, unitPath} = props;
+  const createSubUnitPanel = <CreateSubUnitPanel unitId={unitId} setModalOpen={setCreateSubUnitModalOpen} unitPath={unitPath} />;
+  const createMemoryPiecePanel = <CreateMemoryPiecePanel unitId={unitId} setModalOpen={setCreateMemoryPieceModalOpen} unitPath={unitPath} />;
   return (
     <>
-    {!hasMemoryPieces && <><Button onClick={() => setCreateSubUnitModalOpen(!createSubUnitModalOpen)}>{createSubUnitModalOpen ? 'Close Modal' : 'Create SubUnit'}</Button>
+    {!hasMemoryPieces && <><Button onClick={() => setCreateSubUnitModalOpen(!createSubUnitModalOpen)}>Create New Sub-Unit</Button>
     <Dialog open={createSubUnitModalOpen} as="div" className="relative z-10 focus:outline-none" onClose={() => setCreateSubUnitModalOpen(false)}>
         <div className="fixed inset-0 z-10 w-screen overflow-y-auto bg-black/50 backdrop-blur-sm">
           <div className="flex min-h-full items-center justify-center p-4">
@@ -228,7 +242,7 @@ export default function AddContentModal(props: AddContentModalProps) {
         </div>
       </Dialog></>
     }
-    {!hasSubUnits && <><Button onClick={() => setCreateMemoryPieceModalOpen(!createMemoryPieceModalOpen)}>{createMemoryPieceModalOpen ? 'Close Modal' : 'Create MemoryPiece'}</Button>
+    {!hasSubUnits && <><Button onClick={() => setCreateMemoryPieceModalOpen(!createMemoryPieceModalOpen)}>Create New Memory Piece</Button>
     <Dialog open={createMemoryPieceModalOpen} as="div" className="relative z-10 focus:outline-none" onClose={() => setCreateMemoryPieceModalOpen(false)}>
         <div className="fixed inset-0 z-10 w-screen overflow-y-auto bg-black/50 backdrop-blur-sm">
           <div className="flex min-h-full items-center justify-center p-4">
