@@ -1,5 +1,5 @@
 import Breadcrumbs from "@/app/components/Breadcrumbs"
-import { getUnit, parentUnitChain } from "@/lib/db/api/unit" 
+import { getUnit, parentUnitChain } from "@/lib/db/api/unit"
 import UnitCard from "@/app/components/UnitCard"
 import {UnitProps} from '@/lib/db/model/types/Unit.types'
 import isEmpty from 'lodash/isEmpty'
@@ -9,9 +9,8 @@ import SectionDivider from "@/app/components/SectionDivider";
 import { findOrCreateSubscriptionsInBatch, getSubscriptionsForUser, removeSubscriptionsInBatch } from "@/lib/db/api/subscription"
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/utils/authOptions";
-import { addMemoryPieceToUnit } from '@/lib/db/api/memory-piece';
-import { addSubUnit } from '@/lib/db/api/unit';
-import AddContentModal from '@/app/components/UnitAddContentModal'
+import { hasPermission } from "@/lib/utils/permissions";
+import ContentManagement from '@/app/components/ContentManagement'
 
 function getSubjectTitle(unit: any) {
   return unit?.subject.title;
@@ -49,10 +48,11 @@ export default async function Unit({params}: {params: Promise<{id: string}>}) {
   memoryPieces.forEach((memoryPiece: any) => subscriptions[memoryPiece._id] = false);
   let existingSubscriptions: string[] = [];
   const user = session?.user;
-  let editMode = false;
-  if (user?.name == "Wenjiao Wang") {
-    editMode = true;
-  }
+  const subjectId = unit?.subject.id.toString();
+
+  // Check if user has manage_content permission for this subject
+  const canManageContent = user?.id ? await hasPermission(user.id, 'manage_content', subjectId) : false;
+
   if (isEmpty(unitChildren) && !isEmpty(memoryPieces) && session) {
     // Move to a global state
     existingSubscriptions = (await getSubscriptionsForUser(user.id)).map(subscription => subscription.memoryPieceId.toString());
@@ -65,8 +65,36 @@ export default async function Unit({params}: {params: Promise<{id: string}>}) {
   }
   const hasSubUnits = !isEmpty(unitChildren) && unitChildren.length > 0;
   const hasMemoryPieces = !isEmpty(memoryPieces) && memoryPieces.length > 0;
+
+  // Serialize data to plain objects for client component
+  const serializedUnits = unitChildren.map((unit: any) => ({
+    _id: unit._id?.toString(),
+    title: unit.title,
+    description: unit.description,
+    imageUrls: unit.imageUrls
+  }));
+
+  const serializedMemoryPieces = memoryPieces.map((piece: any) => ({
+    _id: piece._id?.toString(),
+    content: piece.content,
+    description: piece.description,
+    imageUrls: piece.imageUrls,
+    labels: piece.labels
+  }));
+
   return <>
-    {editMode && <div className='w-full flex flex-row justify-center'><AddContentModal unitId={unitId} addMemoryPieceToUnit={addMemoryPieceToUnit} addSubUnit={addSubUnit} hasMemoryPieces={hasMemoryPieces} hasSubUnits={hasSubUnits} unitPath={unitPath} /></div>}
+    {canManageContent && (
+      <ContentManagement
+        type="unit"
+        unitId={unitId}
+        unitPath={unitPath}
+        subjectId={subjectId}
+        hasSubUnits={hasSubUnits}
+        hasMemoryPieces={hasMemoryPieces}
+        units={serializedUnits}
+        memoryPieces={serializedMemoryPieces}
+      />
+    )}
     <Breadcrumbs segments={breadcrumbsSegments}/>
     <SectionDivider title={'Details'}/>
     <ImageCarousel imageSrcs={unit.imageUrls || []} imageAlt='' />

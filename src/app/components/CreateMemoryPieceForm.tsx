@@ -21,13 +21,11 @@ export interface AddMemoryPieceToUnitProps {
 
 export interface CreateMemoryPieceFormProps {
   unitId: string;
-  // server util to save the new memoryPiece {@see memory-piece#addMemoryPieceToUnit}
-  addMemoryPieceToUnit: (props: AddMemoryPieceToUnitProps) => Promise<boolean>;
   unitPath: string;
   submitCallback?: () => void;
 }
 
-export default function CreateMemoryPieceForm({ unitId, addMemoryPieceToUnit, unitPath, submitCallback } : CreateMemoryPieceFormProps) {
+export default function CreateMemoryPieceForm({ unitId, unitPath, submitCallback } : CreateMemoryPieceFormProps) {
   const [images, setImages] = useState<UploadedImage[]>([]);
   const [uploading, setUploading] = useState(false);
   const [content, setContent] = useState('');
@@ -115,20 +113,38 @@ export default function CreateMemoryPieceForm({ unitId, addMemoryPieceToUnit, un
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await addMemoryPieceToUnit({
-      unitId,
-      content,
-      description,
-      imageUrls: images.map(image => image.url),
-      labels: labels.split(',')
-    })
 
-    if (res) {
-      alert('Submitted!');
-      setContent('');
-      setDescription('');
-      setImages([]);
-      setLabels('');
+    try {
+      const response = await fetch('/api/admin/memory-pieces/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          unitId,
+          content,
+          description,
+          imageUrls: images.map(image => image.url),
+          labels: labels.split(',').map(l => l.trim()).filter(Boolean)
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.details || error.error || 'Failed to create memory piece');
+      }
+
+      const res = await response.json();
+
+      if (res) {
+        alert('Memory piece created successfully!');
+        setContent('');
+        setDescription('');
+        setImages([]);
+        setLabels('');
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Create memory piece error:', error);
+      alert('Failed to create memory piece');
     }
     submitCallback?.();
   };
