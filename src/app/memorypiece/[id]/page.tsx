@@ -3,6 +3,9 @@ import { parentUnitChain } from "@/lib/db/api/unit"
 import { getSubject } from "@/lib/db/api/subject"
 import { getMemoryPiece } from '@/lib/db/api/memory-piece'
 import {HeroCard} from '@/app/components/HeroCard'
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/utils/authOptions";
+import { hasPermission } from "@/lib/utils/permissions";
 
 const renderUnit = async (unit: any) => {
     const unitChain = await parentUnitChain(unit.id.toString());
@@ -26,10 +29,31 @@ export default async function MemoryPiece({params}: {params: Promise<{id: string
   const memoryPiece = await getMemoryPiece(memoryPieceId);
   if (!memoryPiece) throw new Error(`memoryPiece not found.`);
 
+  // Check permissions for managing content
+  const session = await getServerSession(authOptions);
+  const user = session?.user;
+
+  // Get subject from first unit to check permissions
+  let canManageContent = false;
+  if (user?.id && memoryPiece.units && memoryPiece.units.length > 0) {
+    const firstUnit = memoryPiece.units[0];
+    if (firstUnit.subject?._id) {
+      canManageContent = await hasPermission(user.id, 'manage_content', firstUnit.subject._id.toString());
+    }
+  }
+
   return <>
   {/* <Breadcrumbs segments={breadcrumbsSegments}/> */}
   <div className="flex flex-col items-center">
-    <HeroCard imageSrcs={memoryPiece.imageUrls} imageAlt={memoryPiece.content} title={memoryPiece.content} description={memoryPiece.description} href={`/memorypiece/${memoryPiece.id}`} />
+    <HeroCard
+      imageSrcs={memoryPiece.imageUrls}
+      imageAlt={memoryPiece.content}
+      title={memoryPiece.content}
+      description={memoryPiece.description}
+      href={`/memorypiece/${memoryPiece.id}`}
+      editorMode={true}
+      canManageContent={canManageContent}
+    />
   </div>
   <div>
     <h2 className="text-2xl font-bold mt-6">Related Units</h2>
