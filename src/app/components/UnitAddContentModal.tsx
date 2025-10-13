@@ -1,5 +1,6 @@
 'use client'
 import CreateMemoryPieceForm, {AddMemoryPieceToUnitProps, UploadedImage} from '@/app/components/CreateMemoryPieceForm';
+import CreateMemoryPieceBatchForm from '@/app/components/CreateMemoryPieceBatchForm';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import { useCallback, useState } from 'react';
 import { Button } from '@/app/components/button';
@@ -17,12 +18,12 @@ interface CreateMemoryPiecePanelProps {
 function CreateMemoryPiecePanel({unitId, setModalOpen, unitPath}: CreateMemoryPiecePanelProps) {
   return  <DialogPanel
               transition
-              className="w-full max-w-md rounded-xl bg-popover p-6 text-foreground shadow-xl ring-1 ring-border backdrop-blur-2xl duration-300 ease-out data-closed:scale-95 data-closed:opacity-0"
+              className="w-full max-w-6xl rounded-xl bg-popover p-6 text-foreground shadow-xl ring-1 ring-border backdrop-blur-2xl duration-300 ease-out data-closed:scale-95 data-closed:opacity-0"
             >
               <DialogTitle as="h3" className="mb-4 text-base/7 font-medium leading-7 text-foreground">
-                Add MemoryPiece
+                Add Memory Pieces (Batch)
               </DialogTitle>
-              <CreateMemoryPieceForm unitId={unitId} submitCallback={() => setModalOpen(false)} unitPath={unitPath} />
+              <CreateMemoryPieceBatchForm unitId={unitId} submitCallback={() => setModalOpen(false)} unitPath={unitPath} />
             </DialogPanel>
 }
 
