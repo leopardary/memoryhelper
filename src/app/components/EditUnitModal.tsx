@@ -1,4 +1,5 @@
 'use client'
+import { toast } from 'sonner';
 import { UploadedImage } from '@/app/components/CreateMemoryPieceForm';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { useCallback, useState } from 'react';
@@ -94,13 +95,13 @@ function EditUnitForm({ unit, unitPath, updateUnit, setModalOpen, onSuccess }: E
       });
 
       if (res != null) {
-        alert('Unit updated successfully!');
+        toast.success('Unit updated successfully!');
         onSuccess();
         setModalOpen(false);
       }
     } catch (error) {
       console.error('Update error:', error);
-      alert('Failed to update unit');
+      toast.error('Failed to update unit');
     }
   };
 

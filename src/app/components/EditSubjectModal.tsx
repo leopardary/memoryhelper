@@ -1,4 +1,5 @@
 'use client'
+import { toast } from 'sonner';
 import {UploadedImage} from '@/app/components/CreateMemoryPieceForm';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import { useCallback, useState, useEffect } from 'react';
@@ -91,13 +92,13 @@ function EditSubjectForm({subject, updateSubject, setModalOpen, onSuccess}: Edit
       });
 
       if (res != null) {
-        alert('Subject updated successfully!');
+        toast.success('Subject updated successfully!');
         onSuccess();
         setModalOpen(false);
       }
     } catch (error) {
       console.error('Update error:', error);
-      alert('Failed to update subject');
+      toast.error('Failed to update subject');
     }
   };
 

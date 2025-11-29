@@ -4,6 +4,7 @@ import { useCallback, useState, useEffect, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { X, Plus, Loader2, Sparkles, CheckCircle2, AlertCircle, Download } from 'lucide-react';
 import Image from "next/image";
+import { toast } from 'sonner';
 
 export type UploadedImage = {
   url: string;
@@ -146,7 +147,7 @@ export default function CreateMemoryPieceBatchForm({
   const removeRow = (id: string) => {
     setRows(prevRows => {
       if (prevRows.length === 1) {
-        alert('Cannot remove the last row');
+        toast.error('Cannot remove the last row');
         return prevRows;
       }
       return prevRows.filter(row => row.id !== id);
@@ -159,7 +160,7 @@ export default function CreateMemoryPieceBatchForm({
 
   const handleGenerate = async (rowId: string, content: string) => {
     if (!content) {
-      alert("请先输入 content");
+      toast.error("请先输入 content");
       return;
     }
 
@@ -174,20 +175,21 @@ export default function CreateMemoryPieceBatchForm({
       const data = await res.json();
       if (res.ok) {
         updateRow(rowId, { description: data.description, generating: false });
+        toast.success("Description generated successfully");
       } else {
-        alert(data.error || "生成失败");
+        toast.error(data.error || "生成失败");
         updateRow(rowId, { generating: false });
       }
     } catch (err) {
       console.error(err);
-      alert("生成描述时出错");
+      toast.error("生成描述时出错");
       updateRow(rowId, { generating: false });
     }
   };
 
   const handleImageUpload = async (rowId: string, content: string, acceptedFiles: File[]) => {
     if (!content) {
-      alert('请先输入 content');
+      toast.error('请先输入 content');
       return;
     }
 
@@ -233,7 +235,7 @@ export default function CreateMemoryPieceBatchForm({
 
   const handleAutoFetchImage = async (rowId: string, content: string) => {
     if (!content) {
-      alert('请先输入 content');
+      toast.error('请先输入 content');
       return;
     }
 
@@ -266,7 +268,7 @@ export default function CreateMemoryPieceBatchForm({
       }
     } catch (error) {
       console.error('Auto-fetch failed:', error);
-      alert(error instanceof Error ? error.message : 'Failed to auto-fetch image');
+      toast.error(error instanceof Error ? error.message : 'Failed to auto-fetch image');
       updateRow(rowId, { autoFetching: false });
     }
   };
@@ -327,7 +329,7 @@ export default function CreateMemoryPieceBatchForm({
     );
 
     if (validRows.length === 0) {
-      alert('Please add at least one memory piece with content and images');
+      toast.error('Please add at least one memory piece with content and images');
       return;
     }
 
@@ -354,11 +356,11 @@ export default function CreateMemoryPieceBatchForm({
       }
 
       const result = await response.json();
-      alert(`Successfully created ${result.count} memory pieces!`);
+      toast.success(`Successfully created ${result.count} memory pieces!`);
       window.location.reload();
     } catch (error) {
       console.error('Batch create error:', error);
-      alert('Failed to create memory pieces');
+      toast.error('Failed to create memory pieces');
     } finally {
       setSubmitting(false);
     }

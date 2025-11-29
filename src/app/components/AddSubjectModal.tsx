@@ -6,6 +6,7 @@ import { Button } from '@/app/components/button';
 import { useDropzone } from 'react-dropzone';
 import { X } from 'lucide-react';
 import Image from "next/image";
+import { toast } from 'sonner';
 
 interface AddSubjectProps {
   title: string;
@@ -91,7 +92,7 @@ function CreateSubjectForm({findOrCreateSubject, setModalOpen, onSuccess}: Creat
     const res = await findOrCreateSubject(subjectData);
 
     if (res != null) {
-      alert('Subject created successfully!');
+      toast.success('Subject created successfully!');
 
       // Call onSuccess with the created subject data
       if (onSuccess) {

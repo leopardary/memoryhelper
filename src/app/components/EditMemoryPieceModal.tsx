@@ -1,4 +1,5 @@
 'use client'
+import { toast } from 'sonner';
 import { UploadedImage } from '@/app/components/CreateMemoryPieceForm';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { useCallback, useState } from 'react';
@@ -98,13 +99,13 @@ function EditMemoryPieceForm({ memoryPiece, unitPath, subjectId, updateMemoryPie
       });
 
       if (res != null) {
-        alert('Memory piece updated successfully!');
+        toast.success('Memory piece updated successfully!');
         onSuccess();
         setModalOpen(false);
       }
     } catch (error) {
       console.error('Update error:', error);
-      alert('Failed to update memory piece');
+      toast.error('Failed to update memory piece');
     }
   };
 

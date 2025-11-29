@@ -5,6 +5,7 @@ import AddRootUnitModal from '@/app/components/AddRootUnitModal';
 import UnitAddContentModal from '@/app/components/UnitAddContentModal';
 import EditUnitModal from '@/app/components/EditUnitModal';
 import EditMemoryPieceModal from '@/app/components/EditMemoryPieceModal';
+import { toast } from 'sonner';
 
 interface ContentManagementForSubjectProps {
   type: 'subject';
@@ -47,11 +48,11 @@ export default function ContentManagement(props: ContentManagementProps) {
         throw new Error(error.details || error.error || 'Failed to delete unit');
       }
 
-      alert('Unit deleted successfully');
+      toast.success('Unit deleted successfully');
       window.location.reload();
     } catch (error) {
       console.error('Delete error:', error);
-      alert('Failed to delete unit');
+      toast.error('Failed to delete unit');
     } finally {
       setDeletingId(null);
     }
@@ -74,11 +75,11 @@ export default function ContentManagement(props: ContentManagementProps) {
         throw new Error(error.details || error.error || 'Failed to delete memory piece');
       }
 
-      alert('Memory piece deleted successfully');
+      toast.success('Memory piece deleted successfully');
       window.location.reload();
     } catch (error) {
       console.error('Delete error:', error);
-      alert('Failed to delete memory piece');
+      toast.error('Failed to delete memory piece');
     } finally {
       setDeletingId(null);
     }

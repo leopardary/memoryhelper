@@ -7,6 +7,7 @@ import SessionProvider from "@/app/SessionProvider";
 import {ColorsThemeProvider} from '@/providers/colors-theme-provider'
 import {ThemeProvider} from '@/providers/theme-provider'
 import { cn } from '@/app/components/utils'
+import { Toaster } from 'sonner'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,6 +47,7 @@ export default function RootLayout({
             </ColorsThemeProvider>
           </ThemeProvider>
         </SessionProvider>
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   );
