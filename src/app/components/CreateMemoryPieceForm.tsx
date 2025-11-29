@@ -4,6 +4,7 @@ import { useDropzone } from 'react-dropzone';
 import { useCallback, useState } from 'react';
 import { X } from 'lucide-react';
 import Image from "next/image";
+import { toast } from 'sonner';
 
 export type UploadedImage = {
   url: string;
@@ -35,7 +36,7 @@ export default function CreateMemoryPieceForm({ unitId, unitPath, submitCallback
 
     const handleGenerate = async () => {
     if (!content) {
-      alert("请先输入 content");
+      toast.error("请先输入 content");
       return;
     }
     setGenerating(true);
@@ -48,12 +49,13 @@ export default function CreateMemoryPieceForm({ unitId, unitPath, submitCallback
       const data = await res.json();
       if (res.ok) {
         setDescription(data.description);
+        toast.success("Description generated successfully");
       } else {
-        alert(data.error || "生成失败");
+        toast.error(data.error || "生成失败");
       }
     } catch (err) {
       console.error(err);
-      alert("生成描述时出错");
+      toast.error("生成描述时出错");
     } finally {
       setGenerating(false);
     }
@@ -135,7 +137,7 @@ export default function CreateMemoryPieceForm({ unitId, unitPath, submitCallback
       const res = await response.json();
 
       if (res) {
-        alert('Memory piece created successfully!');
+        toast.success('Memory piece created successfully!');
         setContent('');
         setDescription('');
         setImages([]);
@@ -144,7 +146,7 @@ export default function CreateMemoryPieceForm({ unitId, unitPath, submitCallback
       }
     } catch (error) {
       console.error('Create memory piece error:', error);
-      alert('Failed to create memory piece');
+      toast.error('Failed to create memory piece');
     }
     submitCallback?.();
   };

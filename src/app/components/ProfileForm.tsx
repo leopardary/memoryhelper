@@ -4,6 +4,7 @@ import { useSession, signOut } from 'next-auth/react';
 import { useDropzone } from 'react-dropzone';
 import Image from 'next/image';
 import { X } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function ProfileForm() {
   const { data: session, update } = useSession();
@@ -42,11 +43,11 @@ export default function ProfileForm() {
 
     // Validate file type and size
     if (!file.type.startsWith('image/')) {
-      alert('Please upload an image file');
+      toast.error('Please upload an image file');
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      alert('Image size should be less than 5MB');
+      toast.error('Image size should be less than 5MB');
       return;
     }
 
@@ -85,10 +86,10 @@ export default function ProfileForm() {
       });
 
       setImageUrl(publicUrl);
-      alert('Image uploaded successfully');
+      toast.success('Image uploaded successfully');
     } catch (err) {
       console.error('Upload failed:', err);
-      alert('Failed to upload image');
+      toast.error('Failed to upload image');
     } finally {
       setUploading(false);
     }
@@ -115,10 +116,10 @@ export default function ProfileForm() {
       });
 
       setImageUrl('');
-      alert('Image removed successfully');
+      toast.success('Image removed successfully');
     } catch (err) {
       console.error('Delete failed:', err);
-      alert('Failed to remove image');
+      toast.error('Failed to remove image');
     }
   };
 
@@ -128,15 +129,15 @@ export default function ProfileForm() {
     // Validate password fields if changing password
     if (currentPassword || newPassword || confirmPassword) {
       if (!currentPassword || !newPassword || !confirmPassword) {
-        alert('Please fill in all password fields');
+        toast.error('Please fill in all password fields');
         return;
       }
       if (newPassword !== confirmPassword) {
-        alert('New passwords do not match');
+        toast.error('New passwords do not match');
         return;
       }
       if (newPassword.length < 6) {
-        alert('New password must be at least 6 characters');
+        toast.error('New password must be at least 6 characters');
         return;
       }
     }
@@ -160,7 +161,7 @@ export default function ProfileForm() {
         throw new Error(error.details || error.error || 'Failed to update profile');
       }
 
-      alert('Profile updated successfully!');
+      toast.success('Profile updated successfully!');
 
       // Update session
       await update({
@@ -174,7 +175,7 @@ export default function ProfileForm() {
       setConfirmPassword('');
     } catch (error) {
       console.error('Update error:', error);
-      alert(error instanceof Error ? error.message : 'Failed to update profile');
+      toast.error(error instanceof Error ? error.message : 'Failed to update profile');
     } finally {
       setLoading(false);
     }
@@ -202,7 +203,7 @@ export default function ProfileForm() {
 
     const typedName = prompt('Please type your name to confirm:');
     if (typedName !== name) {
-      alert('Name does not match. Account deletion cancelled.');
+      toast.error('Name does not match. Account deletion cancelled.');
       return;
     }
 
@@ -218,13 +219,13 @@ export default function ProfileForm() {
         throw new Error(error.details || error.error || 'Failed to delete account');
       }
 
-      alert('Your account has been successfully deleted. You will now be signed out.');
+      toast.success('Your account has been successfully deleted. You will now be signed out.');
 
       // Sign out and redirect to home
       await signOut({ callbackUrl: '/' });
     } catch (error) {
       console.error('Deregister error:', error);
-      alert(error instanceof Error ? error.message : 'Failed to delete account');
+      toast.error(error instanceof Error ? error.message : 'Failed to delete account');
     } finally {
       setLoading(false);
     }

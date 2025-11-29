@@ -1,4 +1,5 @@
 'use client'
+import { toast } from 'sonner';
 import { useState } from 'react';
 import AddSubjectModal from '@/app/components/AddSubjectModal';
 import EditSubjectModal from '@/app/components/EditSubjectModal';
@@ -32,10 +33,10 @@ export default function SubjectManagement({
     try {
       await deleteSubject(subjectId);
       setSubjects(prev => prev.filter(s => s._id.toString() !== subjectId));
-      alert('Subject deleted successfully');
+      toast.success(alert('Subject deleted successfully'));
     } catch (error) {
       console.error('Delete error:', error);
-      alert('Failed to delete subject');
+      toast.error(alert('Failed to delete subject'));
     } finally {
       setIsDeleting(null);
     }

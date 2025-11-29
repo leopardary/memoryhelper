@@ -6,6 +6,7 @@ import { Button } from '@/app/components/button';
 import {DESCRIPTION_SEPARATOR, SENTENCE_SEPARATOR, handleRead} from '@/app/components/utils';
 import { SpeakerWaveIcon, CheckIcon, XMarkIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useCallback, useState } from "react";
+import { toast } from 'sonner';
 
 export interface HeroCardProps {
   imageSrcs?: string[];
@@ -73,10 +74,10 @@ export function HeroCard(props: HeroCardProps) {
         throw new Error('Failed to save audio');
       }
 
-      alert('Audio regenerated successfully!');
+      toast.success('Audio regenerated successfully!');
     } catch (error) {
       console.error('Error regenerating audio:', error);
-      alert('Failed to regenerate audio. Please try again.');
+      toast.error('Failed to regenerate audio. Please try again.');
     } finally {
       setRegenerating(prev => ({ ...prev, [content]: false }));
     }

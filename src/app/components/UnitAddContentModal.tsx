@@ -1,4 +1,5 @@
 'use client'
+import { toast } from 'sonner';
 import CreateMemoryPieceForm, {AddMemoryPieceToUnitProps, UploadedImage} from '@/app/components/CreateMemoryPieceForm';
 import CreateMemoryPieceBatchForm from '@/app/components/CreateMemoryPieceBatchForm';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
@@ -114,7 +115,7 @@ function CreateSubUnitForm({ unitId, setModalOpen, unitPath } : CreateSubUnitPan
       const res = await response.json();
 
       if (res != null) {
-        alert('Sub-unit created successfully!');
+        toast.success('Sub-unit created successfully!');
         setTitle('');
         setDescription('');
         setImages([]);
@@ -122,7 +123,7 @@ function CreateSubUnitForm({ unitId, setModalOpen, unitPath } : CreateSubUnitPan
       }
     } catch (error) {
       console.error('Create sub-unit error:', error);
-      alert('Failed to create sub-unit');
+      toast.error('Failed to create sub-unit');
     }
     setModalOpen?.(false);
   };

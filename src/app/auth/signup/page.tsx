@@ -6,6 +6,7 @@ import { Button } from '@/app/components/button';
 import { useDropzone } from 'react-dropzone';
 import Image from 'next/image';
 import { X } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -22,11 +23,11 @@ export default function SignUpPage() {
 
     // Validate file type and size
     if (!file.type.startsWith('image/')) {
-      alert('Please upload an image file');
+      toast.error('Please upload an image file');
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      alert('Image size should be less than 5MB');
+      toast.error('Image size should be less than 5MB');
       return;
     }
 
@@ -58,9 +59,10 @@ export default function SignUpPage() {
       });
 
       setImageUrl(publicUrl);
+      toast.success('Image uploaded successfully');
     } catch (err) {
       console.error('Upload failed:', err);
-      alert('Failed to upload image');
+      toast.error('Failed to upload image');
     } finally {
       setUploading(false);
     }
@@ -87,9 +89,10 @@ export default function SignUpPage() {
       });
 
       setImageUrl('');
+      toast.success('Image removed successfully');
     } catch (err) {
       console.error('Delete failed:', err);
-      alert('Failed to remove image');
+      toast.error('Failed to remove image');
     }
   };
 
@@ -102,10 +105,11 @@ export default function SignUpPage() {
     });
 
     if (res.ok) {
+      toast.success("Account created successfully! Please sign in.");
       router.push("/auth/signin");
     } else {
       const error = await res.json();
-      alert(error.error || "Signup failed");
+      toast.error(error.error || "Signup failed");
     }
   };
 

@@ -1,4 +1,5 @@
 'use client'
+import { toast } from 'sonner';
 import {UploadedImage} from '@/app/components/CreateMemoryPieceForm';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import { useCallback, useState } from 'react';
@@ -92,7 +93,7 @@ function CreateRootUnitForm({ subjectTitle, subjectId, setModalOpen } : CreateRo
       const res = await response.json();
 
       if (res != null) {
-        alert('Unit created successfully!');
+        toast.success('Unit created successfully!');
         setTitle('');
         setDescription('');
         setImages([]);
@@ -100,7 +101,7 @@ function CreateRootUnitForm({ subjectTitle, subjectId, setModalOpen } : CreateRo
       }
     } catch (error) {
       console.error('Create unit error:', error);
-      alert('Failed to create unit');
+      toast.error('Failed to create unit');
     }
     setModalOpen?.(false);
   };
