@@ -1,6 +1,6 @@
 'use client'
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/react'
-import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
+import { MagnifyingGlassIcon, FaceFrownIcon } from '@heroicons/react/20/solid'
 import clsx from 'clsx'
 import { useState, useEffect, useCallback } from 'react'
 import { MemoryPieceProps } from '@/lib/db/model/types/MemoryPiece.types'
@@ -91,7 +91,7 @@ export default function SearchBar() {
             )}
           </div>
 
-          {results.length > 0 && (
+          {(results.length > 0 || (query.trim().length > 0 && !isLoading)) && (
             <ComboboxOptions
               anchor="bottom"
               transition
@@ -100,37 +100,49 @@ export default function SearchBar() {
                 'transition duration-100 ease-in data-leave:data-closed:opacity-0'
               )}
             >
-              {results.map((memoryPiece) => (
-                <ComboboxOption
-                  key={memoryPiece._id}
-                  value={memoryPiece}
-                  className="group flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 select-none hover:bg-muted/50 data-focus:bg-muted/50"
-                >
-                  {memoryPiece.imageUrls?.[0] && (
-                    <Image
-                      src={memoryPiece.imageUrls[0]}
-                      alt={memoryPiece.content}
-                      width={40}
-                      height={40}
-                      className="rounded object-cover"
-                    />
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-foreground truncate">
-                      {memoryPiece.content}
-                    </div>
-                    {memoryPiece.labels && memoryPiece.labels.length > 0 && (
-                      <div className="flex gap-1 mt-1">
-                        {memoryPiece.labels.slice(0, 2).map((label, idx) => (
-                          <span key={idx} className="text-xs text-muted-foreground">
-                            {label}
-                          </span>
-                        ))}
-                      </div>
+              {results.length > 0 ? (
+                results.map((memoryPiece) => (
+                  <ComboboxOption
+                    key={memoryPiece._id}
+                    value={memoryPiece}
+                    className="group flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 select-none hover:bg-muted/50 data-focus:bg-muted/50"
+                  >
+                    {memoryPiece.imageUrls?.[0] && (
+                      <Image
+                        src={memoryPiece.imageUrls[0]}
+                        alt={memoryPiece.content}
+                        width={40}
+                        height={40}
+                        className="rounded object-cover"
+                      />
                     )}
-                  </div>
-                </ComboboxOption>
-              ))}
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium text-foreground truncate">
+                        {memoryPiece.content}
+                      </div>
+                      {memoryPiece.labels && memoryPiece.labels.length > 0 && (
+                        <div className="flex gap-1 mt-1">
+                          {memoryPiece.labels.slice(0, 2).map((label, idx) => (
+                            <span key={idx} className="text-xs text-muted-foreground">
+                              {label}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </ComboboxOption>
+                ))
+              ) : (
+                <div className="flex flex-col items-center py-6 px-3 text-center">
+                  <FaceFrownIcon className="h-8 w-8 text-muted-foreground mb-2" />
+                  <p className="text-sm font-medium text-foreground mb-1">
+                    No results found
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Try searching with different keywords
+                  </p>
+                </div>
+              )}
             </ComboboxOptions>
           )}
         </Combobox>
