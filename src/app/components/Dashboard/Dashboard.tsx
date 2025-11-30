@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/tabs';
 import { Button } from '@/app/components/button';
-import { ClockIcon, CalendarIcon, CalendarDaysIcon, CalendarDateRangeIcon, GlobeAltIcon } from '@heroicons/react/24/outline';
+import { ClockIcon, CalendarIcon, CalendarDaysIcon, CalendarDateRangeIcon, GlobeAltIcon, ChartBarIcon } from '@heroicons/react/24/outline';
 import { AverageScoreChart, AverageScoreData } from '@/app/components/Dashboard/AverageScoreChart';
 import { NumberOfChecksChart, NumberOfChecksData } from '@/app/components/Dashboard/NumberOfChecksChart';
 import { MemoryPieceGrid } from './MemoryPieceGrid';
@@ -11,6 +11,7 @@ import { StatsOverview } from './StatsOverview';
 import { HistoryModal } from './HistoryModal';
 import { MemoryPiece } from './mockData';
 import {MemoryCheckObj, SubscriptionOverallRecord, TestResult, MemoryPieceStat} from './types';
+import { EmptyState } from '@/app/components/EmptyState';
 
 type TimeFilter = 'today' | 'week' | 'month' | 'year' | 'all';
 
@@ -174,71 +175,85 @@ const Dashboard = ({record} : {record: Record<string, SubscriptionOverallRecord>
           </div>
         </div>
 
-        {/* Stats Overview */}
-        <StatsOverview filteredResults={filteredTestResults} timeFilter={timeFilter} />
+        {filteredTestResults.length === 0 ? (
+          <EmptyState
+            icon={ChartBarIcon}
+            title={`No practice data ${timeFilter === 'all' ? 'yet' : 'for ' + getTimeFilterLabel(timeFilter).toLowerCase()}`}
+            description="Start practicing your subscribed memory pieces to see your performance statistics and progress here. Your practice history will help track your learning journey."
+            action={{
+              label: "Start Practicing",
+              href: "/practice"
+            }}
+          />
+        ) : (
+          <>
+            {/* Stats Overview */}
+            <StatsOverview filteredResults={filteredTestResults} timeFilter={timeFilter} />
 
-        {/* Main Content */}
-        <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="progress">Progress</TabsTrigger>
-            <TabsTrigger value="memory-pieces">Memory Pieces</TabsTrigger>
-          </TabsList>
+            {/* Main Content */}
+            <Tabs defaultValue="overview" className="space-y-6">
+              <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
+                <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="progress">Progress</TabsTrigger>
+                <TabsTrigger value="memory-pieces">Memory Pieces</TabsTrigger>
+              </TabsList>
 
-          <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Average Score Trend</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <AverageScoreChart data={averageScoreData} type="line" />
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle>Number of Checks Trend</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <NumberOfChecksChart data={checkNumData} type="bar" />
-                </CardContent>
-              </Card>
-            </div>
-            
-            <MemoryPieceGrid 
-              memoryPieceStats={memoryPieceStats}
-              onMemoryPieceClick={handleMemoryPieceClick}
-              limit={8}
-            />
-          </TabsContent>
+              <TabsContent value="overview" className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Average Score Trend</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <AverageScoreChart data={averageScoreData} type="line" />
+                    </CardContent>
+                  </Card>
 
-          <TabsContent value="progress" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Average Score Trend</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <AverageScoreChart data={averageScoreData} type="line" />
-              </CardContent>
-            </Card>
-            <Card>
-                <CardHeader>
-                  <CardTitle>Number of Checks Trend</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <NumberOfChecksChart data={checkNumData} type="bar" />
-                </CardContent>
-              </Card>
-          </TabsContent>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Number of Checks Trend</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <NumberOfChecksChart data={checkNumData} type="bar" />
+                    </CardContent>
+                  </Card>
+                </div>
 
-          <TabsContent value="memory-pieces" className="space-y-6">
-            <MemoryPieceGrid 
-              memoryPieceStats={memoryPieceStats}
-              onMemoryPieceClick={handleMemoryPieceClick}
-            />
-          </TabsContent>
-        </Tabs>
+                <MemoryPieceGrid
+                  memoryPieceStats={memoryPieceStats}
+                  onMemoryPieceClick={handleMemoryPieceClick}
+                  limit={8}
+                />
+              </TabsContent>
+
+              <TabsContent value="progress" className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Average Score Trend</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <AverageScoreChart data={averageScoreData} type="line" />
+                  </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                      <CardTitle>Number of Checks Trend</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <NumberOfChecksChart data={checkNumData} type="bar" />
+                    </CardContent>
+                  </Card>
+              </TabsContent>
+
+              <TabsContent value="memory-pieces" className="space-y-6">
+                <MemoryPieceGrid
+                  memoryPieceStats={memoryPieceStats}
+                  onMemoryPieceClick={handleMemoryPieceClick}
+                />
+              </TabsContent>
+            </Tabs>
+          </>
+        )}
 
         {/* History Modal */}
         <HistoryModal

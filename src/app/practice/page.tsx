@@ -5,6 +5,8 @@ import { authOptions } from "@/lib/utils/authOptions";
 import { createMemoryCheckInBatch } from '@/lib/db/api/memory-check';
 import PracticeTable from '@/app/components/PracticeTable';
 import { redirect } from 'next/navigation';
+import { EmptyState } from "@/app/components/EmptyState";
+import { AcademicCapIcon } from "@heroicons/react/24/outline";
 
 const createMemoryChecks = async (memoryCheckResults: Record<string, boolean>) => {
   'use server'
@@ -28,7 +30,27 @@ export default async function Practice() {
     'use server'
     redirect('/performance');
   }
-  return (<div className="flex flex-col items-center">
-        <PracticeTable memoryPiecesStr={JSON.stringify(memoryPiecesToCheck)} memoryPieceIdToSubscriptionId={memoryPieceIdToSubscriptionId} createMemoryChecks={createMemoryChecks} redirectPage={redirectPage} />
-      </div>)
+
+  return (
+    <div className="flex flex-col items-center">
+      {memoryPiecesToCheck.length === 0 ? (
+        <EmptyState
+          icon={AcademicCapIcon}
+          title="No items due for practice"
+          description="Great work! You're all caught up with your spaced repetition practice. Check back later or review your subscribed items."
+          action={{
+            label: "View All Subscriptions",
+            href: "/review"
+          }}
+        />
+      ) : (
+        <PracticeTable
+          memoryPiecesStr={JSON.stringify(memoryPiecesToCheck)}
+          memoryPieceIdToSubscriptionId={memoryPieceIdToSubscriptionId}
+          createMemoryChecks={createMemoryChecks}
+          redirectPage={redirectPage}
+        />
+      )}
+    </div>
+  )
 }
