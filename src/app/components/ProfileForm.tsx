@@ -16,6 +16,7 @@ export default function ProfileForm() {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [isOAuthUser, setIsOAuthUser] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
     // Fetch user profile data
@@ -30,6 +31,9 @@ export default function ProfileForm() {
         }
       } catch (error) {
         console.error('Failed to fetch profile:', error);
+        toast.error('Failed to load profile data');
+      } finally {
+        setInitialLoading(false);
       }
     };
 
@@ -230,6 +234,24 @@ export default function ProfileForm() {
       setLoading(false);
     }
   };
+
+  if (initialLoading) {
+    return (
+      <div className="space-y-8">
+        <div className="bg-card p-6 rounded-lg border animate-pulse">
+          <div className="h-6 bg-muted-foreground/10 rounded w-48 mb-4"></div>
+          <div className="space-y-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="space-y-2">
+                <div className="h-4 bg-muted-foreground/10 rounded w-24"></div>
+                <div className="h-10 bg-muted-foreground/10 rounded w-full"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
