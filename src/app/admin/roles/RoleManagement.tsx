@@ -164,7 +164,7 @@ export default function RoleManagement({
               >
                 <option value="">-- Select Subject --</option>
                 {subjects.map(subject => (
-                  <option key={subject._id.toString()} value={subject._id.toString()}>
+                  <option key={subject._id?.toString()} value={subject._id?.toString()}>
                     {subject.title}
                   </option>
                 ))}

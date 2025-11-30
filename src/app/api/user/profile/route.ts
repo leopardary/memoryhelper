@@ -6,7 +6,7 @@ import { connectDB } from '@/lib/db/utils';
 import bcrypt from 'bcryptjs';
 
 // GET - Get user profile
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     const hasPassword = !!user.password;
 
     // Remove password from response
-    const { password, ...userWithoutPassword } = user;
+    const { password: _password, ...userWithoutPassword } = user;
 
     return NextResponse.json({
       user: userWithoutPassword,

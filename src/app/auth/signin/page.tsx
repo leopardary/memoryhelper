@@ -48,7 +48,7 @@ export default function SignInPage() {
         toast.success("Welcome back!");
         window.location.href = "/";
       }
-    } catch (error) {
+    } catch {
       toast.error("An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);

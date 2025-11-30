@@ -15,7 +15,8 @@ export async function POST(req: Request) {
     name,
     email,
     password: hashedPassword,
-    imageUrl: imageUrl || undefined
+    imageUrl: imageUrl || undefined,
+    defaultRole: 'visitor'
   });
 
   return NextResponse.json({ message: "User created" }, { status: 200 });

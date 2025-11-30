@@ -90,12 +90,16 @@ const SubmitButton = (props: SubmitButtonProps) => {
         }
       })
     }}>Submit</Button>
-    {isPending && <span className="loading loading-spinner loading-md" />}
+    {isPending && (
+      <div className="inline-block ml-2">
+        <div className="animate-spin h-5 w-5 border-3 border-primary border-t-transparent rounded-full" />
+      </div>
+    )}
     {!isPending && success == 1 && (
-      <span className='text-success'>Submitted successfully.</span>
+      <span className='text-green-600 dark:text-green-400'>Submitted successfully.</span>
     )}
     {!isPending && success == -1 && (
-      <span className='text-warning'>Submission failed.</span>
+      <span className='text-red-600 dark:text-red-400'>Submission failed.</span>
     )}
     </>
   );
