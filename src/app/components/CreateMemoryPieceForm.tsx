@@ -2,9 +2,21 @@
 
 import { useDropzone } from 'react-dropzone';
 import { useCallback, useState } from 'react';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { X } from 'lucide-react';
 import Image from "next/image";
 import { toast } from 'sonner';
+import { FormField, TextAreaField } from '@/app/components/FormField';
+
+const memoryPieceSchema = z.object({
+  content: z.string()
+    .min(1, "Content is required")
+    .max(200, "Content must be less than 200 characters"),
+  description: z.string().optional(),
+  labels: z.string().optional(),
+});
 
 export type UploadedImage = {
   url: string;
@@ -26,17 +38,36 @@ export interface CreateMemoryPieceFormProps {
   submitCallback?: () => void;
 }
 
+type MemoryPieceFormData = z.infer<typeof memoryPieceSchema>;
+
 export default function CreateMemoryPieceForm({ unitId, unitPath, submitCallback } : CreateMemoryPieceFormProps) {
   const [images, setImages] = useState<UploadedImage[]>([]);
   const [uploading, setUploading] = useState(false);
-  const [content, setContent] = useState('');
-  const [description, setDescription] = useState('');
   const [generating, setGenerating] = useState(false);
-  const [labels, setLabels] = useState<string>('');
 
-    const handleGenerate = async () => {
+  const {
+    register,
+    handleSubmit: handleFormSubmit,
+    watch,
+    setValue,
+    formState: { errors }
+  } = useForm<MemoryPieceFormData>({
+    resolver: zodResolver(memoryPieceSchema),
+    mode: "onBlur",
+    defaultValues: {
+      content: '',
+      description: '',
+      labels: ''
+    }
+  });
+
+  const content = watch('content');
+  const description = watch('description');
+  const labels = watch('labels');
+
+  const handleGenerate = async () => {
     if (!content) {
-      toast.error("请先输入 content");
+      toast.error("Please enter content first");
       return;
     }
     setGenerating(true);
@@ -48,7 +79,7 @@ export default function CreateMemoryPieceForm({ unitId, unitPath, submitCallback
       });
       const data = await res.json();
       if (res.ok) {
-        setDescription(data.description);
+        setValue('description', data.description);
         toast.success("Description generated successfully");
       } else {
         toast.error(data.error || "生成失败");
@@ -113,8 +144,12 @@ export default function CreateMemoryPieceForm({ unitId, unitPath, submitCallback
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: MemoryPieceFormData) => {
+    // Validate that at least one image is uploaded
+    if (images.length === 0) {
+      toast.error('Please upload at least one image');
+      return;
+    }
 
     try {
       const response = await fetch('/api/admin/memory-pieces/create', {
@@ -122,10 +157,10 @@ export default function CreateMemoryPieceForm({ unitId, unitPath, submitCallback
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           unitId,
-          content,
-          description,
+          content: data.content,
+          description: data.description,
           imageUrls: images.map(image => image.url),
-          labels: labels.split(',').map(l => l.trim()).filter(Boolean)
+          labels: data.labels?.split(',').map(l => l.trim()).filter(Boolean) || []
         })
       });
 
@@ -138,10 +173,10 @@ export default function CreateMemoryPieceForm({ unitId, unitPath, submitCallback
 
       if (res) {
         toast.success('Memory piece created successfully!');
-        setContent('');
-        setDescription('');
+        setValue('content', '');
+        setValue('description', '');
+        setValue('labels', '');
         setImages([]);
-        setLabels('');
         window.location.reload();
       }
     } catch (error) {
@@ -152,45 +187,46 @@ export default function CreateMemoryPieceForm({ unitId, unitPath, submitCallback
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-xl mx-auto">
-      <div>
-        <label className="block mb-1 font-medium">Content</label>
-        <input
-          type="text"
-          className="w-full border rounded px-3 py-2"
-          value={content}
-          onChange={e => setContent(e.target.value)}
-          required
-        />
-      </div>
+    <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-4 max-w-xl mx-auto">
+      <FormField
+        label="Content"
+        name="content"
+        type="text"
+        placeholder="Enter memory piece content"
+        register={register}
+        error={errors.content}
+        disabled={uploading}
+      />
 
       <div>
-        <label className="block mb-1 font-medium">Description</label>
-        <textarea
-          className="w-full border rounded px-3 py-2"
-          value={description}
-          onChange={e => setDescription(e.target.value)}
+        <TextAreaField
+          label="Description"
+          name="description"
+          placeholder="Enter description (optional)"
+          register={register}
+          error={errors.description}
+          disabled={uploading}
           rows={3}
         />
         <button
-            type="button"
-            onClick={handleGenerate}
-            disabled={generating}
-            className="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400"
-          >
-            {generating ? "生成中..." : "Generate"}
-          </button>
+          type="button"
+          onClick={handleGenerate}
+          disabled={generating || !content}
+          className="mt-2 bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400"
+        >
+          {generating ? "Generating..." : "Generate Description"}
+        </button>
       </div>
 
-      <div>
-        <label className="block mb-1 font-medium">Labels</label>
-        <input
-          type="text"
-          className="w-full border rounded px-3 py-2"
-          value={labels}
-          onChange={e => setLabels(e.target.value)}
-        />
-      </div>
+      <FormField
+        label="Labels (comma-separated)"
+        name="labels"
+        type="text"
+        placeholder="e.g., vocabulary, HSK4, common"
+        register={register}
+        error={errors.labels}
+        disabled={uploading}
+      />
 
       <div>
         <label className="block mb-2 font-medium">Images</label>
@@ -239,11 +275,15 @@ export default function CreateMemoryPieceForm({ unitId, unitPath, submitCallback
 
       <button
         type="submit"
-        disabled={uploading || !content || images.length === 0}
+        disabled={uploading || images.length === 0}
         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400"
       >
-        Submit
+        {uploading ? 'Uploading...' : 'Submit'}
       </button>
+
+      {images.length === 0 && (
+        <p className="text-sm text-destructive">* At least one image is required</p>
+      )}
     </form>
   );
 }

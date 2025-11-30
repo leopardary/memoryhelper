@@ -1,20 +1,48 @@
 'use client';
 import { useState, useCallback } from "react";
-import { Field, Fieldset, Input, Label, Legend } from '@headlessui/react'
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Fieldset, Legend } from '@headlessui/react'
 import { useRouter } from "next/navigation";
 import { Button } from '@/app/components/button';
 import { useDropzone } from 'react-dropzone';
 import Image from 'next/image';
 import { X } from 'lucide-react';
 import { toast } from 'sonner';
+import { FormField } from '@/app/components/FormField';
+
+const signupSchema = z.object({
+  name: z.string()
+    .min(1, "Name is required")
+    .min(2, "Name must be at least 2 characters")
+    .max(50, "Name must be less than 50 characters"),
+  email: z.string()
+    .min(1, "Email is required")
+    .email("Please enter a valid email address"),
+  password: z.string()
+    .min(1, "Password is required")
+    .min(6, "Password must be at least 6 characters")
+    .max(100, "Password must be less than 100 characters"),
+});
+
+type SignupFormData = z.infer<typeof signupSchema>;
 
 export default function SignUpPage() {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset
+  } = useForm<SignupFormData>({
+    resolver: zodResolver(signupSchema),
+    mode: "onBlur"
+  });
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
@@ -96,68 +124,79 @@ export default function SignUpPage() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const res = await fetch("/api/auth/signup", {
-      method: "POST",
-      body: JSON.stringify({ name, email, password, imageUrl }),
-      headers: { "Content-Type": "application/json" },
-    });
+  const onSubmit = async (data: SignupFormData) => {
+    setIsSubmitting(true);
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        body: JSON.stringify({ ...data, imageUrl }),
+        headers: { "Content-Type": "application/json" },
+      });
 
-    if (res.ok) {
-      toast.success("Account created successfully! Please sign in.");
-      router.push("/auth/signin");
-    } else {
-      const error = await res.json();
-      toast.error(error.error || "Signup failed");
+      if (res.ok) {
+        toast.success("Account created successfully! Please sign in.");
+        router.push("/auth/signin");
+      } else {
+        const error = await res.json();
+        toast.error(error.error || "Signup failed");
+      }
+    } catch (error) {
+      toast.error("An error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleReset = (e: React.FormEvent) => {
-    e.preventDefault();
-    setName('');
-    setEmail('');
-    setPassword('');
+  const handleReset = () => {
+    reset();
     setImageUrl('');
   };
 
   return (
     <div className="w-full justify-items-center px-4">
       <div className="w-full md:w-10/12 lg:w-8/12 xl:w-6/12">
-        <Fieldset className="space-y-6 rounded-xl bg-gray-100 dark:bg-gray-900 p-6 sm:p-10">
-          <Legend className="text-base/7 font-semibold text-foreground border-b">Sign Up</Legend>
-          <Field>
-            <Label className="text-sm/6 font-medium text-foreground">Name</Label>
-            <Input
-              type="name"
-              className='mt-3 block w-full rounded-lg border-none bg-gray-900/5 dark:bg-gray-100/5 px-3 py-1.5 text-sm/6 text-foreground focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25'
-              value={name}
-              onChange={e => setName(e.target.value)}
-              required
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Fieldset className="space-y-6 rounded-xl bg-gray-100 dark:bg-gray-900 p-6 sm:p-10">
+            <Legend className="text-base/7 font-semibold text-foreground border-b">Sign Up</Legend>
+
+            <FormField
+              label="Name"
+              name="name"
+              type="text"
+              placeholder="Your full name"
+              autoComplete="name"
+              register={register}
+              error={errors.name}
+              disabled={isSubmitting || uploading}
+              className="bg-gray-900/5 dark:bg-gray-100/5"
             />
-          </Field>
-          <Field>
-            <Label className="text-sm/6 font-medium text-foreground">Email</Label>
-            <Input
+
+            <FormField
+              label="Email"
+              name="email"
               type="email"
-              className='mt-3 block w-full rounded-lg border-none bg-gray-900/5 dark:bg-gray-100/5 px-3 py-1.5 text-sm/6 text-foreground focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25'
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
+              placeholder="you@example.com"
+              autoComplete="email"
+              register={register}
+              error={errors.email}
+              disabled={isSubmitting || uploading}
+              className="bg-gray-900/5 dark:bg-gray-100/5"
             />
-          </Field>
-          <Field>
-            <Label className="text-sm/6 font-medium text-foreground">Password</Label>
-            <Input
+
+            <FormField
+              label="Password"
+              name="password"
               type="password"
-              className='mt-3 block w-full rounded-lg border-none bg-gray-900/5 dark:bg-gray-100/5 px-3 py-1.5 text-sm/6 text-foreground focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25'
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
+              placeholder="At least 6 characters"
+              autoComplete="new-password"
+              register={register}
+              error={errors.password}
+              disabled={isSubmitting || uploading}
+              className="bg-gray-900/5 dark:bg-gray-100/5"
             />
-          </Field>
-          <Field>
-            <Label className="text-sm/6 font-medium text-foreground">Profile Image (Optional)</Label>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Profile Image (Optional)</label>
             <div className="mt-3">
               {imageUrl ? (
                 <div className="flex items-start gap-4">
@@ -208,14 +247,26 @@ export default function SignUpPage() {
                 </>
               )}
             </div>
-          </Field>
-          <div className="w-full flex justify-between mt-4">
-            <Button variant="outline" type="reset" onClick={handleReset}>Reset</Button>
-            <Button type="submit" onClick={handleSubmit} disabled={uploading}>
-              {uploading ? 'Uploading...' : 'Sign Up'}
-            </Button>
-          </div>
-        </Fieldset>
+            </div>
+
+            <div className="w-full flex justify-between mt-4">
+              <Button
+                variant="outline"
+                type="button"
+                onClick={handleReset}
+                disabled={isSubmitting || uploading}
+              >
+                Reset
+              </Button>
+              <Button
+                type="submit"
+                disabled={isSubmitting || uploading}
+              >
+                {uploading ? 'Uploading...' : isSubmitting ? 'Creating account...' : 'Sign Up'}
+              </Button>
+            </div>
+          </Fieldset>
+        </form>
       </div>
     </div>
   );
