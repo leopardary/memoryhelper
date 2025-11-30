@@ -32,11 +32,11 @@ export default function SubjectManagement({
     setIsDeleting(subjectId);
     try {
       await deleteSubject(subjectId);
-      setSubjects(prev => prev.filter(s => s._id.toString() !== subjectId));
-      toast.success(alert('Subject deleted successfully'));
+      setSubjects(prev => prev.filter(s => s._id?.toString() !== subjectId));
+      toast.success('Subject deleted successfully');
     } catch (error) {
       console.error('Delete error:', error);
-      toast.error(alert('Failed to delete subject'));
+      toast.error('Failed to delete subject');
     } finally {
       setIsDeleting(null);
     }
@@ -91,7 +91,7 @@ export default function SubjectManagement({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {subjects.map((subject) => (
               <div
-                key={subject._id.toString()}
+                key={subject._id?.toString()}
                 className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
               >
                 {/* Subject Image */}
@@ -152,11 +152,11 @@ export default function SubjectManagement({
                     </button>
                     <button
                       onClick={() => handleDelete(subject._id.toString(), subject.title)}
-                      disabled={isDeleting === subject._id.toString()}
+                      disabled={isDeleting === subject._id?.toString()}
                       className="flex items-center justify-center gap-2 px-3 py-2 text-sm bg-destructive text-destructive-foreground rounded hover:bg-destructive/90 disabled:opacity-50 transition-colors"
                     >
                       <TrashIcon className="w-4 h-4" />
-                      {isDeleting === subject._id.toString() ? 'Deleting...' : 'Delete'}
+                      {isDeleting === subject._id?.toString() ? 'Deleting...' : 'Delete'}
                     </button>
                   </div>
                 </div>
