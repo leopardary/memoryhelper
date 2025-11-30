@@ -140,7 +140,7 @@ export default function SignUpPage() {
         const error = await res.json();
         toast.error(error.error || "Signup failed");
       }
-    } catch (error) {
+    } catch {
       toast.error("An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);

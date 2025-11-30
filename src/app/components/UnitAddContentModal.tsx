@@ -1,13 +1,12 @@
 'use client'
 import { toast } from 'sonner';
-import CreateMemoryPieceForm, {AddMemoryPieceToUnitProps, UploadedImage} from '@/app/components/CreateMemoryPieceForm';
+import { UploadedImage } from '@/app/components/CreateMemoryPieceForm';
 import CreateMemoryPieceBatchForm from '@/app/components/CreateMemoryPieceBatchForm';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import { useCallback, useState } from 'react';
 import { Button } from '@/app/components/button';
 import { useDropzone } from 'react-dropzone';
 import { X } from 'lucide-react';
-import { AddSubUnitProps } from '@/lib/db/api/unit';
 import Image from "next/image";
 
 interface CreateMemoryPiecePanelProps {

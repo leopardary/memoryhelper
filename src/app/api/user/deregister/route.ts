@@ -6,7 +6,7 @@ import { connectDB } from '@/lib/db/utils';
 import mongoose from 'mongoose';
 
 // DELETE - Deregister user (delete account and all associated data)
-export async function DELETE(request: NextRequest) {
+export async function DELETE(_request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 

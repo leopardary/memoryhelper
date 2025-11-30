@@ -62,8 +62,6 @@ export default function CreateMemoryPieceForm({ unitId, unitPath, submitCallback
   });
 
   const content = watch('content');
-  const description = watch('description');
-  const labels = watch('labels');
 
   const handleGenerate = async () => {
     if (!content) {

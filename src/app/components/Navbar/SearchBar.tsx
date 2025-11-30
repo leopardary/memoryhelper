@@ -1,5 +1,5 @@
 'use client'
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/react'
+import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/react'
 import { MagnifyingGlassIcon, FaceFrownIcon } from '@heroicons/react/20/solid'
 import clsx from 'clsx'
 import { useState, useEffect, useCallback } from 'react'
@@ -9,7 +9,7 @@ import Image from 'next/image'
 import { Badge } from '@/app/components/Badge'
 import { DESCRIPTION_SEPARATOR, SENTENCE_SEPARATOR } from '@/app/components/utils'
 
-interface SearchResult extends MemoryPieceProps {
+interface SearchResult extends Omit<MemoryPieceProps, '_id'> {
   _id: string
 }
 

@@ -151,7 +151,7 @@ export default function SubjectManagement({
                       Edit
                     </button>
                     <button
-                      onClick={() => handleDelete(subject._id.toString(), subject.title)}
+                      onClick={() => handleDelete(subject._id?.toString() || '', subject.title)}
                       disabled={isDeleting === subject._id?.toString()}
                       className="flex items-center justify-center gap-2 px-3 py-2 text-sm bg-destructive text-destructive-foreground rounded hover:bg-destructive/90 disabled:opacity-50 transition-colors"
                     >

@@ -2,8 +2,7 @@
 import { toast } from 'sonner';
 import {UploadedImage} from '@/app/components/CreateMemoryPieceForm';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
-import { useCallback, useState, useEffect } from 'react';
-import { Button } from '@/app/components/button';
+import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { X } from 'lucide-react';
 import Image from "next/image";
@@ -84,7 +83,7 @@ function EditSubjectForm({subject, updateSubject, setModalOpen, onSuccess}: Edit
     e.preventDefault();
 
     try {
-      const res = await updateSubject(subject._id.toString(), {
+      const res = await updateSubject(subject._id?.toString() || '', {
         title,
         description,
         imageUrls: images.map(image => image.url),

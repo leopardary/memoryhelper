@@ -36,9 +36,14 @@ export default async function MemoryPiece({params}: {params: Promise<{id: string
   // Get subject from first unit to check permissions
   let canManageContent = false;
   if (user?.id && memoryPiece.units && memoryPiece.units.length > 0) {
-    const firstUnit = memoryPiece.units[0];
-    if (firstUnit.subject?._id) {
-      canManageContent = await hasPermission(user.id, 'manage_content', firstUnit.subject._id.toString());
+    const firstUnit: any = memoryPiece.units[0];
+    // subject can be either ObjectId or populated object
+    const subject = firstUnit.subject;
+    const subjectId = typeof subject === 'object' && subject && '_id' in subject
+      ? subject._id.toString()
+      : subject?.toString();
+    if (subjectId) {
+      canManageContent = await hasPermission(user.id, 'manage_content', subjectId);
     }
   }
 

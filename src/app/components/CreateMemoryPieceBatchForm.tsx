@@ -2,7 +2,7 @@
 
 import { useCallback, useState, useEffect, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { X, Plus, Loader2, Sparkles, CheckCircle2, AlertCircle, Download } from 'lucide-react';
+import { X, Plus, Loader2, Sparkles, CheckCircle2, Download } from 'lucide-react';
 import Image from "next/image";
 import { toast } from 'sonner';
 
@@ -473,7 +473,9 @@ export default function CreateMemoryPieceBatchForm({
                     <div className="absolute right-2 top-1/2 -translate-y-1/2">
                       {row.checking && <Loader2 className="w-4 h-4 animate-spin text-blue-500" />}
                       {!row.checking && row.exists && (
-                        <CheckCircle2 className="w-4 h-4 text-green-600" title="Existing memory piece - data prefilled" />
+                        <div title="Existing memory piece - data prefilled">
+                          <CheckCircle2 className="w-4 h-4 text-green-600" />
+                        </div>
                       )}
                     </div>
                   </div>
