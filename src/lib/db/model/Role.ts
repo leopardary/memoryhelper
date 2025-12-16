@@ -23,9 +23,6 @@ if (!mongoose.models.Role) {
     { timestamps: true, collection: 'roles' }
   );
 
-  // Index for quick role lookups by name
-  roleSchema.index({ name: 1 }, { unique: true });
-
   Role = mongoose.model<RoleProps>('Role', roleSchema);
 } else {
   Role = mongoose.models.Role as Model<RoleProps>;
