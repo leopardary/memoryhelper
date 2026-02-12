@@ -11,12 +11,25 @@ The S3 bucket (`memoryhelper`) stores all image assets for the MemoryHelper appl
 ```
 memoryhelper (S3 Bucket)
 ├── Home/                    # MemoryPiece images
+│   ├── {content}/           # Each MemoryPiece has its own folder
+│   │   ├── image1.jpg
+│   │   └── image2.png
+│   └── [other memory pieces]/
 ├── units/                   # Unit images (hierarchical structure)
 │   ├── 中文/
+│   │   └── {course}/
+│   │       └── {unit}/
+│   │           └── {title}/
+│   │               ├── image1.webp
+│   │               └── image2.webp
 │   ├── 语文/
 │   ├── FIBER/
 │   └── [other subjects]/
 ├── subjects/                # Subject cover images
+│   ├── {title}/             # Each Subject has its own folder
+│   │   ├── cover1.jpg
+│   │   └── cover2.png
+│   └── [other subjects]/
 └── uploads/                 # Temporary upload location (legacy)
 ```
 
@@ -26,19 +39,21 @@ memoryhelper (S3 Bucket)
 
 **Purpose**: Stores images associated with MemoryPiece entities (flashcard content).
 
-**Structure**: Flat structure with all files in the root of the Home/ folder.
+**Structure**: Each MemoryPiece has its own subfolder named after its content, allowing multiple images per memory piece.
 
 **Naming Convention**:
-- Files are stored with their original filenames
-- No subdirectories
-- Chinese characters in filenames are stored as actual Unicode characters (not URL-encoded)
+- Folder structure: `Home/{content}/`
+- Each MemoryPiece content gets its own folder
+- Files are stored with their original filenames within the content folder
+- Chinese characters in paths are stored as actual Unicode characters (not URL-encoded)
 
 **Example Files**:
 ```
-Home/23-700.jpeg
-Home/IMG_4160.JPG
-Home/Screenshot-2020-08-18-at-7.42.30-PM.png
-Home/in-the-beginning.jpg
+Home/我/image1.jpg
+Home/我/image2.png
+Home/你好/photo1.webp
+Home/你好/photo2.webp
+Home/example-word/picture.jpg
 ```
 
 **Database References**:
@@ -46,8 +61,10 @@ Home/in-the-beginning.jpg
 // MemoryPiece document
 {
   _id: "...",
+  content: "我",
   imageUrls: [
-    "https://memoryhelper.s3.us-west-1.amazonaws.com/Home/image-name.jpg"
+    "https://memoryhelper.s3.us-west-1.amazonaws.com/Home/我/image1.jpg",
+    "https://memoryhelper.s3.us-west-1.amazonaws.com/Home/我/image2.png"
   ]
 }
 ```
@@ -60,20 +77,23 @@ Home/in-the-beginning.jpg
 
 **Purpose**: Stores images associated with Unit entities (organizational containers for learning content).
 
-**Structure**: Hierarchical structure mirroring the learning content organization.
+**Structure**: Hierarchical structure mirroring the learning content organization. Each unit has its own subfolder named after its title, allowing multiple images per unit.
 
-**Path Pattern**: `units/{subject}/{course}/{unit}/{lesson}/{filename}`
+**Path Pattern**: `units/{subject}/{course}/{unit-path}/{title}/{filename}`
 
 **Naming Convention**:
 - Paths use actual Chinese characters (e.g., `中文`, `语文`)
-- Subdirectory structure reflects the learning hierarchy
+- Subdirectory structure reflects the complete learning hierarchy
+- Each unit's title becomes the final folder containing its images
 - Filenames are typically UUIDs or descriptive names with extensions
 
 **Example Paths**:
 ```
-units/中文/第一册/第一单元/第一课：识字/0b33b350-543e-48f8-b08e-0dda2534b1d7-0016.webp
-units/语文/统编版小学语文四年级 - 下册/第一单元/d46af58b-246d-409b-aa44-483d06b2d9f1-0005.webp
-units/FIBER/Unit 2: Genesis/23-700.jpeg
+units/中文/第一册/第一单元/第一课：识字/image1.webp
+units/中文/第一册/第一单元/第一课：识字/image2.webp
+units/语文/统编版小学语文四年级 - 下册/第一单元/第一课/photo1.webp
+units/语文/统编版小学语文四年级 - 下册/第一单元/第一课/photo2.webp
+units/FIBER/Unit 2: Genesis/Lesson 1/image.jpeg
 ```
 
 **Database References**:
@@ -81,8 +101,10 @@ units/FIBER/Unit 2: Genesis/23-700.jpeg
 // Unit document
 {
   _id: "...",
+  title: "第一课：识字",
   imageUrls: [
-    "https://memoryhelper.s3.us-west-1.amazonaws.com/units/中文/第一册/第一单元/image.webp"
+    "https://memoryhelper.s3.us-west-1.amazonaws.com/units/中文/第一册/第一单元/第一课：识字/image1.webp",
+    "https://memoryhelper.s3.us-west-1.amazonaws.com/units/中文/第一册/第一单元/第一课：识字/image2.webp"
   ]
 }
 ```
@@ -95,16 +117,21 @@ units/FIBER/Unit 2: Genesis/23-700.jpeg
 
 **Purpose**: Stores cover images and assets for Subject entities (top-level learning topics).
 
-**Structure**: Flat or lightly nested structure.
+**Structure**: Each subject has its own subfolder named after its title, allowing multiple images per subject.
 
 **Naming Convention**:
-- Subject-related asset filenames
-- May include subject IDs or descriptive names
+- Folder structure: `subjects/{title}/`
+- Each Subject title gets its own folder
+- Files are stored with their original filenames within the title folder
+- Chinese characters in paths are stored as actual Unicode characters (not URL-encoded)
 
 **Example Files**:
 ```
-subjects/chinese-cover.jpg
-subjects/subject-id-123.png
+subjects/Chinese Characters/cover.jpg
+subjects/Chinese Characters/banner.png
+subjects/中文/主图.jpg
+subjects/中文/背景.png
+subjects/FIBER/logo.png
 ```
 
 **Database References**:
@@ -112,8 +139,10 @@ subjects/subject-id-123.png
 // Subject document
 {
   _id: "...",
+  title: "Chinese Characters",
   imageUrls: [
-    "https://memoryhelper.s3.us-west-1.amazonaws.com/subjects/cover-image.jpg"
+    "https://memoryhelper.s3.us-west-1.amazonaws.com/subjects/Chinese Characters/cover.jpg",
+    "https://memoryhelper.s3.us-west-1.amazonaws.com/subjects/Chinese Characters/banner.png"
   ]
 }
 ```
@@ -168,21 +197,28 @@ imageUrls: ["https://memoryhelper.s3.us-west-1.amazonaws.com/units/%E4%B8%AD%E6%
 ## File Organization Rules
 
 ### 1. One Entity Type Per Folder
-- MemoryPiece images → `Home/`
-- Unit images → `units/`
-- Subject images → `subjects/`
+- MemoryPiece images → `Home/{content}/`
+- Unit images → `units/{subject}/{path}/{title}/`
+- Subject images → `subjects/{title}/`
 
-### 2. Preserve Hierarchy for Units
-- Unit images maintain the learning content hierarchy in their path structure
+### 2. Entity-Specific Subfolders
+- Each entity instance (MemoryPiece, Unit, Subject) gets its own subfolder
+- Folder name is derived from the entity's identifying property (content, title)
+- This allows multiple images per entity while keeping them organized
+
+### 3. Preserve Complete Hierarchy for Units
+- Unit images maintain the full learning content hierarchy in their path structure
+- The final folder in the path is the unit's title
 - This makes it easier to organize and locate images by course structure
 
-### 3. Flat Structure for MemoryPieces
-- All MemoryPiece images are in the root of `Home/` folder
-- No subdirectories needed as MemoryPieces can belong to multiple units
+### 4. Support Multiple Images
+- Each entity can have multiple image files in its dedicated folder
+- Files within an entity's folder can have any valid filename
+- This structure scales naturally as entities add more images
 
-### 4. No Duplicate Files
+### 5. No Duplicate Files
 - Each image file should exist in only one location
-- Use the appropriate folder based on the primary entity type
+- Use the appropriate folder based on the entity type and its identifying properties
 
 ---
 
@@ -227,15 +263,19 @@ npm run rollback:memorypieces-urls        # Rollback MemoryPiece URLs from memor
 
 ### When Uploading New Images
 
-1. **Determine Entity Type**:
-   - MemoryPiece → Upload to `Home/`
-   - Unit → Upload to `units/{subject}/{path}/`
-   - Subject → Upload to `subjects/`
+1. **Determine Entity Type and Identifying Property**:
+   - MemoryPiece → Upload to `Home/{content}/`
+     - Use the memory piece's `content` field as the folder name
+   - Unit → Upload to `units/{subject}/{path}/{title}/`
+     - Use the complete path hierarchy including the unit's `title`
+   - Subject → Upload to `subjects/{title}/`
+     - Use the subject's `title` field as the folder name
 
 2. **Use Descriptive Filenames**:
-   - Include UUIDs for uniqueness
+   - Include UUIDs for uniqueness when needed
    - Use meaningful names when possible
    - Avoid special characters except Chinese, hyphens, and underscores
+   - Multiple images for the same entity can have different filenames
 
 3. **Set Correct ACL**:
    - All public images should have `public-read` ACL
@@ -244,6 +284,11 @@ npm run rollback:memorypieces-urls        # Rollback MemoryPiece URLs from memor
 4. **Store URLs with Chinese Characters**:
    - Always store actual Chinese characters in the database
    - Never store URL-encoded characters like `%E4%B8%AD%E6%96%87`
+
+5. **Organize by Entity**:
+   - All images for a single entity should be in that entity's dedicated folder
+   - Don't mix images from different entities in the same folder
+   - The folder structure ensures natural organization and discoverability
 
 ### When Querying Images
 
@@ -256,8 +301,18 @@ const units = await Unit.find({
 });
 
 // The URLs in the database contain actual Chinese characters
+// and include the unit's title in the path
 console.log(unit.imageUrls[0]);
-// Output: https://memoryhelper.s3.us-west-1.amazonaws.com/units/中文/第一册/image.webp
+// Output: https://memoryhelper.s3.us-west-1.amazonaws.com/units/中文/第一册/第一单元/第一课/image.webp
+
+// Query MemoryPieces by content folder
+const memoryPieces = await MemoryPiece.find({
+  imageUrls: {
+    $regex: 'Home/我/'
+  }
+});
+
+// Output: https://memoryhelper.s3.us-west-1.amazonaws.com/Home/我/image1.jpg
 ```
 
 ---

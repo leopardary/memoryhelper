@@ -98,12 +98,12 @@ export default function CreateMemoryPieceForm({ unitId, unitPath, submitCallback
       if (!file.type.startsWith('image/')) continue;
       if (file.size > 5 * 1024 * 1024) continue; // 5MB max
 
-      const key = unitPath + '/' + content + '/' + file.name;
+      const key = 'Home/' + content + '/' + file.name;
       try {
         const res = await fetch('/api/s3/upload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fileName: file.name, fileType: file.type, filePath: unitPath + '/' + content }),
+          body: JSON.stringify({ fileName: file.name, fileType: file.type, filePath: 'Home/' + content }),
         });
 
         const { uploadUrl, publicUrl } = await res.json();
