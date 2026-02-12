@@ -26,12 +26,12 @@ function CreateRootUnitForm({ subjectTitle, subjectId, setModalOpen } : CreateRo
       if (!file.type.startsWith('image/')) continue;
       if (file.size > 5 * 1024 * 1024) continue; // 5MB max
 
-      const key = 'Home/' + subjectTitle + '/' + title + '/' + file.name;
+      const key = 'units/' + subjectTitle + '/' + title + '/' + file.name;
       try {
         const res = await fetch('/api/s3/upload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fileName: file.name, fileType: file.type, filePath: 'Home/' + subjectTitle + '/' + title }),
+          body: JSON.stringify({ fileName: file.name, fileType: file.type, filePath: 'units/' + subjectTitle + '/' + title }),
         });
 
         const { uploadUrl, publicUrl } = await res.json();

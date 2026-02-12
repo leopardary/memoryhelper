@@ -36,12 +36,12 @@ function CreateSubjectForm({findOrCreateSubject, setModalOpen, onSuccess}: Creat
       if (!file.type.startsWith('image/')) continue;
       if (file.size > 5 * 1024 * 1024) continue; // 5MB max
 
-      const key = 'Home/' + title + '/' + file.name;
+      const key = 'subjects/' + title + '/' + file.name;
       try {
         const res = await fetch('/api/s3/upload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fileName: file.name, fileType: file.type, filePath: 'Home/' + title }),
+          body: JSON.stringify({ fileName: file.name, fileType: file.type, filePath: 'subjects/' + title }),
         });
 
         const { uploadUrl, publicUrl } = await res.json();
