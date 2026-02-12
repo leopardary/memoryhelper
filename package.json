@@ -8,7 +8,19 @@
     "start": "next start",
     "lint": "next lint",
     "seed:roles": "tsx scripts/seed-roles.ts",
-    "make-admin": "tsx scripts/make-admin.ts"
+    "make-admin": "tsx scripts/make-admin.ts",
+    "migrate:images-to-s3": "tsx scripts/migrate-images-to-s3.ts",
+    "migrate:subjects-images-to-s3": "tsx scripts/migrate-subjects-images-to-s3.ts",
+    "migrate:units-images-to-s3": "tsx scripts/migrate-units-images-to-s3.ts",
+    "reorganize:s3-memorypieces": "tsx scripts/reorganize-s3-memorypieces.ts",
+    "rollback:memorypieces-urls": "tsx scripts/rollback-memorypieces-urls.ts",
+    "flatten:home-folder": "tsx scripts/flatten-home-folder.ts",
+    "move:memorypieces-to-home": "tsx scripts/move-memorypieces-to-home.ts",
+    "cleanup:home-folder": "tsx scripts/cleanup-home-folder.ts",
+    "cleanup:uploads-folder": "tsx scripts/cleanup-uploads-folder.ts",
+    "fix:unit-image-urls": "tsx scripts/fix-unit-image-urls.ts",
+    "decode:unit-image-urls": "tsx scripts/decode-unit-image-urls.ts",
+    "verify:image-migrations": "tsx scripts/verify-image-migrations.ts"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.4",
