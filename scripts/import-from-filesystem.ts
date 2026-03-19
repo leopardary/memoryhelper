@@ -123,13 +123,19 @@ async function createMemoryPiece(
   content: string,
   label: string,
   memoryPiecesDir: string,
+  unitId: string,
   result: ImportResult
 ): Promise<any> {
   // Check if MemoryPiece already exists
-  let memoryPiece = await MemoryPiece.findOne({ content }).lean();
+  let memoryPiece = await MemoryPiece.findOne({ content });
 
   if (memoryPiece) {
     console.log(`  MemoryPiece "${content}" already exists, reusing`);
+    // Add unit to the memory piece's units array if not already present
+    if (!memoryPiece.units.includes(unitId as any)) {
+      memoryPiece.units.push(unitId as any);
+      await memoryPiece.save();
+    }
     return memoryPiece;
   }
 
@@ -183,6 +189,7 @@ async function createMemoryPiece(
     description,
     imageUrls,
     labels: label ? [label] : [],
+    units: [unitId],
   });
 
   result.memoryPiecesCreated++;
@@ -293,29 +300,20 @@ async function createUnitsFromTree(
       console.log(`  Processing memory pieces from CSV...`);
       try {
         const rows = parseCSV(node.memoryPiecesCSV);
-        const memoryPieceIds: string[] = [];
+        let memoryPieceCount = 0;
 
         for (const row of rows) {
-          const memoryPiece = await createMemoryPiece(
+          await createMemoryPiece(
             row.content,
             row.label,
             memoryPiecesDir,
+            unit._id.toString(),
             result
           );
-          memoryPieceIds.push(memoryPiece._id.toString());
+          memoryPieceCount++;
         }
 
-        // Update unit with memory piece IDs (merge with existing if unit already existed)
-        if (isNewUnit || memoryPieceIds.length > 0) {
-          const existingIds = unit.memoryPieceIds || [];
-          const uniqueIds = Array.from(new Set([...existingIds.map(id => id.toString()), ...memoryPieceIds]));
-
-          await Unit.findByIdAndUpdate(unit._id, {
-            memoryPieceIds: uniqueIds,
-          });
-
-          console.log(`  ✅ Added ${memoryPieceIds.length} memory pieces to unit (${uniqueIds.length} total)`);
-        }
+        console.log(`  ✅ Associated ${memoryPieceCount} memory pieces with unit`);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         result.errors.push({
