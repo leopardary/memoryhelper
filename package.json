@@ -20,7 +20,10 @@
     "cleanup:uploads-folder": "tsx scripts/cleanup-uploads-folder.ts",
     "fix:unit-image-urls": "tsx scripts/fix-unit-image-urls.ts",
     "decode:unit-image-urls": "tsx scripts/decode-unit-image-urls.ts",
-    "verify:image-migrations": "tsx scripts/verify-image-migrations.ts"
+    "verify:image-migrations": "tsx scripts/verify-image-migrations.ts",
+    "migrate:memorypieces-to-subfolders": "tsx scripts/migrate-memorypieces-to-subfolders.ts",
+    "migrate:units-to-subfolders": "tsx scripts/migrate-units-to-subfolders.ts",
+    "import:from-filesystem": "tsx scripts/import-from-filesystem.ts"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.4",
