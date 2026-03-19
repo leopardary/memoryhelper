@@ -40,7 +40,6 @@ export default async function Unit({params}: {params: Promise<{id: string}>}) {
   breadcrumbsSegments.unshift({name: getSubjectTitle(unit), url: `/subject/${unit?.subject.id}`});
   // prefix with home.
   breadcrumbsSegments.unshift({name: 'Home', url: `/`});
-  const unitPath = breadcrumbsSegments.map(seg => seg.name).join('/');
   // The unit has either childrern unit, or memoryPieces.
   const unitChildren = getChildren(unit);
   const memoryPieces = getMemoryPieces(unit);

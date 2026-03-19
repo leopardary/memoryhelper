@@ -139,8 +139,9 @@ export default function CreateMemoryPieceBatchForm({
 
   // Cleanup timeouts on unmount
   useEffect(() => {
+    const timeouts = checkTimeouts.current;
     return () => {
-      Object.values(checkTimeouts.current).forEach(timeout => clearTimeout(timeout));
+      Object.values(timeouts).forEach(timeout => clearTimeout(timeout));
     };
   }, []);
 
