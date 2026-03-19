@@ -32,7 +32,7 @@ export interface CreateMemoryPieceBatchFormProps {
 
 export default function CreateMemoryPieceBatchForm({
   unitId,
-  unitPath,
+  unitPath: _unitPath,
   submitCallback
 }: CreateMemoryPieceBatchFormProps) {
   const [rows, setRows] = useState<MemoryPieceRow[]>([
