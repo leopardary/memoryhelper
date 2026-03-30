@@ -99,7 +99,7 @@ export async function DELETE(request: NextRequest) {
           { status: 404 }
         );
       }
-      if (unit.subject.toString() !== subjectId) {
+      if (unit.subject._id.toString() !== subjectId) {
         return NextResponse.json(
           { error: 'Unit does not belong to specified subject' },
           { status: 400 }
