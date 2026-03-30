@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react';
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, LinkSlashIcon, TrashIcon } from '@heroicons/react/24/outline';
 import AddRootUnitModal from '@/app/components/AddRootUnitModal';
 import UnitAddContentModal from '@/app/components/UnitAddContentModal';
 import EditUnitModal from '@/app/components/EditUnitModal';
@@ -58,28 +58,60 @@ export default function ContentManagement(props: ContentManagementProps) {
     }
   };
 
-  const handleMemoryPieceDelete = async (memoryPieceId: string, content: string) => {
-    if (!confirm(`Are you sure you want to delete "${content}"? This action cannot be undone.`)) {
+  const handleMemoryPieceUnlink = async (memoryPieceId: string, content: string) => {
+    // First confirmation: unlink from this unit
+    if (!confirm(`Remove "${content}" from this unit?`)) {
       return;
     }
 
     setDeletingId(memoryPieceId);
     try {
-      const subjectId = props.type === 'unit' ? props.subjectId : props.subjectId;
-      const response = await fetch(`/api/admin/memory-pieces?id=${memoryPieceId}&subjectId=${subjectId}`, {
-        method: 'DELETE',
-      });
+      const unitId = props.type === 'unit' ? props.unitId : undefined;
+
+      if (!unitId) {
+        toast.error('Cannot unlink: Unit ID not available');
+        return;
+      }
+
+      const subjectId = props.subjectId;
+      const response = await fetch(
+        `/api/admin/memory-pieces?id=${memoryPieceId}&subjectId=${subjectId}&unitId=${unitId}`,
+        { method: 'DELETE' }
+      );
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.details || error.error || 'Failed to delete memory piece');
+        throw new Error(error.details || error.error || 'Failed to unlink memory piece');
       }
 
-      toast.success('Memory piece deleted successfully');
+      const result = await response.json();
+
+      // If orphaned, ask if user wants to delete completely
+      if (result.status === 'orphaned') {
+        if (confirm(`"${content}" is not linked to any other units. Do you want to delete it completely?`)) {
+          // Delete the orphaned memory piece
+          const deleteResponse = await fetch(
+            `/api/admin/memory-pieces?id=${memoryPieceId}&subjectId=${subjectId}`,
+            { method: 'DELETE' }
+          );
+
+          if (!deleteResponse.ok) {
+            const error = await deleteResponse.json();
+            throw new Error(error.details || error.error || 'Failed to delete memory piece');
+          }
+
+          toast.success('Memory piece deleted completely');
+        } else {
+          toast.success('Memory piece unlinked (kept as orphaned)');
+        }
+      } else {
+        toast.success('Memory piece unlinked from this unit');
+      }
+
       window.location.reload();
     } catch (error) {
-      console.error('Delete error:', error);
-      toast.error('Failed to delete memory piece');
+      console.error('Unlink error:', error);
+      toast.error('Failed to unlink memory piece');
     } finally {
       setDeletingId(null);
     }
@@ -246,12 +278,12 @@ export default function ContentManagement(props: ContentManagementProps) {
                     <PencilIcon className="w-4 h-4" />
                   </button>
                   <button
-                    onClick={() => handleMemoryPieceDelete(piece._id?.toString(), piece.content)}
+                    onClick={() => handleMemoryPieceUnlink(piece._id?.toString(), piece.content)}
                     disabled={deletingId === piece._id?.toString()}
-                    className="p-2 text-red-600 hover:bg-red-50 rounded disabled:opacity-50"
-                    title="Delete memory piece"
+                    className="p-2 text-orange-600 hover:bg-orange-50 rounded disabled:opacity-50"
+                    title="Unlink memory piece from this unit"
                   >
-                    <TrashIcon className="w-4 h-4" />
+                    <LinkSlashIcon className="w-4 h-4" />
                   </button>
                 </div>
               </div>
