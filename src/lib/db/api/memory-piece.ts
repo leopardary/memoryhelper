@@ -145,3 +145,44 @@ export async function searchMemoryPieces(query: string, limit: number = 10) {
   .lean()
   .exec();
 }
+
+/**
+ * Remove a memory piece from a specific unit.
+ * Returns the status of the operation and whether the piece is now orphaned.
+ */
+export async function removeMemoryPieceFromUnit(memoryPieceId: string, unitId: string): Promise<{
+  success: boolean;
+  status: 'removed' | 'orphaned' | 'not_found';
+  memoryPiece?: any;
+}> {
+  await connectDB();
+
+  const memoryPiece = await MemoryPiece.findById(memoryPieceId);
+
+  if (!memoryPiece) {
+    return { success: false, status: 'not_found' };
+  }
+
+  // Remove the unit from the units array
+  const initialUnitsCount = memoryPiece.units?.length || 0;
+  memoryPiece.units = memoryPiece.units?.filter(
+    (id: any) => id.toString() !== unitId
+  ) || [];
+
+  await memoryPiece.save();
+
+  // Check if orphaned (no units left)
+  if (memoryPiece.units.length === 0) {
+    return {
+      success: true,
+      status: 'orphaned',
+      memoryPiece
+    };
+  }
+
+  return {
+    success: true,
+    status: 'removed',
+    memoryPiece
+  };
+}
