@@ -148,13 +148,29 @@ export async function DELETE(request: NextRequest) {
         );
       }
 
-      // Check if any of the memory piece's units belong to this subject
-      const units = await Promise.all(
-        memoryPiece.units?.map((unitId: any) => getUnit(unitId.toString())) || []
-      );
+      // Check if memory piece is orphaned (no units)
+      if (!memoryPiece.units || memoryPiece.units.length === 0) {
+        // For orphaned pieces, allow deletion
+        // User already has manage_content permission on the subjectId
+        await deleteMemoryPiece(id);
+        return NextResponse.json({
+          success: true,
+          id,
+          status: 'deleted',
+          message: 'Orphaned memory piece deleted completely'
+        });
+      }
 
-      const belongsToSubject = units.some(unit => unit?.subject.toString() === subjectId);
-      if (!belongsToSubject) {
+      // For non-orphaned pieces, validate subject relationship
+      // Use single query for better performance instead of N+1 queries
+      const Unit = (await import('@/lib/db/model/Unit')).default;
+      const unitIds = memoryPiece.units.map((id: any) => id.toString());
+      const unitWithSubject = await Unit.findOne({
+        _id: { $in: unitIds },
+        subject: subjectId
+      });
+
+      if (!unitWithSubject) {
         return NextResponse.json(
           { error: 'Memory piece does not belong to specified subject' },
           { status: 400 }
