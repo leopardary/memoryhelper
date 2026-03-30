@@ -50,6 +50,8 @@ The app follows a three-level content hierarchy:
 3. **MemoryPiece** (`src/lib/db/model/MemoryPiece.ts`)
    - Atomic learning content (flashcard equivalent)
    - Can belong to multiple units
+   - Unlinking from a unit removes the unit reference, not the memory piece itself
+   - Orphaned memory pieces (no unit associations) are kept and remain searchable
    - Has content, description, labels, imageUrls
 
 ### Spaced Repetition System
