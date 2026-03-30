@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/utils/authOptions';
 import { hasPermission } from '@/lib/utils/permissions';
-import { updateMemoryPiece, deleteMemoryPiece, removeMemoryPieceFromUnit } from '@/lib/db/api/memory-piece';
+import { updateMemoryPiece, deleteMemoryPiece, removeMemoryPieceFromUnit, getMemoryPiece } from '@/lib/db/api/memory-piece';
+import { getUnit } from '@/lib/db/api/unit';
 
 // PUT - Update memory piece
 export async function PUT(request: NextRequest) {
@@ -90,6 +91,21 @@ export async function DELETE(request: NextRequest) {
 
     // If unitId provided, unlink from unit; otherwise full delete
     if (unitId) {
+      // Validate unit-subject relationship
+      const unit = await getUnit(unitId);
+      if (!unit) {
+        return NextResponse.json(
+          { error: 'Unit not found' },
+          { status: 404 }
+        );
+      }
+      if (unit.subject.toString() !== subjectId) {
+        return NextResponse.json(
+          { error: 'Unit does not belong to specified subject' },
+          { status: 400 }
+        );
+      }
+
       const result = await removeMemoryPieceFromUnit(id, unitId);
 
       if (!result.success) {
@@ -123,8 +139,35 @@ export async function DELETE(request: NextRequest) {
       });
     } else {
       // Full delete (for orphaned pieces)
+      // Validate memory piece belongs to subject
+      const memoryPiece = await getMemoryPiece(id);
+      if (!memoryPiece) {
+        return NextResponse.json(
+          { error: 'Memory piece not found' },
+          { status: 404 }
+        );
+      }
+
+      // Check if any of the memory piece's units belong to this subject
+      const units = await Promise.all(
+        memoryPiece.units?.map((unitId: any) => getUnit(unitId.toString())) || []
+      );
+
+      const belongsToSubject = units.some(unit => unit?.subject.toString() === subjectId);
+      if (!belongsToSubject) {
+        return NextResponse.json(
+          { error: 'Memory piece does not belong to specified subject' },
+          { status: 400 }
+        );
+      }
+
       await deleteMemoryPiece(id);
-      return NextResponse.json({ success: true, id, status: 'deleted' });
+      return NextResponse.json({
+        success: true,
+        id,
+        status: 'deleted',
+        message: 'Memory piece deleted completely'
+      });
     }
   } catch (error) {
     console.error('Delete/unlink memory piece error:', error);
