@@ -59,20 +59,24 @@ export default function ContentManagement(props: ContentManagementProps) {
   };
 
   const handleMemoryPieceUnlink = async (memoryPieceId: string, content: string) => {
+    // Truncate long content for better UX in confirmations
+    const truncatedContent = content.length > 50 ? `${content.slice(0, 50)}...` : content;
+
     // First confirmation: unlink from this unit
-    if (!confirm(`Remove "${content}" from this unit?`)) {
+    if (!confirm(`Remove "${truncatedContent}" from this unit?`)) {
       return;
     }
 
+    // Validate unitId BEFORE setting loading state
+    const unitId = props.type === 'unit' ? props.unitId : undefined;
+    if (!unitId) {
+      toast.error('Cannot unlink: Unit ID not available');
+      return;
+    }
+
+    // Now set loading state after guards pass
     setDeletingId(memoryPieceId);
     try {
-      const unitId = props.type === 'unit' ? props.unitId : undefined;
-
-      if (!unitId) {
-        toast.error('Cannot unlink: Unit ID not available');
-        return;
-      }
-
       const subjectId = props.subjectId;
       const response = await fetch(
         `/api/admin/memory-pieces?id=${memoryPieceId}&subjectId=${subjectId}&unitId=${unitId}`,
@@ -88,7 +92,11 @@ export default function ContentManagement(props: ContentManagementProps) {
 
       // If orphaned, ask if user wants to delete completely
       if (result.status === 'orphaned') {
-        if (confirm(`"${content}" is not linked to any other units. Do you want to delete it completely?`)) {
+        toast.info(`"${truncatedContent}" is no longer linked to any units`);
+        // Brief delay to let user read the toast before next confirmation
+        await new Promise(resolve => setTimeout(resolve, 800));
+
+        if (confirm(`Do you want to permanently delete "${truncatedContent}"?`)) {
           // Delete the orphaned memory piece
           const deleteResponse = await fetch(
             `/api/admin/memory-pieces?id=${memoryPieceId}&subjectId=${subjectId}`,
@@ -110,7 +118,7 @@ export default function ContentManagement(props: ContentManagementProps) {
 
       window.location.reload();
     } catch (error) {
-      console.error('Unlink error:', error);
+      console.error('Unlink error:', { memoryPieceId, unitId, error });
       toast.error('Failed to unlink memory piece');
     } finally {
       setDeletingId(null);
