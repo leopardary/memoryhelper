@@ -1,7 +1,7 @@
 'use server'
 import MemoryPiece from '@/lib/db/model/MemoryPiece';
 import { connectDB } from '@/lib/db/utils';
-import { CreateMemoryPieceInput, UpdateMemoryPieceInput } from '@/lib/db/model/types/MemoryPiece.types';
+import { CreateMemoryPieceInput, UpdateMemoryPieceInput, MemoryPieceProps } from '@/lib/db/model/types/MemoryPiece.types';
 import { getSubscriptionsDueToCheckForUser } from '@/lib/db/api/subscription';
 import { getUnit } from '@/lib/db/api/unit';
 import { revalidatePath } from 'next/cache'
@@ -152,8 +152,8 @@ export async function searchMemoryPieces(query: string, limit: number = 10) {
  */
 export async function removeMemoryPieceFromUnit(memoryPieceId: string, unitId: string): Promise<{
   success: boolean;
-  status: 'removed' | 'orphaned' | 'not_found';
-  memoryPiece?: any;
+  status: 'removed' | 'orphaned' | 'not_found' | 'not_linked' | 'error';
+  memoryPiece?: MemoryPieceProps;
 }> {
   await connectDB();
 
@@ -163,26 +163,42 @@ export async function removeMemoryPieceFromUnit(memoryPieceId: string, unitId: s
     return { success: false, status: 'not_found' };
   }
 
+  // Track original length to verify if unit was actually removed
+  const originalUnitsCount = memoryPiece.units?.length || 0;
+
   // Remove the unit from the units array
-  const initialUnitsCount = memoryPiece.units?.length || 0;
   memoryPiece.units = memoryPiece.units?.filter(
-    (id: any) => id.toString() !== unitId
+    (id) => id.toString() !== unitId
   ) || [];
 
-  await memoryPiece.save();
-
-  // Check if orphaned (no units left)
-  if (memoryPiece.units.length === 0) {
-    return {
-      success: true,
-      status: 'orphaned',
-      memoryPiece
-    };
+  // Check if the unit was actually linked
+  if (memoryPiece.units.length === originalUnitsCount) {
+    return { success: false, status: 'not_linked' };
   }
 
-  return {
-    success: true,
-    status: 'removed',
-    memoryPiece
-  };
+  try {
+    await memoryPiece.save();
+
+    // Invalidate cache for both unit and memory piece pages
+    revalidatePath(`/unit/${unitId}`);
+    revalidatePath(`/memorypiece/${memoryPieceId}`);
+
+    // Check if orphaned (no units left)
+    if (memoryPiece.units.length === 0) {
+      return {
+        success: true,
+        status: 'orphaned',
+        memoryPiece
+      };
+    }
+
+    return {
+      success: true,
+      status: 'removed',
+      memoryPiece
+    };
+  } catch (error) {
+    console.error('Error saving memory piece after removing unit:', error);
+    return { success: false, status: 'error' };
+  }
 }
