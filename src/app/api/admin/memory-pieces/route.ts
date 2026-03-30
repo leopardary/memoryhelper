@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/utils/authOptions';
 import { hasPermission } from '@/lib/utils/permissions';
-import { updateMemoryPiece, deleteMemoryPiece } from '@/lib/db/api/memory-piece';
+import { updateMemoryPiece, deleteMemoryPiece, removeMemoryPieceFromUnit } from '@/lib/db/api/memory-piece';
 
 // PUT - Update memory piece
 export async function PUT(request: NextRequest) {
@@ -55,7 +55,7 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-// DELETE - Delete memory piece
+// DELETE - Delete memory piece or unlink from unit
 export async function DELETE(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -67,6 +67,7 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     const subjectId = searchParams.get('subjectId');
+    const unitId = searchParams.get('unitId');
 
     if (!id) {
       return NextResponse.json(
@@ -87,14 +88,49 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    await deleteMemoryPiece(id);
+    // If unitId provided, unlink from unit; otherwise full delete
+    if (unitId) {
+      const result = await removeMemoryPieceFromUnit(id, unitId);
 
-    return NextResponse.json({ success: true, id });
+      if (!result.success) {
+        // Handle different failure statuses
+        if (result.status === 'not_found') {
+          return NextResponse.json(
+            { error: 'Memory piece not found' },
+            { status: 404 }
+          );
+        } else if (result.status === 'not_linked') {
+          return NextResponse.json(
+            { error: 'Memory piece is not linked to this unit' },
+            { status: 400 }
+          );
+        } else {
+          // status === 'error'
+          return NextResponse.json(
+            { error: 'Failed to unlink memory piece' },
+            { status: 500 }
+          );
+        }
+      }
+
+      return NextResponse.json({
+        success: true,
+        id,
+        status: result.status,
+        message: result.status === 'orphaned'
+          ? 'Memory piece unlinked. It is not linked to any other units.'
+          : 'Memory piece unlinked from unit successfully.'
+      });
+    } else {
+      // Full delete (for orphaned pieces)
+      await deleteMemoryPiece(id);
+      return NextResponse.json({ success: true, id, status: 'deleted' });
+    }
   } catch (error) {
-    console.error('Delete memory piece error:', error);
+    console.error('Delete/unlink memory piece error:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: 'Failed to delete memory piece', details: errorMessage },
+      { error: 'Failed to delete/unlink memory piece', details: errorMessage },
       { status: 500 }
     );
   }
