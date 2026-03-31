@@ -15,9 +15,15 @@ export async function POST(req: Request) {
     // Google Sign-In flow
     if (googleIdToken) {
       try {
+        // Accept both Web and iOS client IDs
+        const acceptedAudiences = [env.GOOGLE_CLIENT_ID];
+        if (env.GOOGLE_IOS_CLIENT_ID) {
+          acceptedAudiences.push(env.GOOGLE_IOS_CLIENT_ID);
+        }
+
         const ticket = await googleClient.verifyIdToken({
           idToken: googleIdToken,
-          audience: env.GOOGLE_CLIENT_ID,
+          audience: acceptedAudiences,
         });
         const payload = ticket.getPayload();
         if (!payload || !payload.email) {
