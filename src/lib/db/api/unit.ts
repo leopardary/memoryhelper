@@ -83,10 +83,10 @@ export interface AddSubUnitProps extends UnitBaseProps {
   type?: UnitType
 }
 
-function getDefaultTypeForSubUnit(parentType: string): UnitType {
+function getDefaultTypeForSubUnit(parentType: UnitType): UnitType {
   if (parentType === 'module') return 'chapter';
   if (parentType === 'chapter') return 'lesson';
-  return 'module'; // for 'lesson' or any other case
+  return 'module'; // for 'lesson' case (cycles back to module)
 }
 
 /**
