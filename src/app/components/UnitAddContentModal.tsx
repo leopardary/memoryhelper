@@ -31,13 +31,21 @@ interface CreateSubUnitPanelProps {
   unitId: string;
   setModalOpen: (open: boolean) => void;
   unitPath: string;
+  parentType: string;
 }
 
-function CreateSubUnitForm({ unitId, setModalOpen, unitPath } : CreateSubUnitPanelProps) {
+function getDefaultType(parentType: string): 'module' | 'chapter' | 'lesson' {
+  if (parentType === 'module') return 'chapter';
+  if (parentType === 'chapter') return 'lesson';
+  return 'module';
+}
+
+function CreateSubUnitForm({ unitId, setModalOpen, unitPath, parentType } : CreateSubUnitPanelProps) {
   const [images, setImages] = useState<UploadedImage[]>([]);
   const [uploading, setUploading] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [type, setType] = useState<'module' | 'chapter' | 'lesson'>(getDefaultType(parentType));
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     setUploading(true);
@@ -103,6 +111,7 @@ function CreateSubUnitForm({ unitId, setModalOpen, unitPath } : CreateSubUnitPan
           title,
           description,
           imageUrls: images.map(image => image.url),
+          type,
         })
       });
 
@@ -138,6 +147,20 @@ function CreateSubUnitForm({ unitId, setModalOpen, unitPath } : CreateSubUnitPan
           onChange={e => setTitle(e.target.value)}
           required
         />
+      </div>
+
+      <div>
+        <label className="block mb-1 font-medium">Type</label>
+        <select
+          className="w-full border rounded px-3 py-2"
+          value={type}
+          onChange={e => setType(e.target.value as 'module' | 'chapter' | 'lesson')}
+          required
+        >
+          <option value="module">Module</option>
+          <option value="chapter">Chapter</option>
+          <option value="lesson">Lesson</option>
+        </select>
       </div>
 
       <div>
@@ -206,7 +229,7 @@ function CreateSubUnitForm({ unitId, setModalOpen, unitPath } : CreateSubUnitPan
   );
 }
 
-function CreateSubUnitPanel({unitId, setModalOpen, unitPath}: CreateSubUnitPanelProps) {
+function CreateSubUnitPanel({unitId, setModalOpen, unitPath, parentType}: CreateSubUnitPanelProps) {
   return  <DialogPanel
               transition
               className="w-full max-w-md rounded-xl bg-popover p-6 text-foreground shadow-xl ring-1 ring-border backdrop-blur-2xl duration-300 ease-out data-closed:scale-95 data-closed:opacity-0"
@@ -214,7 +237,7 @@ function CreateSubUnitPanel({unitId, setModalOpen, unitPath}: CreateSubUnitPanel
               <DialogTitle as="h3" className="mb-4 text-base/7 font-medium leading-7 text-foreground">
                 Add Unit
               </DialogTitle>
-              <CreateSubUnitForm unitId={unitId} setModalOpen={() => setModalOpen(false)} unitPath={unitPath}/>
+              <CreateSubUnitForm unitId={unitId} setModalOpen={() => setModalOpen(false)} unitPath={unitPath} parentType={parentType}/>
             </DialogPanel>
 }
 
@@ -224,13 +247,14 @@ interface AddContentModalProps {
   hasSubUnits: boolean;
   hasMemoryPieces: boolean;
   unitPath: string;
+  parentType: string;
 }
 
 export default function AddContentModal(props: AddContentModalProps) {
   const [createSubUnitModalOpen, setCreateSubUnitModalOpen] = useState(false);
   const [createMemoryPieceModalOpen, setCreateMemoryPieceModalOpen] = useState(false);
-  const {unitId, hasSubUnits, hasMemoryPieces, unitPath} = props;
-  const createSubUnitPanel = <CreateSubUnitPanel unitId={unitId} setModalOpen={setCreateSubUnitModalOpen} unitPath={unitPath} />;
+  const {unitId, hasSubUnits, hasMemoryPieces, unitPath, parentType} = props;
+  const createSubUnitPanel = <CreateSubUnitPanel unitId={unitId} setModalOpen={setCreateSubUnitModalOpen} unitPath={unitPath} parentType={parentType} />;
   const createMemoryPiecePanel = <CreateMemoryPiecePanel unitId={unitId} setModalOpen={setCreateMemoryPieceModalOpen} unitPath={unitPath} />;
   return (
     <>
