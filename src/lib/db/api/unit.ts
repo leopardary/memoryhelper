@@ -2,7 +2,7 @@
 import Unit from '@/lib/db/model/Unit';
 import { getSubject } from '@/lib/db/api/subject';
 import { connectDB } from '@/lib/db/utils';
-import { CreateUnitInput, UpdateUnitInput } from '@/lib/db/model/types/Unit.types';
+import { CreateUnitInput, UpdateUnitInput, UnitType } from '@/lib/db/model/types/Unit.types';
 import { revalidatePath } from 'next/cache'
 
 export async function createUnit(data: CreateUnitInput) {
@@ -115,11 +115,11 @@ export async function addSubUnit(props: AddSubUnitProps) {
 
 export interface AddRootUnitProps extends UnitBaseProps {
   subjectId: string,
-  type?: string,
+  type?: UnitType,
 }
 
 export async function addRootUnitForSubject(props: AddRootUnitProps) {
-  const {subjectId, title, description, imageUrls, type = 'module'} = props;
+  const {subjectId, title, description, imageUrls, type = 'module' as UnitType} = props;
   try {
     if (!imageUrls) {
       throw new Error(`Image file not found: ${imageUrls}`);
