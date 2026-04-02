@@ -3,6 +3,9 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/utils/authOptions';
 import { hasPermission } from '@/lib/utils/permissions';
 import { addSubUnit, getUnit } from '@/lib/db/api/unit';
+import { UnitType } from '@/lib/db/model/types/Unit.types';
+
+const VALID_UNIT_TYPES: ReadonlyArray<UnitType> = ['module', 'chapter', 'lesson'];
 
 // POST - Create sub unit
 export async function POST(request: NextRequest) {
@@ -14,11 +17,19 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { parentUnitId, title, description, imageUrls } = body;
+    const { parentUnitId, title, description, imageUrls, type } = body;
 
     if (!parentUnitId) {
       return NextResponse.json(
         { error: 'Parent unit ID is required' },
+        { status: 400 }
+      );
+    }
+
+    // Validate type if provided
+    if (type && !VALID_UNIT_TYPES.includes(type as UnitType)) {
+      return NextResponse.json(
+        { error: 'Invalid unit type. Must be one of: module, chapter, lesson' },
         { status: 400 }
       );
     }
@@ -38,7 +49,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const result = await addSubUnit({ parentUnitId, title, description, imageUrls });
+    const result = await addSubUnit({ parentUnitId, title, description, imageUrls, type });
 
     return NextResponse.json({ title: result });
   } catch (error) {
