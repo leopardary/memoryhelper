@@ -17,6 +17,7 @@ function CreateRootUnitForm({ subjectTitle, subjectId, setModalOpen } : CreateRo
   const [uploading, setUploading] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [type, setType] = useState<'module' | 'chapter' | 'lesson'>('module');
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     setUploading(true);
@@ -82,6 +83,7 @@ function CreateRootUnitForm({ subjectTitle, subjectId, setModalOpen } : CreateRo
           title,
           description,
           imageUrls: images.map(image => image.url),
+          type,
         })
       });
 
@@ -117,6 +119,20 @@ function CreateRootUnitForm({ subjectTitle, subjectId, setModalOpen } : CreateRo
           onChange={e => setTitle(e.target.value)}
           required
         />
+      </div>
+
+      <div>
+        <label className="block mb-1 font-medium">Type</label>
+        <select
+          className="w-full border rounded px-3 py-2"
+          value={type}
+          onChange={e => setType(e.target.value as 'module' | 'chapter' | 'lesson')}
+          required
+        >
+          <option value="module">Module</option>
+          <option value="chapter">Chapter</option>
+          <option value="lesson">Lesson</option>
+        </select>
       </div>
 
       <div>
