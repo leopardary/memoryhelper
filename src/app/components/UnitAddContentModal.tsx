@@ -31,10 +31,10 @@ interface CreateSubUnitPanelProps {
   unitId: string;
   setModalOpen: (open: boolean) => void;
   unitPath: string;
-  parentType: string;
+  parentType: 'chapter' | 'lesson' | 'module';
 }
 
-function getDefaultType(parentType: string): 'module' | 'chapter' | 'lesson' {
+function getDefaultType(parentType: 'chapter' | 'lesson' | 'module'): 'module' | 'chapter' | 'lesson' {
   if (parentType === 'module') return 'chapter';
   if (parentType === 'chapter') return 'lesson';
   return 'module';
@@ -247,7 +247,7 @@ interface AddContentModalProps {
   hasSubUnits: boolean;
   hasMemoryPieces: boolean;
   unitPath: string;
-  parentType: string;
+  parentType: 'chapter' | 'lesson' | 'module';
 }
 
 export default function AddContentModal(props: AddContentModalProps) {
