@@ -80,13 +80,20 @@ interface UnitBaseProps {
 
 export interface AddSubUnitProps extends UnitBaseProps {
   parentUnitId: string
+  type?: UnitType
+}
+
+function getDefaultTypeForSubUnit(parentType: string): UnitType {
+  if (parentType === 'module') return 'chapter';
+  if (parentType === 'chapter') return 'lesson';
+  return 'module'; // for 'lesson' or any other case
 }
 
 /**
  * To add subUnit based on the passed in props.
  */
 export async function addSubUnit(props: AddSubUnitProps) {
-  const {parentUnitId, title, description, imageUrls} = props;
+  const {parentUnitId, title, description, imageUrls, type} = props;
   try {
     if (!imageUrls) {
       throw new Error(`Image file not found: ${imageUrls}`);
@@ -95,13 +102,17 @@ export async function addSubUnit(props: AddSubUnitProps) {
     if (parentUnit == null) {
       throw new Error("Parent Unit not found.");
     }
+
+    // Calculate default type based on parent if not provided
+    const unitType = type || getDefaultTypeForSubUnit(parentUnit.type);
+
     const siblingUnits = await Unit.find({ parentUnit: parentUnit });
     const existingOrderIndices = siblingUnits.map(unit => (unit.order || 0));
     const order = Math.max(...existingOrderIndices) + 1;
     // Unit is uniquely defined by the combination of [title, parentUnit, subject]
     const record = await Unit.findOneAndUpdate(
       { title: title, parentUnit: parentUnit, subject: parentUnit.subject },
-      { title: title, parentUnit: parentUnit, subject: parentUnit.subject, description, imageUrls, order },
+      { title: title, parentUnit: parentUnit, subject: parentUnit.subject, description, imageUrls, order, type: unitType },
       { upsert: true, new: true }
     );
     revalidatePath(`/unit/${parentUnitId}`);
