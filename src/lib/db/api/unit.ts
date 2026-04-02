@@ -115,10 +115,11 @@ export async function addSubUnit(props: AddSubUnitProps) {
 
 export interface AddRootUnitProps extends UnitBaseProps {
   subjectId: string,
+  type?: string,
 }
 
 export async function addRootUnitForSubject(props: AddRootUnitProps) {
-  const {subjectId, title, description, imageUrls} = props;
+  const {subjectId, title, description, imageUrls, type = 'module'} = props;
   try {
     if (!imageUrls) {
       throw new Error(`Image file not found: ${imageUrls}`);
@@ -133,7 +134,7 @@ export async function addRootUnitForSubject(props: AddRootUnitProps) {
     // Unit is uniquely defined by the combination of [title, parentUnit, subject]
     const record = await Unit.findOneAndUpdate(
       { title: title, subject: subject },
-      { title: title, subject: subject, description, imageUrls, order },
+      { title: title, subject: subject, description, imageUrls, order, type },
       { upsert: true, new: true }
     );
     revalidatePath(`/subject/${subjectId}`);
