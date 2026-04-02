@@ -12,6 +12,8 @@ interface UnitData {
   title: string;
   description?: string;
   imageUrls?: string[];
+  type: 'chapter' | 'lesson' | 'module';
+  children?: any[];
 }
 
 interface EditUnitFormProps {
@@ -29,6 +31,7 @@ function EditUnitForm({ unit, unitPath, updateUnit, setModalOpen, onSuccess }: E
   const [uploading, setUploading] = useState(false);
   const [title, setTitle] = useState(unit.title);
   const [description, setDescription] = useState(unit.description || '');
+  const [type, setType] = useState<'module' | 'chapter' | 'lesson'>(unit.type);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     setUploading(true);
@@ -92,6 +95,7 @@ function EditUnitForm({ unit, unitPath, updateUnit, setModalOpen, onSuccess }: E
         title,
         description,
         imageUrls: images.map(image => image.url),
+        type,
       });
 
       if (res != null) {
@@ -126,6 +130,29 @@ function EditUnitForm({ unit, unitPath, updateUnit, setModalOpen, onSuccess }: E
           onChange={e => setDescription(e.target.value)}
         />
       </div>
+
+      <div>
+        <label className="block mb-1 font-medium">Type</label>
+        <select
+          className="w-full border rounded px-3 py-2"
+          value={type}
+          onChange={e => setType(e.target.value as 'module' | 'chapter' | 'lesson')}
+          required
+        >
+          <option value="module">Module</option>
+          <option value="chapter">Chapter</option>
+          <option value="lesson">Lesson</option>
+        </select>
+      </div>
+
+      {unit.children && unit.children.length > 0 && (
+        <div className="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded flex gap-2 items-start">
+          <span className="text-amber-600">⚠️</span>
+          <p className="text-sm">
+            This unit has child units. Changing its type may create an unusual hierarchy.
+          </p>
+        </div>
+      )}
 
       <div>
         <label className="block mb-2 font-medium">Images</label>
