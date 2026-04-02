@@ -3,6 +3,9 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/utils/authOptions';
 import { hasPermission } from '@/lib/utils/permissions';
 import { updateUnit, deleteUnit, getUnit } from '@/lib/db/api/unit';
+import { UnitType } from '@/lib/db/model/types/Unit.types';
+
+const VALID_UNIT_TYPES: ReadonlyArray<UnitType> = ['module', 'chapter', 'lesson'];
 
 // PUT - Update unit
 export async function PUT(request: NextRequest) {
@@ -35,6 +38,14 @@ export async function PUT(request: NextRequest) {
     const canManage = await hasPermission(session.user.id, 'manage_content', unit.subject.id.toString());
     if (!canManage) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    // Validate type if provided
+    if (data.type && !VALID_UNIT_TYPES.includes(data.type as UnitType)) {
+      return NextResponse.json(
+        { error: 'Invalid unit type. Must be one of: module, chapter, lesson' },
+        { status: 400 }
+      );
     }
 
     const updatedUnit = await updateUnit(id, data);
