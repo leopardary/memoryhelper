@@ -89,6 +89,7 @@ export default async function Unit({params}: {params: Promise<{id: string}>}) {
         unitId={unitId}
         unitPath={unitPath}
         subjectId={subjectId}
+        unitType={unit.type}
         hasSubUnits={hasSubUnits}
         hasMemoryPieces={hasMemoryPieces}
         units={serializedUnits}

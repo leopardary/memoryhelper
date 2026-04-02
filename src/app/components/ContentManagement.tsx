@@ -19,6 +19,7 @@ interface ContentManagementForUnitProps {
   unitId: string;
   unitPath: string;
   subjectId: string;
+  unitType: 'chapter' | 'lesson' | 'module';
   hasSubUnits: boolean;
   hasMemoryPieces: boolean;
   units?: any[];
@@ -229,6 +230,7 @@ export default function ContentManagement(props: ContentManagementProps) {
           hasSubUnits={props.hasSubUnits}
           hasMemoryPieces={props.hasMemoryPieces}
           unitPath={props.unitPath}
+          parentType={props.unitType}
         />
       </div>
 
