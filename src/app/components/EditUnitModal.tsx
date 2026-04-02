@@ -123,15 +123,6 @@ function EditUnitForm({ unit, unitPath, updateUnit, setModalOpen, onSuccess }: E
       </div>
 
       <div>
-        <label className="block mb-1 font-medium">Description</label>
-        <textarea
-          className="w-full border rounded px-3 py-2 min-h-[100px]"
-          value={description}
-          onChange={e => setDescription(e.target.value)}
-        />
-      </div>
-
-      <div>
         <label className="block mb-1 font-medium">Type</label>
         <select
           className="w-full border rounded px-3 py-2"
@@ -153,6 +144,15 @@ function EditUnitForm({ unit, unitPath, updateUnit, setModalOpen, onSuccess }: E
           </p>
         </div>
       )}
+
+      <div>
+        <label className="block mb-1 font-medium">Description</label>
+        <textarea
+          className="w-full border rounded px-3 py-2 min-h-[100px]"
+          value={description}
+          onChange={e => setDescription(e.target.value)}
+        />
+      </div>
 
       <div>
         <label className="block mb-2 font-medium">Images</label>
