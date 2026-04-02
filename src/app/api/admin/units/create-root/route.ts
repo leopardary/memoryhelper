@@ -3,8 +3,9 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/utils/authOptions';
 import { hasPermission } from '@/lib/utils/permissions';
 import { addRootUnitForSubject } from '@/lib/db/api/unit';
+import { UnitType } from '@/lib/db/model/types/Unit.types';
 
-const VALID_UNIT_TYPES = ['module', 'chapter', 'lesson'] as const;
+const VALID_UNIT_TYPES: ReadonlyArray<UnitType> = ['module', 'chapter', 'lesson'];
 
 // POST - Create root unit for subject
 export async function POST(request: NextRequest) {
@@ -26,7 +27,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate type
-    if (type && !VALID_UNIT_TYPES.includes(type)) {
+    if (!VALID_UNIT_TYPES.includes(type as UnitType)) {
       return NextResponse.json(
         { error: 'Invalid unit type. Must be one of: module, chapter, lesson' },
         { status: 400 }
