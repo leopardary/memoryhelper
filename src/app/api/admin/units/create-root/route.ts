@@ -4,6 +4,8 @@ import { authOptions } from '@/lib/utils/authOptions';
 import { hasPermission } from '@/lib/utils/permissions';
 import { addRootUnitForSubject } from '@/lib/db/api/unit';
 
+const VALID_UNIT_TYPES = ['module', 'chapter', 'lesson'] as const;
+
 // POST - Create root unit for subject
 export async function POST(request: NextRequest) {
   try {
@@ -14,11 +16,19 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { subjectId, title, description, imageUrls } = body;
+    const { subjectId, title, description, imageUrls, type = 'module' } = body;
 
     if (!subjectId) {
       return NextResponse.json(
         { error: 'Subject ID is required' },
+        { status: 400 }
+      );
+    }
+
+    // Validate type
+    if (type && !VALID_UNIT_TYPES.includes(type)) {
+      return NextResponse.json(
+        { error: 'Invalid unit type. Must be one of: module, chapter, lesson' },
         { status: 400 }
       );
     }
@@ -28,7 +38,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const result = await addRootUnitForSubject({ subjectId, title, description, imageUrls });
+    const result = await addRootUnitForSubject({ subjectId, title, description, imageUrls, type });
 
     return NextResponse.json({ title: result });
   } catch (error) {
